@@ -1,0 +1,13 @@
+{
+    "output": "../",
+    "locals": {
+        "title": "Jet",
+        "url": "http://localhost:8080",
+        "name": "Jet",
+        "description": "The JSON Bus",
+        "owner": {
+            "name": "Gerhard Preuss",
+            "url": "https://github.com/lipp"
+        }
+    }
+}
