@@ -1,0 +1,48 @@
+{
+    "template": "comparison.jade",
+    "names": ["Jet","DBus"],
+    "features": [{
+        "name": "Methods",
+        "value": ["Yes","Yes"]
+    },{
+        "name": "States",
+        "value": ["Yes","Yes (Properties)"]
+    },{
+        "name": "Objects",
+        "value": ["No (States can be Objects)","Yes"]
+    },{
+        "name": "Process bounds visible",
+        "value": ["No","Yes (Services)"]
+    },{
+        "name": "Hot-plug",
+        "value": ["Yes","Yes"]
+    },{
+        "name": "Filter",
+        "value": ["Yes","Yes"]
+    },{
+        "name": "Filter by value",
+        "value": ["Yes","No"]
+    },{
+        "name": "Sorting",
+        "value": ["Yes","No"]
+    },{
+        "name": "Websockets",
+        "value": ["Yes","No"]
+    },{
+        "name": "Schema",
+        "value": ["No","Yes (XSD)"]
+    },{
+        "name": "Format",
+        "value": ["JSON","XML"]
+    },{
+        "name": "Ref. Language",
+        "value": ["Lua & Node.js","C"]
+    },{
+        "name": "Ref. Bus LOC",
+        "value": ["< 2k","> 20k"]
+    },{
+        "name": "Ref. Peer/Client LOC",
+        "value": ["< 1k","> 50k"]
+    }]
+    
+}
