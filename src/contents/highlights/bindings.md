@@ -1,3 +1,3 @@
 ---
 ---
-__Nice!__ Fresh langauge bindings and daemon implementations available for [Node.js](http://nodejs.org/) and [Lua](http://www.lua.org/).
+__Nice!__ Fresh peer and daemon implementations available for [Node.js](http://github.com/lipp/node-jet) and [Lua](http://github.com/lipp/node-jet).

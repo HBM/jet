@@ -14,13 +14,13 @@ arbitrary service distribution.
 
 # Daemon
 
-A single Jet Bus must have one running Jet daemon. At the moment there are two Daemon
+A single Jet Bus must have one running Jet Daemon. At the moment there are two Daemon
 implementations available:
 
  *    [lua-jet](http://github.com/lipp/lua-jet) for [Lua](http://www.lua.org)
  *    [node-jet](http://github.com/lipp/node-jet) for [Node.js](http://www.nodejs.org)
 
-The Daemon serves these purposes:
+A Daemon serves these purposes:
 
  *     Routing Messages
  *     Caching Values
