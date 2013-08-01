@@ -34,6 +34,11 @@ header {
     z-index: 2;
 }
 
+#navi.navbar ul.nav li a{
+    background-color: transparent;
+    box-shadow: none;
+}
+
 .tagline {
     font-family: 'Special Elite', cursive;
     font-size: 33px;
