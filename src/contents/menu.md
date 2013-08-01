@@ -1,5 +1,5 @@
 ---
 ---
-[Home](index.html)
+[Home](/)
 [Messages](messages.html)
 [Architecture](architecture.html)
