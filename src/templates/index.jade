@@ -3,9 +3,7 @@ extends layout
 block body
   section
     div!= contents['about.md'].html
+  section.row
+    include highlights
   section
     include comparison
-        
-  footer
-    p Made in -34°C 
-

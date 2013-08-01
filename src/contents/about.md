@@ -1,6 +1,6 @@
 ---
 ---
-Jet is a system bus on steroids.
+Jet is a lightweight system bus for easily creating distributed web-enabled applications.
 
 The event based architecture keeps network traffic low and peers up-to-date. 
 REST/SQL-inspired filters and sorting options let peers get the data they want (and nothing more).

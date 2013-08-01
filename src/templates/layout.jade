@@ -10,9 +10,9 @@ html(lang='en')
       meta(property='og:url', content=locals.url)
       meta(property='og:description', content=locals.description)
       meta(property='og:type', content='website')
-      link(rel='stylesheet', href='css/bootstrap.min.css', media='screen')
+      link(rel='stylesheet', href='/css/bootstrap.min.css', media='screen')
       link(href='http://fonts.googleapis.com/css?family=Special+Elite', rel='stylesheet', type='text/css')
-      link(rel='stylesheet', href='css/custom.css')
+      link(rel='stylesheet', href='/css/custom.css')
       link(rel='stylesheet', href='http://yandex.st/highlightjs/7.3/styles/github.min.css')
       title local.title
       script.
@@ -30,3 +30,6 @@ html(lang='en')
     
     block body
       p Nothing to see here, move along.
+
+    footer
+      include footer
