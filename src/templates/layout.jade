@@ -1,5 +1,5 @@
 !!! 5
-html(lang='en')
+html#jet(lang='en')
   head
     block head
       meta(charset='utf-8')
@@ -23,13 +23,15 @@ html(lang='en')
         ga('create', 'UA-42875905-1', 'lipp.github.io');
         ga('send', 'pageview');
 
-  body.container
-    header
-      include nav
+  .border
+  body
+    header.container
       include logo
+      include nav
     
-    block body
-      p Nothing to see here, move along.
+    section.container
+      block body
+        p Nothing to see here, move along.
 
-    footer
+    footer.container
       include footer

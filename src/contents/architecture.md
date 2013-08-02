@@ -22,8 +22,8 @@ implementations available:
 
 A Daemon serves these purposes:
 
- *     Routing Messages
- *     Caching Values
+ *     Routing
+ *     Caching
  *     Filtering
  *     Sorting
 

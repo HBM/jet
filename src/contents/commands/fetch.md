@@ -5,7 +5,7 @@ template: command.jade
 
 Fetching is __the__ mechanism to efficiently get data from the Jet
 Bus. It works similar to the publish-subscribe pattern, but also
-generates notifications for "past" events using the cache. As this is
+generates notifications for "past" events using the Daemon's cache. As this is
 Jet's most powerful command, it needs some more explanation.
 
 A Peer can have many different fetches at the same time. The Peer must supply fetch parameters, which specifiy which data you are

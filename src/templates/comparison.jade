@@ -1,16 +1,14 @@
 - var comp = contents['comparison.json'].metadata;
-table.table
-  thead
-    tr
-      th
-      each title in comp.names
-        th= title
-
-  tbody
-    each feature in comp.features
-      tr
-        td= feature.name
-        each val in feature.value
-          td= val        
+#comparison
+  .row
+    .span3
+    each title in comp.names
+      .span3.tablename= title
+  
+  each feature in comp.features
+    .row
+      .span3.tablename= feature.name
+      each val in feature.value
+        .span3= val        
 
 
