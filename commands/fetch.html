@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html id="jet" lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+    <meta name="description" content="The JSON Bus">
+    <meta name="keywords" content="system bus,dbus alternative,web bus,json bus,lua,node.js,embedded,raspberry pi">
+    <meta property="og:title" content="Jet">
+    <meta property="og:url" content="http://lipp.github.io/jet">
+    <meta property="og:description" content="The JSON Bus">
+    <meta property="og:type" content="website">
+    <link rel="stylesheet" href="/css/bootstrap.min.css" media="screen">
+    <link href="http://fonts.googleapis.com/css?family=Special+Elite" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" href="/css/custom.css">
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+    <title>local.title</title>
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+      ga('create', 'UA-42875905-1', 'lipp.github.io');
+      ga('send', 'pageview');
+      
+    </script>
+  </head>
+  <div class="border"></div>
+  <body>
+    <header class="container">
+      <div class="row"><a href="https://github.com/lipp/jet"><img style="position: absolute; top: 0; right: 0; border: 0;" src="/images/forkme_right_red_aa0000.png" alt="Fork me on GitHub"></a>
+        <div class="span4 mega">JET</div>
+        <div class="span8 tagline">The JSON Bus</div>
+      </div>
+      <div id="navi"><a href="/">Home</a><a href="/architecture.html">Architecture</a><a href="/commands/fetch.html">Fetch</a></div>
+    </header>
+    <section class="container">
+      <!-- h1= page.metadata.title-->
+      <div><p>Fetching is <strong>the</strong> mechanism to efficiently get data from the Jet
+Bus. It works similar to the publish-subscribe pattern, but also
+generates notifications for &quot;past&quot; events using the Daemon&#39;s cache. As this is
+Jet&#39;s most powerful command, it needs some more explanation.</p>
+<p>A Peer can have many different fetches at the same time. The Peer must supply fetch parameters, which specifiy which data you are
+interested in and what &#39;method&#39; the forwarded fetch notifications should
+have (&#39;fetchId&#39;). The Daemon first scans its cache for matching elements
+and publishes them to the Peer. Afterwards, whenever some Peer adds, removes
+or changes elements on the Jet Bus, the Daemon applies the fetch rules
+and forwards matching messages to the fetching Peer. There are two
+main categories of fetches, sorting and non-sorting. </p>
+<p>A fetch message always looks like this:</p>
+<pre><code class="lang-JSON">// Peer --&gt; Daemon
+{
+  &quot;id&quot;: &lt;id&gt;, // optional, if the peer wants confirmation for setup the fetch rule
+  &quot;method&quot;: &quot;fetch&quot;,
+  &quot;params&quot;: {
+    &quot;id&quot;: &lt;fetchId&gt;, // This will be the &#39;method&#39; field in fetch notifications
+    &quot;matches&quot;: [...], // optional, Array with match patterns 
+    &quot;unmatches&quot;: [...], // optional, Array with unmatch patterns
+    &quot;where&quot;: { // optional, filter by value
+      ...
+    },
+    &quot;sort&quot;: { // optional sorting criteria
+    }    
+  }
+}</code></pre>
+<p>The forwarding rule created by the &#39;fetch&#39; call can be destroyed by
+calling &#39;unfetch&#39; with the respective &#39;fetchId&#39;.</p>
+<pre><code class="lang-JSON">// Peer --&gt; Daemon
+{
+  &quot;id&quot;: &lt;id&gt;, // optional, if the peer wants confirmation for cleanup the fetch rule
+  &quot;method&quot;: &quot;unfetch&quot;,
+  &quot;params&quot;: {
+    &quot;id&quot;: &lt;fetchId&gt; // Must have been previously specified in &#39;fetch&#39; call
+  }
+}</code></pre>
+<h2>Non-sorting Fetches</h2>
+<p>If the &#39;sort&#39; field of the fetch parameters is not specified, the fetch
+is considered to be non-sorting. For non-sorting fetches the Daemon
+sends messages with this content:</p>
+<pre><code class="lang-JSON">// Daemon --&gt; Peer
+{
+  &quot;method&quot;: &lt;fetchId&gt; // as supplied by the Peer (params.id)
+  &quot;params&quot;: {
+    &quot;event&quot;: &lt;event&gt; // &#39;add&#39;,&#39;change&#39; or &#39;remove&#39;,
+    &quot;path&quot;: &lt;elementPath&gt;,
+    &quot;value&quot;: &lt;elementValue&gt; // optional, any type (also Object or Arrays)
+  }
+}</code></pre>
+<h2>Sorting Fetches</h2>
+<p>If the &#39;sort&#39; field of the fetch parameters is specified, the fetch is
+considered sorting. For sorting fetches the Daemon send messages with
+this content:</p>
+<pre><code class="lang-JSON">// Daemon --&gt; Peer
+{
+  &quot;method&quot;: &lt;fetchId&gt; // as supplied by the Peer (params.id)
+  &quot;params&quot;: {
+    &quot;n&quot;: &lt;someNumber&gt; // The number of currently matching elements in [to:from]
+    &quot;changes&quot;: [ // an Array containing the changes elements
+      {
+        &quot;index&quot;: &lt;indexInRange&gt;, // the position/index in [to:from]
+        &quot;path&quot;: &lt;elementPath&gt;,
+        &quot;value&quot;: &lt;elementValue&gt; // optional, any type (also Object orArrays)
+      },
+  }
+}</code></pre>
+<h3>Example 1: Fetch all stuff</h3>
+<p>Define the wildcard pattern &#39;.*&#39; in the &#39;matches&#39; fetch parameter to
+get all states and methods available at the Jet Bus. This is pretty
+much like subscribing to anything.</p>
+<pre><code class="lang-JSON">// Peer --&gt; Daemon
+{
+  &quot;method&quot;: &quot;fetch&quot;,
+  &quot;params&quot;: {
+    &quot;id&quot;: &quot;fetchAllStuff&quot;,
+    &quot;matches&quot;: [&quot;.*&quot;]
+  }
+}</code></pre>
+<h3>Example 2: Fetch all persons and cars</h3>
+<p>Use multiple &#39;matches&#39; Array entries plus the wildcard pattern &#39;.*&#39;.</p>
+<pre><code class="lang-JSON">// Peer --&gt; Daemon
+{
+  &quot;method&quot;: &quot;fetch&quot;,
+  &quot;params&quot;: {
+    &quot;id&quot;: &quot;fetchPersonsAndCars&quot;,
+    &quot;matches&quot;: [&quot;persons/.*&quot;,&quot;cars/.*&quot;]
+  }
+}</code></pre>
+<h3>Example 3: Fetch all persons but not the person with id 25162</h3>
+<p>Use &#39;unmatches&#39; Array to exclude entries which are matched by
+&#39;matches&#39; pattern. </p>
+<pre><code class="lang-JSON">// Peer --&gt; Daemon
+{
+  &quot;method&quot;: &quot;fetch&quot;,
+  &quot;params&quot;: {
+    &quot;id&quot;: &quot;fetchPersonsButNot25162&quot;,
+    &quot;matches&quot;: [&quot;persons/.*&quot;],
+    &quot;unmatches&quot;: [&quot;person/25162&quot;]
+  }
+}</code></pre>
+<h3>Fetch Notification Scenario</h3>
+<p>The Daemon will scan its internal cache and forward all matching
+entries. Even if the elements already have been added, the event is
+set to &#39;add&#39;. This is to make virtually no difference for the fetcher if the
+state/method was already added or not.</p>
+<pre><code class="lang-JSON">// Daemon --&gt; Peer
+
+// message 1, add state foo
+{
+  &quot;method&quot;: &quot;f521&quot;, // the fetchId specified by the Peer
+  &quot;params&quot;: {
+    &quot;event&quot;: &quot;add&quot;,
+    &quot;path&quot;: &quot;foo&quot;,
+    &quot;value&quot;: &quot;bar&quot;
+  }
+}
+
+// message 2, add state persons/fatty
+{
+  &quot;method&quot;: &quot;f521&quot;, // the fetchId specified by the Peer
+  &quot;params&quot;: {
+    &quot;event&quot;: &quot;add&quot;,
+    &quot;path&quot;: &quot;persons/fatty&quot;,
+    &quot;value&quot;: {
+      &quot;age&quot;: 35,
+      &quot;name&quot;: &quot;John Foo&quot;
+    }
+  }
+}
+
+// message 3, add state persons/slowdude
+{
+  &quot;method&quot;: &quot;f521&quot;, // the fetchId specified by the Peer
+  &quot;params&quot;: {
+    &quot;event&quot;: &quot;add&quot;,
+    &quot;path&quot;: &quot;persons/slowdude&quot;,
+    &quot;value&quot;: false
+  }
+}
+
+// message 3, add method reboot
+{
+  &quot;method&quot;: &quot;f521&quot;, // the fetchId specified by the Peer
+  &quot;params&quot;: {
+    &quot;event&quot;: &quot;add&quot;,
+    &quot;path&quot;: &quot;reboot&quot;
+  }
+}</code></pre>
+<p>If (later on) another state is added, removed or changed, this is also forwarded:</p>
+<pre><code class="lang-JSON">// Daemon --&gt; Peer
+
+// message 4, add state brother
+{
+  &quot;method&quot;: &quot;f521&quot;, // the fetchId specified by the Peer
+  &quot;params&quot;: {
+    &quot;event&quot;: &quot;add&quot;,
+    &quot;path&quot;: &quot;brother&quot;,
+    &quot;value&quot;: &quot;hi there!&quot;
+  }
+}
+
+// message 5, remove state foo
+{
+  &quot;method&quot;: &quot;f521&quot;, // the fetchId specified by the Peer
+  &quot;params&quot;: {
+    &quot;event&quot;: &quot;remove&quot;,
+    &quot;path&quot;: &quot;foo&quot;,
+    &quot;value&quot;: &quot;hi there!&quot; // the last known value
+  }
+}
+
+// message 5, change persons/fatty
+{
+  &quot;method&quot;: &quot;f521&quot;, // the fetchId specified by the Peer
+  &quot;params&quot;: {
+    &quot;event&quot;: &quot;change&quot;,
+    &quot;path&quot;: &quot;persons/fatty&quot;,
+    &quot;value&quot;: {
+      &quot;age&quot;: 36,
+      &quot;name&quot;: &quot;John Foo&quot;
+    }   
+  }
+}</code></pre>
+</div>
+    </section>
+    <footer class="container">
+      <div class="row">
+        <div class="span12"><span>&copy; 2013 </span><a href="https://github.com/lipp">Gerhard Preuss</a></div>
+      </div>
+    </footer>
+  </body>
+  <div class="border"></div>
+</html>

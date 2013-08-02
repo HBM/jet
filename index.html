@@ -1,185 +1,151 @@
 <!DOCTYPE html>
-<html lang="en">
+<html id="jet" lang="en">
   <head>
     <meta charset="utf-8">
-    <title>Jet
-    </title>
-    <link rel="stylesheet" href="css/bootstrap.min.css" media="screen">
-    <link href="http://fonts.googleapis.com/css?family=PT+Mono" rel="stylesheet" type="text/css">
+    <meta name="viewport" content="width=device-width">
+    <meta name="description" content="The JSON Bus">
+    <meta name="keywords" content="system bus,dbus alternative,web bus,json bus,lua,node.js,embedded,raspberry pi">
+    <meta property="og:title" content="Jet">
+    <meta property="og:url" content="http://lipp.github.io/jet">
+    <meta property="og:description" content="The JSON Bus">
+    <meta property="og:type" content="website">
+    <link rel="stylesheet" href="/css/bootstrap.min.css" media="screen">
     <link href="http://fonts.googleapis.com/css?family=Special+Elite" rel="stylesheet" type="text/css">
-    <link href="http://fonts.googleapis.com/css?family=Share+Tech+Mono" rel="stylesheet" type="text/css">
-    <link href="http://fonts.googleapis.com/css?family=Ubuntu+Mono" rel="stylesheet" type="text/css">
-    <link href="http://fonts.googleapis.com/css?family=Petit+Formal+Script" rel="stylesheet" type="text/css">
-    <link rel="stylesheet" href="css/custom.css">
-    <link rel="stylesheet" href="http://yandex.st/highlightjs/7.3/styles/github.min.css">
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>
+    <link rel="stylesheet" href="/css/custom.css">
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+    <title>local.title</title>
     <script>
-      var changeExample = function(x){
-        $('.example').hide();
-        $("#example"+x).show();
-      };
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+      ga('create', 'UA-42875905-1', 'lipp.github.io');
+      ga('send', 'pageview');
       
     </script>
   </head>
+  <div class="border"></div>
   <body>
-    <div class="container">
-      <header class="row"><a href="https://github.com/lipp/jet"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_red_aa0000.png" alt="Fork me on GitHub"></a>
-        <!--img(style="position: absolute; top: 0; left: 0; border: 0;", src="/images/coffee-stain.png")-->
-        <div class="span12">
+    <header class="container">
+      <div class="row"><a href="https://github.com/lipp/jet"><img style="position: absolute; top: 0; right: 0; border: 0;" src="/images/forkme_right_red_aa0000.png" alt="Fork me on GitHub"></a>
+        <div class="span4 mega">JET</div>
+        <div class="span8 tagline">The JSON Bus</div>
+      </div>
+      <div id="navi"><a href="/">Home</a><a href="/architecture.html">Architecture</a><a href="/commands/fetch.html">Fetch</a></div>
+    </header>
+    <section class="container">
+      <section>
+        <div><p>Jet is a lightweight system bus for easily creating distributed web-enabled applications.</p>
+<p>The event based architecture keeps network traffic low and peers up-to-date. 
+REST/SQL-inspired filters and sorting options let peers get the data they want (and nothing more).
+Jet is fully web-enabled and compatible with modern browsers out of the box.
+It&#39;s simplicity and efficiency make Jet also suitable for devices with
+rather limited resources like <a href="http://www.raspberrypi.org/">Raspberry Pi</a>.</p>
+</div>
+      </section>
+      <section class="row">
+        <div class="span3"><p><strong>Nice!</strong> Fresh peer and daemon implementations available for <a href="http://github.com/lipp/node-jet">Node.js</a> and <a href="http://github.com/lipp/lua-jet">Lua</a>.</p>
+</div>
+        <div class="span3"><p><strong><a href="http://www.youtube.com/watch?v=sPfxMIhEUrQ">Tight, Tight, Tight!</a></strong> Only 7 messages define the protocol.</p>
+</div>
+        <div class="span3"><p><strong>Just JSON.</strong> No XML, no XSD, no bloaty libs. Less dependencies then ever.</p>
+</div>
+        <div class="span3"><p><strong>Packed with <a href="http://github.com/lipp/radar">Radar</a>.</strong> Watch you Jet in action - directly in the browser.</p>
+</div>
+        <div class="span3"><p><strong>Side-effects welcome.</strong> Jet peers are well prepared for state changes at any time.</p>
+</div>
+        <div class="span3"><p><strong>Start fetching.</strong> Powerful fetching mechanisms help you getting the data you want.</p>
+</div>
+        <div class="span3"><p><strong>Stop polling.</strong> Jet has been designed to keep pollers out and peers responsive.</p>
+</div>
+        <div class="span3"><p><strong>Web-enabled.</strong> Communication via Websockets or trivial TCP message frames.</p>
+</div>
+      </section>
+      <section>
+        <div id="comparison">
           <div class="row">
-            <div class="span7 mega">JET
-              <div class="row">
-                <div class="span8 tagline">The JSON Bus</div>
-              </div>
-            </div>
-            <div id="sum" class="span4">
-              <div class="row">
-                <div class="span3">
-                  <p class="text-right">DBus</p>
-                </div>
-                <div class="span1"></div>
-              </div>
-              <div class="row">
-                <div class="span1">
-                  <p class="text-right">-</p>
-                  <p class="text-right">+</p>
-                  <p class="text-right">+</p>
-                </div>
-                <div class="span2">
-                  <p class="text-right">bad parts</p>
-                  <p class="text-right">Web Tech.</p>
-                  <p class="text-right">Coffee</p>
-                </div>
-                <div class="span1"></div>
-              </div><img src="./images/postit_note_a.png">
-            </div>
+            <div class="span3"></div>
+            <div class="span3 tablename">Jet</div>
+            <div class="span3 tablename">DBus</div>
+          </div>
+          <div class="row">
+            <div class="span3 tablename">Methods</div>
+            <div class="span3">Yes</div>
+            <div class="span3">Yes</div>
+          </div>
+          <div class="row">
+            <div class="span3 tablename">States</div>
+            <div class="span3">Yes</div>
+            <div class="span3">Yes (Properties)</div>
+          </div>
+          <div class="row">
+            <div class="span3 tablename">Objects</div>
+            <div class="span3">No (States can be Objects)</div>
+            <div class="span3">Yes</div>
+          </div>
+          <div class="row">
+            <div class="span3 tablename">Process bounds visible</div>
+            <div class="span3">No</div>
+            <div class="span3">Yes (Services)</div>
+          </div>
+          <div class="row">
+            <div class="span3 tablename">Hot-plug</div>
+            <div class="span3">Yes</div>
+            <div class="span3">Yes</div>
+          </div>
+          <div class="row">
+            <div class="span3 tablename">Filter</div>
+            <div class="span3">Yes</div>
+            <div class="span3">Yes</div>
+          </div>
+          <div class="row">
+            <div class="span3 tablename">Filter by value</div>
+            <div class="span3">Yes</div>
+            <div class="span3">No</div>
+          </div>
+          <div class="row">
+            <div class="span3 tablename">Sorting</div>
+            <div class="span3">Yes</div>
+            <div class="span3">No</div>
+          </div>
+          <div class="row">
+            <div class="span3 tablename">Websockets</div>
+            <div class="span3">Yes</div>
+            <div class="span3">No</div>
+          </div>
+          <div class="row">
+            <div class="span3 tablename">Schema</div>
+            <div class="span3">No</div>
+            <div class="span3">Yes (XSD)</div>
+          </div>
+          <div class="row">
+            <div class="span3 tablename">Format</div>
+            <div class="span3">JSON</div>
+            <div class="span3">XML</div>
+          </div>
+          <div class="row">
+            <div class="span3 tablename">Ref. Language</div>
+            <div class="span3">Lua &amp; Node.js</div>
+            <div class="span3">C</div>
+          </div>
+          <div class="row">
+            <div class="span3 tablename">Ref. Bus LOC</div>
+            <div class="span3">&lt; 2k</div>
+            <div class="span3">&gt; 20k</div>
+          </div>
+          <div class="row">
+            <div class="span3 tablename">Ref. Peer/Client LOC</div>
+            <div class="span3">&lt; 1k</div>
+            <div class="span3">&gt; 50k</div>
           </div>
         </div>
-      </header>
+      </section>
+    </section>
+    <footer class="container">
       <div class="row">
-        <div class="span12">
-          <div class="row">
-            <div id="highlights">
-              <div class="span3"><p><strong>Nice!</strong> Fresh langauge bindings and daemon implementations available for <a href="http://nodejs.org/">Node.js</a> and <a href="http://www.lua.org/">Lua</a>.</p>
-</div>
-              <div class="span3"><p><strong>It&#39;s simple.</strong> The whole protocol is made of 7 messages types.</p>
-</div>
-              <div class="span3"><p><strong>Just JSON.</strong> No XML, no XSD, no bloaty libs. Less dependencies then ever.</p>
-</div>
-              <div class="span3"><p><strong>Packed with Radar.</strong> Watch you Jet in action - directly in the browser (aka &#39;introspection&#39;).</p>
-</div>
-              <div class="span3"><p><strong>Side-effects welcome.</strong> Jet peers are well prepared for state changes at any time.</p>
-</div>
-              <div class="span3"><p><strong>Start fetching.</strong> Powerful fetching mechanisms help you getting the data you want.</p>
-</div>
-              <div class="span3"><p><strong>Stop polling.</strong> Jet has been designed to keep pollers out and peers responsive.</p>
-</div>
-              <div class="span3"><p><strong>Web-enabled.</strong> Communication via Websockets or trivial TCP message frames.</p>
-</div>
-            </div>
-          </div>
-        </div>
+        <div class="span12"><span>&copy; 2013 </span><a href="https://github.com/lipp">Gerhard Preuss</a></div>
       </div>
-      <div id="examples">
-        <div class="row">
-          <div class="span9">
-            <div style="display: block;" id="example0" class="example">
-              <div class="row">
-                <div class="span9 card-title">
-                  <h4 class="title">--&gt; Call Method:</h4>
-                </div>
-              </div>
-              <div class="row card-content">
-                <p class="span3 story">Call &quot;person/26317/run&quot;. Arguments can be any JSON Object or JSON Array. The request is routet to the peer who added the method. If an *id* is specfied, the response it routed back as well.</p>
-                <div class="span6"><pre><code class="lang-json">{
-  "<span class="attribute">method</span>": <span class="value"><span class="string">"call"</span></span>,
-  "<span class="attribute">params</span>": <span class="value">{
-    "<span class="attribute">path</span>": <span class="value"><span class="string">"person/26317/run"</span></span>,
-    "<span class="attribute">args</span>": <span class="value">{
-      "<span class="attribute">fast</span>": <span class="value"><span class="literal">true</span>
-    }</span>
-  }</span></span>,
-  "<span class="attribute">id</span>": <span class="value"><span class="number">123918</span>
-}</span></code></pre>
-</div>
-              </div><img src="./images/card_shadow.png" class="span9">
-            </div>
-            <div style="display: none;" id="example1" class="example">
-              <div class="row">
-                <div class="span9 card-title">
-                  <h4 class="title">--&gt; Advanced Fetch:</h4>
-                </div>
-              </div>
-              <div class="row card-content">
-                <p class="span3 story">Fetches all people, who play guitar in their freetime. The filter system is inspired by common REST-APIs</p>
-                <div class="span6"><pre><code class="lang-json">{
-  "<span class="attribute">method</span>": <span class="value"><span class="string">"fetch"</span></span>,
-  "<span class="attribute">params</span>": <span class="value">{
-    "<span class="attribute">id</span>": <span class="value"><span class="string">"f76"</span></span>,
-    "<span class="attribute">matches</span>": <span class="value">[<span class="string">"^persons/.*"</span>]</span>,
-    "<span class="attribute">equals</span>": <span class="value">{
-      "<span class="attribute">hobby</span>": <span class="value"><span class="string">"guitar"</span>
-    }</span>
-  }</span>
-}</span></code></pre>
-</div>
-              </div><img src="./images/card_shadow.png" class="span9">
-            </div>
-            <div style="display: none;" id="example2" class="example">
-              <div class="row">
-                <div class="span9 card-title">
-                  <h4 class="title">--&gt; Basic Fetch:</h4>
-                </div>
-              </div>
-              <div class="row card-content">
-                <p class="span3 story">Fetches all. Regular Expressions allow to match every state and method of every peer.</p>
-                <div class="span6"><pre><code class="lang-json">{
-  "<span class="attribute">method</span>": <span class="value"><span class="string">"fetch"</span></span>,
-  "<span class="attribute">params</span>": <span class="value">{
-    "<span class="attribute">id</span>": <span class="value"><span class="string">"f819"</span></span>,
-    "<span class="attribute">matches</span>": <span class="value">[<span class="string">".*"</span>]
-  }</span>
-}</span></code></pre>
-</div>
-              </div><img src="./images/card_shadow.png" class="span9">
-            </div>
-            <div style="display: none;" id="example3" class="example">
-              <div class="row">
-                <div class="span9 card-title">
-                  <h4 class="title">--&gt; Set states:</h4>
-                </div>
-              </div>
-              <div class="row card-content">
-                <p class="span3 story">Set &quot;person/26317/run&quot;. Arguments can be any JSON Object or JSON Array.</p>
-                <div class="span6"><pre><code class="lang-json">{
-  "<span class="attribute">method</span>": <span class="value"><span class="string">"set"</span></span>,
-  "<span class="attribute">params</span>": <span class="value">{
-    "<span class="attribute">path</span>": <span class="value"><span class="string">"person/26317/address"</span></span>,
-    "<span class="attribute">args</span>": <span class="value">{
-      "<span class="attribute">street</span>": <span class="value"><span class="string">"Homestreet"</span></span>,
-      "<span class="attribute">zip</span>": <span class="value"><span class="number">89123</span></span>,
-      "<span class="attribute">country</span>": <span class="value">Canada
-    }</span>
-  }</span></span>,
-  "<span class="attribute">id</span>": <span class="value"><span class="number">123918</span>
-}</span></code></pre>
-</div>
-              </div><img src="./images/card_shadow.png" class="span9">
-            </div>
-          </div>
-          <div id="examplesLinks" class="span3">
-            <p onmouseover="changeExample(0);">Call Method</p>
-            <p onmouseover="changeExample(1);">Advanced Fetch</p>
-            <p onmouseover="changeExample(2);">Basic Fetch</p>
-            <p onmouseover="changeExample(3);">Set states</p>
-          </div>
-        </div>
-      </div>
-      <footer class="row">
-        <div class="span12">
-          <p>&copy; 2013 <a href="https://github.com/lipp">Gerhard Preuss</a></p>
-        </div>
-      </footer>
-    </div>
+    </footer>
   </body>
+  <div class="border"></div>
 </html>

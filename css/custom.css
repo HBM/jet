@@ -1,14 +1,14 @@
-#sum .table th, .table td {
-    border-top: none;
-}
+/* #sum .table th, .table td { */
+/*     border-top: none; */
+/* } */
 
 /* sum { */
 /*     background-image: url('/images/postit_note_a.png'); */
 /*     height: 400px; */
 /* } */
 
-header {
-    margin-top: 20px;
+.tablename {
+    font-weight: bold;
 }
 
 #sum {
@@ -16,11 +16,12 @@ header {
     position: relative;
 /*    font-family: 'PT Mono', sans-serif;*/
     font-family: 'Special Elite', cursive;
-    font-size: 28px;
-    height: 350px;
+    font-size: 20px;
+    height: 200px;
     -webkit-transform: rotate(+2deg); 
     -moz-transform: rotate(+2deg);
-    margin-top: 20px;
+    margin-top: 0px;
+    padding-top: 60px;
 }
 
 #subcontent .textdivider {
@@ -33,20 +34,35 @@ header {
     z-index: 2;
 }
 
+#navi a{
+  margin-right: 15px;  
+}
+
+#navi {
+    padding-bottom: 50px;
+}
+
+section {
+    padding-bottom: 50px;
+}
+
+
 .tagline {
     font-family: 'Special Elite', cursive;
-    font-size: 33px;
+    font-size: 50px;
 /*    text-align: center;*/
-    margin-top: 30px;
-    -webkit-transform: rotate(-1deg); 
-    -moz-transform: rotate(-1deg);
+    margin-top: 79px;
+    line-height: 100%;
+    /* -webkit-transform: rotate(-1deg);  */
+    /* -moz-transform: rotate(-1deg); */
 /*    margin-top: 150px;*/
 }
 
 .mega {
     font-family: 'Special Elite', cursive;
-    margin-top: 130px;
+    margin-top: 30px;
     font-size: 120px;
+    line-height: 100%;
 /*    text-align: center;*/
 }
 
@@ -58,18 +74,11 @@ header {
     margin: 12px 10px;
 }
 
-#sum p {
-    margin-top: 2px;
-}
 
 #sum p:first-of-type {
-    -webkit-transform: rotate(+4deg); 
-    -moz-transform: rotate(+4deg);
+    -webkit-transform: rotate(+1deg); 
+    -moz-transform: rotate(+1deg);
     
-}
-
-#sum {
-    padding-top: 40px;
 }
 
 #sum img {
@@ -83,8 +92,20 @@ header {
     /* font-family: 'Ubuntu Mono', sans-serif; */
 }
 
+#examples {
+    padding-top: 50px;
+}
+
 #examples .row {
     margin-top: 15px;
+}
+
+#jet pre {
+    opacity: 0.7;
+}
+
+#jet code {
+    font-size: 14px;
 }
 
 .example code, .example p {
@@ -106,8 +127,9 @@ header {
     background: none;
 }
 
-body {
+#jet body{
 /*    font-family: 'Special Elite', cursive;*/
+    font-size: 14px;
 }
 
 #examples p.story {
@@ -130,14 +152,54 @@ body {
 
 #highlights p {
     /* font-family: 'Ubuntu Mono', sans-serif; */
-    font-size: 17px;
+/*    font-size: 17px;*/
     margin-bottom: 70px;
     height: 50px;
     
 }
 
-body {
-    background-image: url('../images/textured_paper.png'); 
+.border {
+    background-color: #0CC;
+    width: 100%;
+    height: 6px;
+}
+
+#jet section h1 {
+    margin-top: 40px;
+    margin-bottom: 20px;
+    
+}
+
+#jet section h2 {
+    margin-top: 40px;
+    margin-bottom: 20px;
+    
+}
+
+#jet a {
+    text-decoration: none; border-bottom:1px dotted;
+    color: inherit;
+}
+
+#jet a:active {
+    color: #0CC;
+}
+
+footer {
+    -bottom: 
+}
+
+html {
+/*    margin-top: -15px;
+    padding-bottom: 7px;
+    background-color: #0CC;*/
+/*    background-image: url('../images/textured_paper.png'); */
+}
+
+#jet body {
+    background-color: transparent;
+    background-image: url('../images/textured_paper.png');
+    min-height: 100%;
 }
 
 .example {
@@ -160,7 +222,7 @@ body {
 }
 
 #examplesLinks p {
-    font-size: 17px;    
+    font-size: 20px;    
     font-family: 'Special Elite', cursive;    
 }
 
