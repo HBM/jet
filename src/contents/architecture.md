@@ -2,8 +2,6 @@
 template: architecture.jade
 ---
 
-# Overview
-
 A Jet Bus is made of one Daemon and an arbitrary number of Peers. The Peers
 communicate with the Daemon through network sockets. Thus Peers may run on the same
 machine or another machine as long as a network connection between
