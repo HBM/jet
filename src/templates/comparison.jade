@@ -3,11 +3,11 @@
   .row
     .span3
     each title in comp.names
-      .span3.tablename= title
+      .span3.colname= title
   
   each feature in comp.features
     .row
-      .span3.tablename= feature.name
+      .span3.rowname= feature.name
       each val in feature.value
         .span3= val        
 

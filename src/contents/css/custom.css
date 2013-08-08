@@ -1,14 +1,18 @@
-border/* #sum .table th, .table td { */
-/*     border-top: none; */
-/* } */
-
-/* sum { */
-/*     background-image: url('/images/postit_note_a.png'); */
-/*     height: 400px; */
-/* } */
-
-.tablename {
+.rowname {
     font-weight: bold;
+}
+
+.colname {
+    font-weight: bold;
+}
+
+#comparison .row {
+    padding-top: 2px;
+    padding-bottom: 2px;
+    border-bottom: 1px solid #BBBBBB;
+}
+
+#comparison .row div {
 }
 
 #sum {
