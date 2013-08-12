@@ -1,3 +1,3 @@
 ---
 ---
-__Packed with [Radar](http://github.com/lipp/radar).__ Watch you Jet in action - directly in the browser.
+__Packed with [Radar](http://github.com/lipp/radar).__ Watch your Jets fly by in the Radar Web App.
