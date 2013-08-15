@@ -92,13 +92,19 @@ this content:</p>
 {
   &quot;method&quot;: &lt;fetchId&gt; // as supplied by the Peer (params.id)
   &quot;params&quot;: {
-    &quot;n&quot;: &lt;someNumber&gt; // The number of currently matching elements in [to:from]
-    &quot;changes&quot;: [ // an Array containing the changes elements
+    &quot;n&quot;: &lt;someNumber&gt; // The number of currently matching elements [0,(to - from)]
+    &quot;changes&quot;: [ // an Array containing the changed elements
       {
         &quot;index&quot;: &lt;indexInRange&gt;, // the position/index in [to:from]
         &quot;path&quot;: &lt;elementPath&gt;,
-        &quot;value&quot;: &lt;elementValue&gt; // optional, any type (also Object orArrays)
+        &quot;value&quot;: &lt;elementValue&gt; // optional, any type (also Object or Arrays)
       },
+      {
+        &quot;index&quot;: &lt;indexInRange&gt;, // the position/index in [to:from]
+        &quot;path&quot;: &lt;elementPath&gt;,
+        &quot;value&quot;: &lt;elementValue&gt; // optional, any type (also Object or Arrays)
+      }
+    ]
   }
 }</code></pre>
 <h3>Example 1: Fetch all stuff</h3>
