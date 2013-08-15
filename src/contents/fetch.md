@@ -79,13 +79,19 @@ this content:
 {
   "method": <fetchId> // as supplied by the Peer (params.id)
   "params": {
-    "n": <someNumber> // The number of currently matching elements in [to:from]
-    "changes": [ // an Array containing the changes elements
+    "n": <someNumber> // The number of currently matching elements [0,(to - from)]
+    "changes": [ // an Array containing the changed elements
       {
         "index": <indexInRange>, // the position/index in [to:from]
         "path": <elementPath>,
-        "value": <elementValue> // optional, any type (also Object orArrays)
+        "value": <elementValue> // optional, any type (also Object or Arrays)
       },
+      {
+        "index": <indexInRange>, // the position/index in [to:from]
+        "path": <elementPath>,
+        "value": <elementValue> // optional, any type (also Object or Arrays)
+      }
+	]
   }
 }
 ```
