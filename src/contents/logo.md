@@ -1,6 +1,0 @@
----
----
-
-# Jet
-
-## The JSON Bus
