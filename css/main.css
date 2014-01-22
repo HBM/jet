@@ -28,6 +28,21 @@
 
 html, body { height: 100%; }
 
+#hero h1 {    
+    color: white;
+    font-size: 10em;   
+    font-family: 'Open Sans',sans serif;
+    margin: 0px;
+    text-align: left;
+}
+
+#hero {
+    background-color: red;
+    z-index: 5;
+    height: 150px; 
+    width: 100%;
+}
+
 body {
   background-color: #FFF;
   font: 13.34px Helvetica, Arial, sans-serif;
@@ -41,9 +56,8 @@ h1, h2, h3, h4, h5, h6 {
     margin: 1em 0;
 }
 
-h1 {
-    color: transparent;
-    border-bottom: 1px solid black;
+.site h1:after {
+    content: " //";
 }
 
 h2, h3, h4, h5, h6 {
@@ -85,6 +99,9 @@ a:visited { color: #a0a; }
 /*****************************************************************************/
 
 .site {
+    height: auto;
+    top: 100px;
+    left: 100px;
   font-size: 115%;
   text-align: justify;
   width: 42em;
@@ -157,31 +174,30 @@ a:visited { color: #a0a; }
 /*****************************************************************************/
 
 #toc {
-    top: 0px;
-    left: 0px;
-    height: 100%;
     position: fixed;
-    background: #333;
-    box-shadow: inset -5px 0 5px 0px #000;
-    width: 200px;
-    padding-top: 20px;
-    color: #fff;
+    top: 0px; 
+    width: 100%;
+    background-color: red;
+    color: #000;
 }
+
 
 #toc ul {
     margin: 0;
     padding: 0;
     list-style: none;
+    display: inline;
 }
 
 #toc li {
     padding: 5px 10px;
+    display: inline;
 }
 
 #toc a {
     color: #fff;
     text-decoration: none;
-    display: block;
+    display: inline;
     text-align: left;
 }
 
@@ -191,14 +207,15 @@ a:visited { color: #a0a; }
 
 #toc .toc-h2 {
     padding-left: 10px;
+    display: none;
 }
 
 #toc .toc-h3 {
     padding-left: 20px;
 }
 
-#toc .toc-active a:before {
-    content: ">> ";
+#toc .toc-active a:after {
+    content: " //";
 }
 
 /* #toc .toc-active { */

@@ -14,6 +14,9 @@
 
     </head>
     <body>
+        <div id="hero">
+          <h1 id="brand">Jet</h1>
+        </div>
         <div id="toc">
 	</div>
         <div class="site">
@@ -42,7 +45,7 @@
     <script src="js/jquery.toc.min.js"></script>
     <script>
       $('#toc').toc({
-        selectors:'h1',offset:50
+        selectors:'h1',container:'.site',highlightOffset:0
       });
     </script>
 </html>
