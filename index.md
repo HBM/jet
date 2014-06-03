@@ -5,6 +5,8 @@ title: Jet
 
 # Quick Start
 
+This is a Quick Start for writing Peers using the [Node.js API](http://github.com/lipp/node-jet). It may help you getting a basic understanding even if your are not planing to use this Peer API.
+
 ## Create a Peer
 
 To interact with a Jet Daemon you need a Peer. A peer sets up a network connection to the Daemon and performs some configuration steps. Peers always communicate with the Daemon and never communicate directly.
@@ -124,12 +126,70 @@ There are implementations available for Lua ([lua-jet](http://github.com/lipp/lu
 
 There can be any number of Peers. Peers bring the Jet bus to life. They can do any of the following things: 
 
- - Add States and Methods
+ - Add / Remove States and Methods
  - Call Methods
  - Set States
- - Fetch States and Methods based on their path and/or value 
+ - Fetch / Unfetch States and Methods
 
 ## States
+
+A State is made up a unique Path and an optional value. The value of a State can be any valid JSON, as primitive Types (Boolean, Numbers, Strings) or nested Objects are. Peers can add States to the bus by calling __add__, e.g.:
+
+```javascript
+{
+  "method": "add",
+  "params": {
+    "path": "foo/bar",
+    "value": 123
+  } 
+  "id": 41
+}
+```
+
+```javascript
+{
+  "method": "add",
+  "params": {
+    "path": "person/Xop",
+    "value": {
+      "name": "Bob",
+      "age": 26,
+      "hobbies": ["Hiking", "Swimming"]
+    }
+  } 
+ // Note that this is a Notification as there is no "id"
+}
+```
+
+As time goes by, States are most probably subject to change. States are allowed (or even expected) to change at any time to any new value. The Peer has just to inform the daemon (and thus eventually other Peers) by calling __change__ making a state change public, e.g. 
+
+```javascript
+{
+  "method": "change",
+  "params": {
+    "path": "foo/bar",
+    "value": false // yes, state values may change type 
+  } 
+  "id": 41
+}
+```
+
+```javascript
+{
+  "method": "change",
+  "params": {
+    "path": "person/Xop",
+    "value": {
+      "name": "Bob",
+      "age": 27,
+      "hobbies": ["Computer Games", "Climbing"]
+    }
+  } 
+ // Note that this is a Notification as there is no "id"
+}
+```
+
+A State change is always a replacement. The Daemon manages a State cache and stores the current (last known) value of all States currently added. This enables the daemon to provide the correct and complete information for fetchers who join the party lately.
 
 ## Methods
 
