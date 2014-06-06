@@ -5,7 +5,7 @@ title: Jet
 
 # Quick Start
 
-This is a Quick Start for writing Peers using the [Node.js API](http://github.com/lipp/node-jet). It may help you getting a basic understanding even if your are not planing to use this Peer API.
+This is a Quick Start for writing Peers using the or Javascript Peer API for [Browsers](http://github.com/lipp/jet-js) and [Node.js](http://github.com/lipp/node-jet). It may help you getting a basic understanding even if your are not planing to use this Peer API.
 
 ## Create a Peer
 
@@ -318,5 +318,5 @@ connect(&#x27;ws://jet.nodejitsu.com&#x27;);</code></pre>
 
 Creates a peer and then adds a state with random path name (path must be unique on the jet bus).
 
-<p data-height="461" data-theme-id="0" data-slug-hash="kLlfB" data-default-tab="result" class='codepen'>See the Pen <a href='http://codepen.io/lipp/pen/kLlfB/'>Jet Add State</a> by Gerhard Preuss (<a href='http://codepen.io/lipp'>@lipp</a>) on <a href='http://codepen.io'>CodePen</a>.</p>
+<p data-height="650" data-theme-id="0" data-slug-hash="kLlfB" data-default-tab="js" class='codepen'>See the Pen <a href='http://codepen.io/lipp/pen/kLlfB/'>Jet Add State</a> by Gerhard Preuss (<a href='http://codepen.io/lipp'>@lipp</a>) on <a href='http://codepen.io'>CodePen</a>.</p>
 <script async src="//codepen.io/assets/embed/ei.js"></script>
