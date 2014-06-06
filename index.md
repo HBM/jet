@@ -86,7 +86,7 @@ peer.fetch({ // first param is the fetch rule
       byValueField: {
         score: 'number'
       }
-    }    
+    }
   }, function (sorted) { // second param is the fetch callback
     console.log(sorted);
 	// will show:
@@ -124,7 +124,7 @@ There are implementations available for Lua ([lua-jet](http://github.com/lipp/lu
 
 ## Peer
 
-There can be any number of Peers. Peers bring the Jet bus to life. They can do any of the following things: 
+There can be any number of Peers. Peers bring the Jet bus to life. They can do any of the following things:
 
  - Add / Remove States and Methods
  - Call Methods
@@ -141,7 +141,7 @@ A State is made up a unique Path and an optional value. The value of a State can
   "params": {
     "path": "foo/bar",
     "value": 123
-  } 
+  }
   "id": 41
 }
 ```
@@ -156,20 +156,20 @@ A State is made up a unique Path and an optional value. The value of a State can
       "age": 26,
       "hobbies": ["Hiking", "Swimming"]
     }
-  } 
+  }
  // Note that this is a Notification as there is no "id"
 }
 ```
 
-As time goes by, States are most probably subject to change. States are allowed (or even expected) to change at any time to any new value. The Peer has just to inform the daemon (and thus eventually other Peers) by calling __change__ making a state change public, e.g. 
+As time goes by, States are most probably subject to change. States are allowed (or even expected) to change at any time to any new value. The Peer has just to inform the daemon (and thus eventually other Peers) by calling __change__ making a state change public, e.g.
 
 ```javascript
 {
   "method": "change",
   "params": {
     "path": "foo/bar",
-    "value": false // yes, state values may change type 
-  } 
+    "value": false // yes, state values may change type
+  }
   "id": 41
 }
 ```
@@ -184,7 +184,7 @@ As time goes by, States are most probably subject to change. States are allowed 
       "age": 27,
       "hobbies": ["Computer Games", "Climbing"]
     }
-  } 
+  }
  // Note that this is a Notification as there is no "id"
 }
 ```
@@ -203,12 +203,12 @@ As a reminder: Don't be confused by the term Notification. A Notification is sim
 
 ## Architecture
 
- - There must be one Daemon. 
+ - There must be one Daemon.
  - There can be any number of Peers.
 
 
 Peers never communicate directly. Peers always communicate with a Daemon. Peer can (indirectly) interact between each other through a Daemon. The Daemon may send messages to other Peers when one of two things happen:
- 
+
  - A Peer sends a message to the Daemon
  - A Peer connection closes (and thus States and Methods are removed)
 
@@ -216,15 +216,15 @@ Peers never communicate directly. Peers always communicate with a Daemon. Peer c
 ## Active / Passive
 
 There are two different kinds of message flows:
- 
+
  -  __Active__: The Peer sends a Request to the Daemon
  -  __Passive__: The Daemon sends a Request to the Peer
- 
 
-The __Active__ messages always originate from Peers and are send to the Daemon. Eventually the Daemon may send __Passive__ messages to one or more Peers as a result of processing an __Active__ message. For instance: If a Peer __adds__ a State, another __fetching__ Peer with matching fetch rules may be informed by __Passive__ messages. 
- 
+
+The __Active__ messages always originate from Peers and are send to the Daemon. Eventually the Daemon may send __Passive__ messages to one or more Peers as a result of processing an __Active__ message. For instance: If a Peer __adds__ a State, another __fetching__ Peer with matching fetch rules may be informed by __Passive__ messages.
+
 The __Passive__ messages are:
-  
+
    - Fetch based messages
    - (Routed) Requests to set (change) a State
    - (Routed) Requests to call a Method
@@ -268,7 +268,55 @@ This is a __Passive__ message which is issued based on the fetch rule defined ab
 
 ## Differences to JSON-RPC 2.0
 
-In opposite to the [JSON-RPC 2.0 spec](http://www.jsonrpc.org/specification) the `"jsonrpc": "2.0"` field is considered optional and can be simply ignored. 
+In opposite to the [JSON-RPC 2.0 spec](http://www.jsonrpc.org/specification) the `"jsonrpc": "2.0"` field is considered optional and can be simply ignored.
 
 Further __Batch__ Messages are not subject of any order requirements are may be processed and send at any time. This allows to minimize message framing overhead (e.g. Websockets).
 
+# Live Examples
+
+The following examples demonstrate Javascript peer API usage and (protocol) messages.
+They actually run in your browser. You can edit them on [codepen](http://codepen.io) if desired.
+Most of them use the Jet Daemon hosted at [nodejitsu](http://nodejitsu.com) with the
+Daemon URL: `ws://jet.nodejitsu.com` (Port 80). The nodejitsu jet daemon is public
+and you may notice activity of other peers "playing" with it.
+
+## Connect
+
+Creates a peer and reports back the connection status.
+
+<div data-height="636" data-theme-id="0" data-slug-hash="GEyuq" data-default-tab="js" class='codepen'><pre><code>
+var connect = function(url) {
+try {
+  $(&#x27;#status&#x27;).text(&#x27;disconnected&#x27;);
+
+  var peer = new jet.Peer({
+    url: url,
+    onOpen: function() {
+      $(&#x27;#status&#x27;).text(&#x27;connected&#x27;);
+    }
+  });
+
+} catch(e) {
+  $(&#x27;#status&#x27;).text(&#x27;error &#x27; + e);
+  $(&#x27;#status&#x27;).style({color: &#x27;red&#x27;});
+}
+};
+
+$(&#x27;button&#x27;).click(function(e) {
+  connect($(&#x27;input&#x27;).val());
+});
+
+$(&#x27;input&#x27;).change(function(e) {
+  connect($(&#x27;input&#x27;).val());
+});
+
+connect(&#x27;ws://jet.nodejitsu.com&#x27;);</code></pre>
+<p>See the Pen <a href='http://codepen.io/lipp/pen/GEyuq/'>Jet Connect</a> by Gerhard Preuss (<a href='http://codepen.io/lipp'>@lipp</a>) on <a href='http://codepen.io'>CodePen</a>.</p>
+</div><script async src="//codepen.io/assets/embed/ei.js"></script>
+
+## Add State
+
+Creates a peer and then adds a state with random path name (path must be unique on the jet bus).
+
+<p data-height="461" data-theme-id="0" data-slug-hash="kLlfB" data-default-tab="result" class='codepen'>See the Pen <a href='http://codepen.io/lipp/pen/kLlfB/'>Jet Add State</a> by Gerhard Preuss (<a href='http://codepen.io/lipp'>@lipp</a>) on <a href='http://codepen.io'>CodePen</a>.</p>
+<script async src="//codepen.io/assets/embed/ei.js"></script>
