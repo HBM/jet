@@ -3,6 +3,14 @@ layout: default
 title: Jet
 ---
 
+# About
+
+Jet is a lightweight message protocol for realtime communication between apps. These apps
+may run within browsers, on servers or even on embedded systems. It employs Websockets as transport and
+JSON-RPC 2.0 as message format. On top, Jet adds simple concepts and message definitions which allow efficient,
+flexible and transparent information flow.
+
+
 # Quick Start
 
 This is a Quick Start for writing Peers using the or Javascript Peer API for [Browsers](http://github.com/lipp/jet-js) and [Node.js](http://github.com/lipp/node-jet). It may help you getting a basic understanding even if your are not planing to use this Peer API.
