@@ -174,12 +174,17 @@ html, body { height: 100%; }
     margin: 1em 0;
   }
 
-    h2, h3, h4, h5, h6 {
+  h2, h3, h4, h5, h6 {
     font-size: 1.5em;
     padding-top: 20px;
   }
 
-  h1 { margin-bottom: 1em; }
+  h1 {
+      margin-bottom: 1em;
+      margin-top: 3em;
+      padding-bottom: 4px;
+border-bottom: 1px solid rgb(163, 211, 165);
+    }
   p { margin: 1em 0; }
 
   a         { color: #00a; }
@@ -216,7 +221,7 @@ html, body { height: 100%; }
     height: auto;
     top: 100px;
     left: 100px;
-    font-size: 115%;
+    font-size: 16px;
     text-align: justify;
     min-width: 42em;
     max-width: 60%;
@@ -317,6 +322,8 @@ html, body { height: 100%; }
   #toc {
     width: 100%;
     color: #000;
+
+
     background-image: -webkit-gradient(
       linear,
       left top,

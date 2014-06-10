@@ -6,13 +6,15 @@ title: Jet
 # About
 
 Jet is a lightweight message protocol for realtime communication between apps.
-These apps may run within browsers, on servers or even on embedded systems.
+These apps may run within browsers, on servers or even on embedded systems with very limited ressources.
 It may be viewed as a realtime auto-sync database like [Firebase](http://firebase.com)
 or as a web-enabled system bus like [DBus](dbus.freedesktop.org).
 
 It employs Websockets as transport and JSON-RPC 2.0 as message format.
 On top, Jet adds few simple concepts and a handfull of message definitions which allow efficient,
-flexible and transparent information flow.
+flexible and transparent information flow. Implementations are pretty small, e.g. the full featured
+Javascript Peer for [browsers](http://https://github.com/lipp/jet-js/blob/master/peer.js) has less
+than 1k single lines of code (SLOC).
 
 # Quick Start
 
@@ -76,9 +78,9 @@ peer.fetch({
     equalsOneOf: ['foo','addNumbers']
   }, function (notification) {
     console.log(notification);
-	// will show:
-	// {"path": "foo", "event": "add", "value": 1234}
-	// {"path": "addNumbers", "event": "add"}
+    // will show:
+    // {"path": "foo", "event": "add", "value": 1234}
+    // {"path": "addNumbers", "event": "add"}
   }
 });
 ```
@@ -87,28 +89,28 @@ If desired, the fetched elements can also be delivered sorted, e.g. querying the
 
 ```javascript
 peer.fetch({ // first param is the fetch rule
-    path: {
-      startsWith: 'players/'
-    },
-    sort: {
-      from: 1,
-      to: 10,
-      descending: true,
-      byValueField: {
-        score: 'number'
-      }
+  path: {
+    startsWith: 'players/'
+  },
+  sort: {
+    from: 1,
+    to: 10,
+    descending: true,
+    byValueField: {
+      score: 'number'
     }
-  }, function (sorted) { // second param is the fetch callback
-    console.log(sorted);
-	// will show:
-	// { "n": 10,
-        //   "changes": [
-        //     {"path": "players/apXsdi", "event": "add", "value": { "nick": "BobTheNerd", "score": 999890} , index: 1},
-        // {"path": "players/apiesda", "event": "add", "value": { "nick": "Superman", "score": 920} , index: 2}
-        // ...
-        //   ]
-        // }
   }
+}, function (sorted) { // second param is the fetch callback
+  console.log(sorted);
+  // will show:
+  // { "n": 10,
+  //   "changes": [
+  //     {"path": "players/apXsdi", "event": "add", "value": { "nick": "BobTheNerd", "score": 999890} , index: 1},
+  // {"path": "players/apiesda", "event": "add", "value": { "nick": "Superman", "score": 920} , index: 2}
+  // ...
+  //   ]
+  // }
+}
 });
 ```
 
@@ -137,10 +139,10 @@ There are implementations available for Lua ([lua-jet](http://github.com/lipp/lu
 
 There can be any number of Peers. Peers bring the Jet bus to life. They can do any of the following things:
 
- - Add / Remove States and Methods
- - Call Methods
- - Set States
- - Fetch / Unfetch States and Methods
+- Add / Remove States and Methods
+- Call Methods
+- Set States
+- Fetch / Unfetch States and Methods
 
 ## States
 
@@ -168,7 +170,7 @@ A State is made up a unique Path and an optional value. The value of a State can
       "hobbies": ["Hiking", "Swimming"]
     }
   }
- // Note that this is a Notification as there is no "id"
+  // Note that this is a Notification as there is no "id"
 }
 ```
 
@@ -196,7 +198,7 @@ As time goes by, States are most probably subject to change. States are allowed 
       "hobbies": ["Computer Games", "Climbing"]
     }
   }
- // Note that this is a Notification as there is no "id"
+  // Note that this is a Notification as there is no "id"
 }
 ```
 
@@ -214,31 +216,31 @@ As a reminder: Don't be confused by the term Notification. A Notification is sim
 
 ## Architecture
 
- - There must be one Daemon.
- - There can be any number of Peers.
+- There must be one Daemon.
+- There can be any number of Peers.
 
 
 Peers never communicate directly. Peers always communicate with a Daemon. Peer can (indirectly) interact between each other through a Daemon. The Daemon may send messages to other Peers when one of two things happen:
 
- - A Peer sends a message to the Daemon
- - A Peer connection closes (and thus States and Methods are removed)
+- A Peer sends a message to the Daemon
+- A Peer connection closes (and thus States and Methods are removed)
 
 
 ## Active / Passive
 
 There are two different kinds of message flows:
 
- -  __Active__: The Peer sends a Request to the Daemon
- -  __Passive__: The Daemon sends a Request to the Peer
+-  __Active__: The Peer sends a Request to the Daemon
+-  __Passive__: The Daemon sends a Request to the Peer
 
 
 The __Active__ messages always originate from Peers and are send to the Daemon. Eventually the Daemon may send __Passive__ messages to one or more Peers as a result of processing an __Active__ message. For instance: If a Peer __adds__ a State, another __fetching__ Peer with matching fetch rules may be informed by __Passive__ messages.
 
 The __Passive__ messages are:
 
-   - Fetch based messages
-   - (Routed) Requests to set (change) a State
-   - (Routed) Requests to call a Method
+- Fetch based messages
+- (Routed) Requests to set (change) a State
+- (Routed) Requests to call a Method
 
 The method name field of __Passive__ messages are Peer defined (via __add__ and __fetch__), whereas the method name field of __Active__ messages is always on of __add__, __remove__, __fetch__, __unfetch__, __set__, __call__, __change__ or __config__.
 
@@ -297,37 +299,37 @@ Creates a peer and reports back the connection status.
 
 <div data-height="636" data-theme-id="0" data-slug-hash="GEyuq" data-default-tab="js" class='codepen'><pre><code>
 var connect = function(url) {
-try {
-  $(&#x27;#status&#x27;).text(&#x27;disconnected&#x27;);
+  try {
+    $(&#x27;#status&#x27;).text(&#x27;disconnected&#x27;);
 
-  var peer = new jet.Peer({
-    url: url,
-    onOpen: function() {
-      $(&#x27;#status&#x27;).text(&#x27;connected&#x27;);
-    }
-  });
+    var peer = new jet.Peer({
+      url: url,
+      onOpen: function() {
+        $(&#x27;#status&#x27;).text(&#x27;connected&#x27;);
+      }
+      });
 
-} catch(e) {
-  $(&#x27;#status&#x27;).text(&#x27;error &#x27; + e);
-  $(&#x27;#status&#x27;).style({color: &#x27;red&#x27;});
-}
-};
+      } catch(e) {
+        $(&#x27;#status&#x27;).text(&#x27;error &#x27; + e);
+        $(&#x27;#status&#x27;).style({color: &#x27;red&#x27;});
+      }
+    };
 
-$(&#x27;button&#x27;).click(function(e) {
-  connect($(&#x27;input&#x27;).val());
-});
+    $(&#x27;button&#x27;).click(function(e) {
+      connect($(&#x27;input&#x27;).val());
+      });
 
-$(&#x27;input&#x27;).change(function(e) {
-  connect($(&#x27;input&#x27;).val());
-});
+      $(&#x27;input&#x27;).change(function(e) {
+        connect($(&#x27;input&#x27;).val());
+        });
 
-connect(&#x27;ws://jet.nodejitsu.com&#x27;);</code></pre>
-<p>See the Pen <a href='http://codepen.io/lipp/pen/GEyuq/'>Jet Connect</a> by Gerhard Preuss (<a href='http://codepen.io/lipp'>@lipp</a>) on <a href='http://codepen.io'>CodePen</a>.</p>
-</div><script async src="//codepen.io/assets/embed/ei.js"></script>
+        connect(&#x27;ws://jet.nodejitsu.com&#x27;);</code></pre>
+        <p>See the Pen <a href='http://codepen.io/lipp/pen/GEyuq/'>Jet Connect</a> by Gerhard Preuss (<a href='http://codepen.io/lipp'>@lipp</a>) on <a href='http://codepen.io'>CodePen</a>.</p>
+        </div><script async src="//codepen.io/assets/embed/ei.js"></script>
 
-## Add State
+        ## Add State
 
-Creates a peer and then adds a state with random path name (path must be unique on the jet bus).
+        Creates a peer and then adds a state with random path name (path must be unique on the jet bus).
 
-<p data-height="650" data-theme-id="0" data-slug-hash="kLlfB" data-default-tab="js" class='codepen'>See the Pen <a href='http://codepen.io/lipp/pen/kLlfB/'>Jet Add State</a> by Gerhard Preuss (<a href='http://codepen.io/lipp'>@lipp</a>) on <a href='http://codepen.io'>CodePen</a>.</p>
-<script async src="//codepen.io/assets/embed/ei.js"></script>
+        <p data-height="650" data-theme-id="0" data-slug-hash="kLlfB" data-default-tab="js" class='codepen'>See the Pen <a href='http://codepen.io/lipp/pen/kLlfB/'>Jet Add State</a> by Gerhard Preuss (<a href='http://codepen.io/lipp'>@lipp</a>) on <a href='http://codepen.io'>CodePen</a>.</p>
+        <script async src="//codepen.io/assets/embed/ei.js"></script>
