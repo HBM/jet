@@ -89,8 +89,7 @@ html, body { height: 100%; }
 }
 
 .downloads-category {
-  flex-grow: 1;
-
+  width: 50%;
   padding-bottom: 26px;
 }
 
@@ -107,7 +106,9 @@ html, body { height: 100%; }
 
 .downloads-category ul {
   justify-content: center;
+  -webkit-justify-content: center;
   display: flex;
+  display: -webkit-flex;
   padding-left: 0px;
 }
 
@@ -128,13 +129,15 @@ html, body { height: 100%; }
   margin: 0 10px;
 }
 
-
+#hero > div {
+  display: flex;
+  display: -webkit-flex;
+  align-items: center;
+  -webkit-align-items: center;
+}
 
 #hero {
   padding-top: 30px;
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
   background-image: -webkit-gradient(
     linear,
     left top,
@@ -179,7 +182,7 @@ html, body { height: 100%; }
     padding-top: 20px;
   }
 
-  h1 {
+  .site h1 {
       margin-bottom: 1em;
       margin-top: 3em;
       padding-bottom: 4px;
