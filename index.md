@@ -5,11 +5,14 @@ title: Jet
 
 # About
 
-Jet is a lightweight message protocol for realtime communication between apps. These apps
-may run within browsers, on servers or even on embedded systems. It employs Websockets as transport and
-JSON-RPC 2.0 as message format. On top, Jet adds simple concepts and message definitions which allow efficient,
-flexible and transparent information flow.
+Jet is a lightweight message protocol for realtime communication between apps.
+These apps may run within browsers, on servers or even on embedded systems.
+It may be viewed as a realtime auto-sync database like [Firebase](http://firebase.com)
+or as a web-enabled system bus like [DBus](dbus.freedesktop.org).
 
+It employs Websockets as transport and JSON-RPC 2.0 as message format.
+On top, Jet adds few simple concepts and a handfull of message definitions which allow efficient,
+flexible and transparent information flow.
 
 # Quick Start
 
