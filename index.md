@@ -385,14 +385,14 @@ and you may notice activity of other peers "playing" with it.
 
 ## Connect
 
-Creates a peer and reports back the connection status. Most relevant snippet:
+This example creates a peer and reports back the connection status.
+
+The most relevant code snippet is:
 
 ```javascript
 var peer = new jet.Peer({
       url: 'ws://jet.nodejitsu.com:80',
-      onOpen: function() {
-
-      },
+      onOpen: function() {}
     });
 ```
 
@@ -429,6 +429,38 @@ connect(&#x27;ws://jet.nodejitsu.com&#x27;);</code></pre>
 
 ## Add States
 
+This example creates a Peer and adds two States with random. One, ignoring the
+Daemon response, the other one logging the Daemon response to console. The message
+traffic between the Daemon and the Peer is visible in the result window bottom.
+
+The most relevant code snippet is:
+
+```javascript
+// create read-only state (no set callback provided)
+// ignore the daemon response by leaving out the callback object.
+// the request is a notification.
+peer.state({
+  path: 'foo',
+  value: 123
+});
+
+// create writable state,
+// provide callback object with error and success handlers.
+// the daemon will send a response, as the request is not a
+// notification.
+var bar = 'hello';
+peer.state({
+  path: 'bar',
+  value: bar,
+  set: function(newVal) {
+      bar = newVal;
+  }
+  }, {
+  success: function() {},
+  error: function(err) {}
+});
+```
+
 <div data-height="591" data-theme-id="0" data-slug-hash="kLlfB" data-default-tab="js" class='codepen'><pre><code>var connect = function(url) {
    try {
     $(&#x27;#status&#x27;).text(&#x27;disconnected&#x27;);
@@ -456,7 +488,10 @@ connect(&#x27;ws://jet.nodejitsu.com&#x27;);</code></pre>
      // add as request
      peer.state({
        path: random,
-       value: 123
+       value: 123,
+       set: function(newValue) {
+         random = newValue;
+       }
      },{
        success: function() {
          console.log(&#x27;ok&#x27;);
