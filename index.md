@@ -90,7 +90,9 @@ var greet = peer.method({
     if (name === 'John') {
       throw 'John is a bad guy!';
     }
-    console.log('Hello', name);
+    var greeting = 'Hello ' + name;
+    console.log(greeting);
+    return greeting;
   }
 });
 ```
@@ -100,9 +102,11 @@ var greet = peer.method({
 Other Peers can fetch States and Methods. Fetching is like having a realtime
 query with automatic push notifications for changes. The fetch callback will be
 invoked if:
- - a State/Method is added
- - a State/Method is removed
- - a State changed its value
+
+- a State/Method is added
+- a State/Method is removed
+- a State changed its value
+
 Fetch expressions can be based on paths and/or values. Note the Daemon caches all
 States and Methods and thus is able to "fake" add events for Peers joining the
 party lately. This feature allows Peers to have hotplug-like behaviour.
@@ -149,6 +153,8 @@ available).
 peer.set('foo', 6271);
 ```
 
+You must not make any assumptions about side-effects of a set call without error
+
 ## Call Methods
 
 Any Peer may (try) to call Methods. The return value is determined by the
@@ -167,6 +173,10 @@ the Daemon if the network connection to a Peer breaks. In any case, all fetching
 Peers will be informed.
 
 ```javascript
+var foo = peer.state({
+  path: 'foo',
+  value: 123
+});
 foo.remove();
 ```
 
@@ -177,21 +187,31 @@ the Daemon if the network connection to a Peer breaks. In any case, all fetching
 Peers will be informed.
 
 ```javascript
+var greet = peer.method({
+  path: 'greet',
+  call: function() {}
+});
 greet.remove();
 ```
 
 
 # Concepts
 
-Jet is built around some simple but powerful concepts. There are two kinds of
-"players" involved in a Jet setup:
+Jet is built around some simple but powerful concepts: Daemon, Peer, States,
+Methods and Fetching.
+
+There are two kinds of "players" involved in a Jet setup:
+
 - A Daemon
 - Any Number of Peers
+
 All Peers which are able to connect to the Daemon's Jet Websocket service can join
 the party. Whereas the Daemon provides the infrastructure, the Peers provide the
 content:
+
 - States
 - Methods
+
 Either one must have a unique path to avoid name clashes
 (which would introduce ambiguous routes) and can be considered
 services/information offered by the Peer. Once setup the Daemon takes care of
@@ -225,7 +245,8 @@ and for Node.js ([node-jet](http://github.com/lipp/node-jet)).
 
 ## Peer
 
-There can be any number of Peers. Peers bring the Jet bus to life. They can do any of the following things:
+There can be any number of Peers. Peers bring the Jet bus to life. They can do
+any of the following things:
 
 - Add / Remove States and Methods
 - Call Methods
@@ -234,7 +255,9 @@ There can be any number of Peers. Peers bring the Jet bus to life. They can do a
 
 ## States
 
-A State is made up a unique Path and an optional value. The value of a State can be any valid JSON, as primitive Types (Boolean, Numbers, Strings) or nested Objects are. Peers can add States to the bus by calling __add__, e.g.:
+A State is made up a unique Path and an optional value. The value of a State can
+be any valid JSON, as primitive Types (Boolean, Numbers, Strings) or nested
+Objects are. Peers can add States to the bus by calling __add__, e.g.:
 
 ```javascript
 {
@@ -262,7 +285,10 @@ A State is made up a unique Path and an optional value. The value of a State can
 }
 ```
 
-As time goes by, States are most probably subject to change. States are allowed (or even expected) to change at any time to any new value. The Peer has just to inform the daemon (and thus eventually other Peers) by calling __change__ making a state change public, e.g.
+As time goes by, States are most probably subject to change. States are allowed
+(or even expected) to change at any time to any new value. The Peer has just to
+inform the daemon (and thus eventually other Peers) by calling __change__ making
+a state change public, e.g.
 
 ```javascript
 {
@@ -290,7 +316,10 @@ As time goes by, States are most probably subject to change. States are allowed 
 }
 ```
 
-A State change is always a replacement. The Daemon manages a State cache and stores the current (last known) value of all States currently added. This enables the daemon to provide the correct and complete information for fetchers who join the party lately.
+A State change is always a replacement. The Daemon manages a State cache and
+stores the current (last known) value of all States currently added. This
+enables the daemon to provide the correct and complete information for fetchers
+who join the party lately.
 
 ## Methods
 
@@ -298,31 +327,25 @@ A State change is always a replacement. The Daemon manages a State cache and sto
 
 # Protocol
 
-Jet heavily relies on [JSON-RPC 2.0](http://www.jsonrpc.org/specification) semantics for all of its messages. There are some minor changes to the spec, however. To be able to follow the protocol details, the reader must be familiar with the (JSON-RPC 2.0) terms: Request, Response, Notification, Error Object and Batch.
+Jet heavily relies on [JSON-RPC 2.0](http://www.jsonrpc.org/specification)
+semantics for all of its messages. There are some minor changes to the spec,
+however. To be able to follow the protocol details, the reader must be familiar
+with the (JSON-RPC 2.0) terms: Request, Response, Notification, Error Object and Batch.
 
-As a reminder: Don't be confused by the term Notification. A Notification is simply a Request without an __id__  specified, thus indicating no Response to the Request is expected.
+As a reminder: Don't be confused by the term Notification. A Notification is
+simply a Request without an __id__  specified, thus indicating no Response to
+the Request is expected.
 
-## Architecture
-
-- There must be one Daemon.
-- There can be any number of Peers.
-
-
-Peers never communicate directly. Peers always communicate with a Daemon. Peer can (indirectly) interact between each other through a Daemon. The Daemon may send messages to other Peers when one of two things happen:
-
-- A Peer sends a message to the Daemon
-- A Peer connection closes (and thus States and Methods are removed)
-
-
-## Active / Passive
-
-There are two different kinds of message flows:
+There are two types of messages to distinguish:
 
 -  __Active__: The Peer sends a Request to the Daemon
 -  __Passive__: The Daemon sends a Request to the Peer
 
-
-The __Active__ messages always originate from Peers and are send to the Daemon. Eventually the Daemon may send __Passive__ messages to one or more Peers as a result of processing an __Active__ message. For instance: If a Peer __adds__ a State, another __fetching__ Peer with matching fetch rules may be informed by __Passive__ messages.
+The __Active__ messages always originate from Peers and are send to the Daemon.
+Eventually the Daemon may send __Passive__ messages to one or more Peers as a
+result of processing an __Active__ message. For instance: If a Peer __adds__ a
+State, another __fetching__ Peer with matching fetch rules is informed by means
+of a __Passive__ message.
 
 The __Passive__ messages are:
 
@@ -330,11 +353,19 @@ The __Passive__ messages are:
 - (Routed) Requests to set (change) a State
 - (Routed) Requests to call a Method
 
-The method name field of __Passive__ messages are Peer defined (via __add__ and __fetch__), whereas the method name field of __Active__ messages is always on of __add__, __remove__, __fetch__, __unfetch__, __set__, __call__, __change__ or __config__.
+The `method` field of __Passive__ messages are Peer defined
+(via __add__ and __fetch__), whereas the method name field of __Active__
+messages is always on of __add__, __remove__, __fetch__, __unfetch__, __set__,
+__call__, __change__ or __config__.
 
-### Example for Active Message
+Note: Batches can contain __Active__ and/or __Passive__ messages.
 
-In this example a Peer fetches all persons (all states and methods, where the path starts with "person"). The side-effect of this message is that, the Daemon may send a __Passive__ message with `"method":"personFetcher"` to the peer whenever appropriate.
+## Example for Active Message
+
+In this example a Peer fetches all persons (all states and methods, where the
+path starts with "person"). The side-effect of this message is that, the Daemon
+may send a __Passive__ message with `"method":"personFetcher"` to the peer
+whenever appropriate.
 
 ```javascript
 {
@@ -349,9 +380,10 @@ In this example a Peer fetches all persons (all states and methods, where the pa
 }
 ```
 
-### Example for Passive Message
+## Example for Passive Message
 
-This is a __Passive__ message which is issued based on the fetch rule defined above. Note the method name, which has been specified earlier in the fetch call.
+This is a __Passive__ message which is issued based on the fetch rule defined
+above. Note the method name, which has been specified earlier in the fetch call.
 
 ```javascript
 {
@@ -535,3 +567,27 @@ var addLogEntry = function(direction, message) {
 </code></pre>
 <p>See the Pen <a href='http://codepen.io/lipp/pen/kLlfB/'>Jet Add State</a> by Gerhard Preuss (<a href='http://codepen.io/lipp'>@lipp</a>) on <a href='http://codepen.io'>CodePen</a>.</p>
 </div><script async src="//codepen.io/assets/embed/ei.js"></script>
+
+## Fetch everything
+
+This examples creates a Peer, adds two States with random name (so that at least
+these State is available for fetching) and fetches everything with a path starting
+with "random". The message traffic between the Daemon and the Peer is visible
+in the result window bottom. Compare the (fetch) `id` of the `fetch` message
+with the incoming messages' `method` field. The incoming messages can be
+considered __Passive__ as they are Requests targeted at the Peer, embedding a
+Peer defined `method` field value.
+
+This is the most relevant snippet:
+
+```javascript
+// fetch and provide: 1) fetch rule, 2) callback for fetching
+peer.fetch({
+    startsWith: 'random',
+  }, function(path, event, value){
+
+});
+```
+
+<p data-height="660" data-theme-id="0" data-slug-hash="Cglby" data-default-tab="js" class='codepen'>See the Pen <a href='http://codepen.io/lipp/pen/Cglby/'>Jet Fetch State</a> by Gerhard Preuss (<a href='http://codepen.io/lipp'>@lipp</a>) on <a href='http://codepen.io'>CodePen</a>.</p>
+<script async src="//codepen.io/assets/embed/ei.js"></script>
