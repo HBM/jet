@@ -164,6 +164,11 @@ html, body { height: 100%; }
     width: 100%;
   }
 
+  .site strong {
+    color: rgb(8, 180, 187);
+    font-weight: inherit;
+  }
+
   body {
     background-color: #FFF;
     font: 13.34px Helvetica, Arial, sans-serif;
@@ -190,7 +195,7 @@ html, body { height: 100%; }
     font-size: 44px;
     font-weight: 500;
   }
-  
+
   .site h2 {
     padding-top: 50px;
     font-weight: 500;
@@ -198,9 +203,13 @@ html, body { height: 100%; }
   }
   p { margin: 1em 0; }
 
-  a         { color: #00a; }
-  a:hover   { color: #000; }
-  a:visited { color: #a0a; }
+  .site a {
+    font-style: italic;
+    color: #177E97;
+    text-decoration: initial;
+  }
+  .site a:hover   { text-decoration: underline; }
+  .site a:visited { color: #6ee4ab; }
 
   /*****************************************************************************/
   /*
