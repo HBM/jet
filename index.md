@@ -6,52 +6,80 @@ title: Jet
 # About
 
 Jet is a lightweight message protocol for realtime communication between apps.
-These apps may run within browsers, on servers or even on embedded systems.
-It may be viewed as a realtime auto-sync database like [Firebase](http://firebase.com)
-or as a web-enabled system bus like [DBus](dbus.freedesktop.org).
+These apps may run within browsers, on servers or even on embedded systems with
+very limited ressources. It may be considered a realtime auto-sync database like
+[Firebase](http://firebase.com) or as a web-enabled system bus like [DBus](dbus.freedesktop.org).
 
 It employs Websockets as transport and JSON-RPC 2.0 as message format.
-On top, Jet adds few simple concepts and a handfull of message definitions which allow efficient,
-flexible and transparent information flow.
+On top, Jet adds few simple concepts and a handfull of message definitions which
+allow efficient, flexible and transparent information flow. Implementations are
+pretty small, e.g. the full-featured Javascript Peer for
+[Browsers](http://https://github.com/lipp/jet-js/blob/master/peer.js) has <1k
+lines of code (SLOC).
 
-# Quick Start
+# Jet in 10 Minutes
 
-This is a Quick Start for writing Peers using the or Javascript Peer API for [Browsers](http://github.com/lipp/jet-js) and [Node.js](http://github.com/lipp/node-jet). It may help you getting a basic understanding even if your are not planing to use this Peer API.
+This is a quick start for writing Peers using the or Javascript Peer API for
+[Browsers](http://github.com/lipp/jet-js) and [Node.js](http://github.com/lipp/node-jet).
+It may help you getting a basic understanding even if your are not planing to use
+one of this Peer implementations. The full documentation can be found
+[here](#API).
 
-## Create a Peer
-
-To interact with a Jet Daemon you need a Peer. A peer sets up a network connection to the Daemon and performs some configuration steps. Peers always communicate with the Daemon and never communicate directly.
+Note that Node.js users have to require the jet module.
 
 ```javascript
 var jet = require('jet');
+```
+
+## Create a Peer
+
+To interact with a Jet Daemon you need a Peer. The constructor sets up a network
+connection to the Daemon. Peers always communicate with the Daemon and never
+communicate directly.
+
+```javascript
 var peer = new jet.Peer();
 ```
 
 ## Add States
 
-Peers can add States to the Daemon. A State must have a unique path and a value, which can be of any (non-function) type. They are visible to other Peers. Whenever someone tries to set a State through the Daemon to a new value, the corresponding set callback function will be invoked. States may also change at any time spontaneously.
+Peers can add States to the Daemon connected. A State must have a **unique path**
+and a **value**, which can be of any (non-function) type. States are visible to other
+Peers (by fetching) and any Peer may try to **set** the State to a new value.
+Whenever someone tries to set a State to a new value, the corresponding `set`
+callback function will be invoked. If a State does not provide a set callback
+function, it is considered read-only and an appropriate error response will be emitted.
+Per default, when the `set` callback does not throw an error, a State change is
+posted automaticlly, thus keeping all other Peers and the Daemon in sync.
 
+States may also change at any time spontaneously.
 
 ```javascript
 // add a state
+var fooVal = 1234;
 var foo = peer.state({
   path: 'foo',
-  value: 1234,
+  value: fooVal,
   set: function (newVal) {
-    console.log('foo is now set to',newVal);
+    fooVal = newVal;
   }
 });
 
 // async set to a new value
 setTimeout(function () {
-  foo.value(6257);
+  fooVal = 627;
+  foo.value(fooVal);
 },3000);
 ```
 
-
 ## Add Methods
 
-Peers may also add Methods. Like States, Method must have a unique path and are visible to other Peers. Whenever someone calls the Method through the Jet Daemon, the call callback will be invoked. Method arguments can be of any (non-function) type and the number of arguments is flexible. The Method may return a value of any type or a exeception might be thrown during execution.
+Peers may also add Methods. Like States, Methods must have a **unique path** and
+are visible to other Peers (by fetching). Whenever someone calls the Method
+(through the Jet Daemon), the `call` callback will be invoked.
+Method arguments can be of any (non-function) type and the number of arguments
+is flexible. The Method may return a value of any type or an exception might be
+thrown during execution.
 
 ```javascript
 // add a method
@@ -59,34 +87,40 @@ var greet = peer.method({
   path: 'greet',
   call: function (name) {
     if (name === 'John') {
-      throw 'John was a bad guy!';
+      throw 'John is a bad guy!';
     }
-    console.log('Hello',name);
+    console.log('Hello', name);
   }
 });
 ```
 
 ## Fetch States and Methods
 
-Other Peers can fetch States and Methods. Fetching is like having a realtime query with automatic push notifications for changes. Fetch expressions can be based on paths and values.
+Other Peers can fetch States and Methods. Fetching is like having a realtime
+query with automatic push notifications for changes. The fetch callback will be
+invoked if:
+ - a State/Method is added
+ - a State/Method is removed
+ - a State changed its value
+Fetch expressions can be based on paths and/or values. Note the Daemon caches all
+States and Methods and thus is able to "fake" add events for Peers joining the
+party lately. This feature allows Peers to have hotplug-like behaviour.
 
 ```javascript
 peer.fetch({
   path: {
     equalsOneOf: ['foo','addNumbers']
-  }, function (notification) {
-    console.log(notification);
-	// will show:
-	// {"path": "foo", "event": "add", "value": 1234}
-	// {"path": "addNumbers", "event": "add"}
+  }, function (path, event, value) {
+      // the value is undefined for methods
   }
 });
 ```
 
-If desired, the fetched elements can also be delivered sorted, e.g. querying the top ten players could look like:
+If desired, the fetched elements can also be delivered sorted, e.g. querying the
+top ten players could look like:
 
 ```javascript
-peer.fetch({ // first param is the fetch rule
+peer.fetch({
     path: {
       startsWith: 'players/'
     },
@@ -97,35 +131,48 @@ peer.fetch({ // first param is the fetch rule
       byValueField: {
         score: 'number'
       }
-    }
-  }, function (sorted) { // second param is the fetch callback
-    console.log(sorted);
-	// will show:
-	// { "n": 10,
-        //   "changes": [
-        //     {"path": "players/apXsdi", "event": "add", "value": { "nick": "BobTheNerd", "score": 999890} , index: 1},
-        // {"path": "players/apiesda", "event": "add", "value": { "nick": "Superman", "score": 920} , index: 2}
-        // ...
-        //   ]
-        // }
+    }, function (sorted) {
   }
 });
 ```
 
-
 ## Set States
 
-Other Peers may (try) to set States to other values. This operation may succeed or fail as determined by the implementation of the set callback function defined by the owning Peer of the respective State.
+Any Peer may (try) to set States to other values. This operation may succeed
+or fail as determined by the implementation of the `set` callback function defined
+by the owning Peer of the respective State. The Daemon will route the request
+to the Peer which added the State (or reply with an error if the State is not
+available).
 
 ```javascript
-peer.set('foo',6271);
+peer.set('foo', 6271);
 ```
 
 ## Call Methods
 
-Other
+Any Peer may (try) to call Methods. The return value is determined by the
+implementation of the `call` callback function defined by the owning Peer of the
+respective Method. The Daemon will route the request to the Peer which added the
+Method (or reply with an error if the Method is not available).
+
+```javascript
+peer.call('greet', 'Rupert');
+```
+
+## Remove State
+
+States can be removed by the owning Peer. States are also implicitly removed by
+the Daemon if the network connection to a Peer breaks. In any case, all fetching
+Peers will be informed.
+
+```javascript
+foo.remove();
+greet.remove();
+```
 
 # Concepts
+
+Jet is built around some simple but powerful concepts.
 
 ## Daemon
 
@@ -137,10 +184,10 @@ There are implementations available for Lua ([lua-jet](http://github.com/lipp/lu
 
 There can be any number of Peers. Peers bring the Jet bus to life. They can do any of the following things:
 
- - Add / Remove States and Methods
- - Call Methods
- - Set States
- - Fetch / Unfetch States and Methods
+- Add / Remove States and Methods
+- Call Methods
+- Set States
+- Fetch / Unfetch States and Methods
 
 ## States
 
@@ -168,7 +215,7 @@ A State is made up a unique Path and an optional value. The value of a State can
       "hobbies": ["Hiking", "Swimming"]
     }
   }
- // Note that this is a Notification as there is no "id"
+  // Note that this is a Notification as there is no "id"
 }
 ```
 
@@ -196,7 +243,7 @@ As time goes by, States are most probably subject to change. States are allowed 
       "hobbies": ["Computer Games", "Climbing"]
     }
   }
- // Note that this is a Notification as there is no "id"
+  // Note that this is a Notification as there is no "id"
 }
 ```
 
@@ -214,31 +261,31 @@ As a reminder: Don't be confused by the term Notification. A Notification is sim
 
 ## Architecture
 
- - There must be one Daemon.
- - There can be any number of Peers.
+- There must be one Daemon.
+- There can be any number of Peers.
 
 
 Peers never communicate directly. Peers always communicate with a Daemon. Peer can (indirectly) interact between each other through a Daemon. The Daemon may send messages to other Peers when one of two things happen:
 
- - A Peer sends a message to the Daemon
- - A Peer connection closes (and thus States and Methods are removed)
+- A Peer sends a message to the Daemon
+- A Peer connection closes (and thus States and Methods are removed)
 
 
 ## Active / Passive
 
 There are two different kinds of message flows:
 
- -  __Active__: The Peer sends a Request to the Daemon
- -  __Passive__: The Daemon sends a Request to the Peer
+-  __Active__: The Peer sends a Request to the Daemon
+-  __Passive__: The Daemon sends a Request to the Peer
 
 
 The __Active__ messages always originate from Peers and are send to the Daemon. Eventually the Daemon may send __Passive__ messages to one or more Peers as a result of processing an __Active__ message. For instance: If a Peer __adds__ a State, another __fetching__ Peer with matching fetch rules may be informed by __Passive__ messages.
 
 The __Passive__ messages are:
 
-   - Fetch based messages
-   - (Routed) Requests to set (change) a State
-   - (Routed) Requests to call a Method
+- Fetch based messages
+- (Routed) Requests to set (change) a State
+- (Routed) Requests to call a Method
 
 The method name field of __Passive__ messages are Peer defined (via __add__ and __fetch__), whereas the method name field of __Active__ messages is always on of __add__, __remove__, __fetch__, __unfetch__, __set__, __call__, __change__ or __config__.
 
@@ -279,9 +326,11 @@ This is a __Passive__ message which is issued based on the fetch rule defined ab
 
 ## Differences to JSON-RPC 2.0
 
-In opposite to the [JSON-RPC 2.0 spec](http://www.jsonrpc.org/specification) the `"jsonrpc": "2.0"` field is considered optional and can be simply ignored.
+In opposite to the [JSON-RPC 2.0 spec](http://www.jsonrpc.org/specification) the
+`"jsonrpc": "2.0"` field is considered optional and can be simply ignored.
 
-Further __Batch__ Messages are not subject of any order requirements are may be processed and send at any time. This allows to minimize message framing overhead (e.g. Websockets).
+Further __Batch__ Messages are not subject of any order requirements are may be
+processed and send at any time. This allows to minimize message framing overhead (e.g. Websockets).
 
 # Live Examples
 
@@ -293,41 +342,118 @@ and you may notice activity of other peers "playing" with it.
 
 ## Connect
 
-Creates a peer and reports back the connection status.
+Creates a peer and reports back the connection status. Most relevant snippet:
 
-<div data-height="636" data-theme-id="0" data-slug-hash="GEyuq" data-default-tab="js" class='codepen'><pre><code>
-var connect = function(url) {
-try {
-  $(&#x27;#status&#x27;).text(&#x27;disconnected&#x27;);
+```javascript
+var peer = new jet.Peer({
+      url: 'ws://jet.nodejitsu.com:80',
+      onOpen: function() {
 
-  var peer = new jet.Peer({
-    url: url,
-    onOpen: function() {
-      $(&#x27;#status&#x27;).text(&#x27;connected&#x27;);
-    }
-  });
+      },
+    });
+```
 
-} catch(e) {
-  $(&#x27;#status&#x27;).text(&#x27;error &#x27; + e);
-  $(&#x27;#status&#x27;).style({color: &#x27;red&#x27;});
-}
+<div data-height="619" data-theme-id="0" data-slug-hash="GEyuq" data-default-tab="js" class='codepen'><pre><code>var connect = function(url) {
+   try {
+    $(&#x27;#status&#x27;).text(&#x27;disconnected&#x27;);
+    // create a Jet Peer, providing the Jet (Daemon) Websocket URL
+    var peer = new jet.Peer({
+      url: url,
+      onOpen: function() {
+        $(&#x27;#status&#x27;).text(&#x27;connected&#x27;);
+      },
+    });
+  } catch(err) {
+    $(&#x27;#status&#x27;).text(&#x27;error &#x27; + err);
+  }
 };
 
+// try to (re-)connect when button is clicked
 $(&#x27;button&#x27;).click(function(e) {
   connect($(&#x27;input&#x27;).val());
 });
 
+// try to (re-)connect when input field changed
 $(&#x27;input&#x27;).change(function(e) {
   connect($(&#x27;input&#x27;).val());
 });
 
+// initially try to reach the jet daemon hosted at nodejitsu.com (which listens on port 80)
 connect(&#x27;ws://jet.nodejitsu.com&#x27;);</code></pre>
 <p>See the Pen <a href='http://codepen.io/lipp/pen/GEyuq/'>Jet Connect</a> by Gerhard Preuss (<a href='http://codepen.io/lipp'>@lipp</a>) on <a href='http://codepen.io'>CodePen</a>.</p>
 </div><script async src="//codepen.io/assets/embed/ei.js"></script>
 
-## Add State
 
-Creates a peer and then adds a state with random path name (path must be unique on the jet bus).
+## Add States
 
-<p data-height="650" data-theme-id="0" data-slug-hash="kLlfB" data-default-tab="js" class='codepen'>See the Pen <a href='http://codepen.io/lipp/pen/kLlfB/'>Jet Add State</a> by Gerhard Preuss (<a href='http://codepen.io/lipp'>@lipp</a>) on <a href='http://codepen.io'>CodePen</a>.</p>
-<script async src="//codepen.io/assets/embed/ei.js"></script>
+<div data-height="591" data-theme-id="0" data-slug-hash="kLlfB" data-default-tab="js" class='codepen'><pre><code>var connect = function(url) {
+   try {
+    $(&#x27;#status&#x27;).text(&#x27;disconnected&#x27;);
+    // create a Jet Peer, providing the Jet (Daemon) Websocket URL
+    var peer = new jet.Peer({
+      url: url,
+      onOpen: function() {
+        $(&#x27;#status&#x27;).text(&#x27;connected&#x27;);
+      },
+      onSend: function(message) {
+        addLogEntry(&#x27;Out&#x27;,message);
+      },
+      onReceive: function(message) {
+        addLogEntry(&#x27;In&#x27;,message);
+      }
+    });
+     var random = &#x27;random&#x27; + new Date().getTime();
+     // add as notification
+     peer.state({
+       path: random,
+       value: 123
+     });
+
+     random = &#x27;random_2_&#x27; + new Date().getTime();
+     // add as request
+     peer.state({
+       path: random,
+       value: 123
+     },{
+       success: function() {
+         console.log(&#x27;ok&#x27;);
+       },
+       error: function(err) {
+         console.log(err);
+       }
+     });
+  } catch(err) {
+    $(&#x27;#status&#x27;).text(&#x27;error &#x27; + err);
+  }
+};
+
+
+
+// try to (re-)connect when button is clicked
+$(&#x27;button&#x27;).click(function(e) {
+  connect($(&#x27;input&#x27;).val());
+});
+
+// try to (re-)connect when input field changed
+$(&#x27;input&#x27;).change(function(e) {
+  connect($(&#x27;input&#x27;).val());
+});
+
+// initially try to reach the jet daemon hosted at nodejitsu.com (which listens on port 80)
+connect(&#x27;ws://jet.nodejitsu.com&#x27;);
+var off;
+var addLogEntry = function(direction, message) {
+  var now = new Date().getTime();
+  if (!off) {
+    off = now;
+  }
+  var tr = $(&#x27;&lt;tr&gt;&lt;/tr&gt;&#x27;);
+  tr.append(&#x27;&lt;td&gt;&#x27; + (now-off) + &#x27;&lt;/td&gt;&#x27;);
+  tr.append(&#x27;&lt;td&gt;&#x27; + direction + &#x27;&lt;/td&gt;&#x27;);
+  tr.append(&#x27;&lt;td&gt;&#x27; + message + &#x27;&lt;/td&gt;&#x27;);
+  $(&#x27;#log tbody&#x27;).append(tr);
+};
+
+</code></pre>
+<p>See the Pen <a href='http://codepen.io/lipp/pen/kLlfB/'>Jet Add State</a> by Gerhard Preuss (<a href='http://codepen.io/lipp'>@lipp</a>) on <a href='http://codepen.io'>CodePen</a>.</p>
+</div><script async src="//codepen.io/assets/embed/ei.js"></script>

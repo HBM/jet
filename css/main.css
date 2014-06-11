@@ -89,8 +89,7 @@ html, body { height: 100%; }
 }
 
 .downloads-category {
-  flex-grow: 1;
-
+  width: 50%;
   padding-bottom: 26px;
 }
 
@@ -107,7 +106,9 @@ html, body { height: 100%; }
 
 .downloads-category ul {
   justify-content: center;
+  -webkit-justify-content: center;
   display: flex;
+  display: -webkit-flex;
   padding-left: 0px;
 }
 
@@ -128,13 +129,15 @@ html, body { height: 100%; }
   margin: 0 10px;
 }
 
-
+#hero > div {
+  display: flex;
+  display: -webkit-flex;
+  align-items: center;
+  -webkit-align-items: center;
+}
 
 #hero {
   padding-top: 30px;
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
   background-image: -webkit-gradient(
     linear,
     left top,
@@ -174,12 +177,17 @@ html, body { height: 100%; }
     margin: 1em 0;
   }
 
-    h2, h3, h4, h5, h6 {
+  h2, h3, h4, h5, h6 {
     font-size: 1.5em;
     padding-top: 20px;
   }
 
-  h1 { margin-bottom: 1em; }
+  .site h1 {
+      margin-bottom: 1em;
+      margin-top: 3em;
+      padding-bottom: 4px;
+border-bottom: 1px solid rgb(163, 211, 165);
+    }
   p { margin: 1em 0; }
 
   a         { color: #00a; }
@@ -216,9 +224,9 @@ html, body { height: 100%; }
     height: auto;
     top: 100px;
     left: 100px;
-    font-size: 115%;
+    font-size: 16px;
     text-align: justify;
-    min-width: 42em;
+    min-width: 420px;
     max-width: 60%;
     margin: 3em auto 2em;
     line-height: 1.5em;
@@ -317,6 +325,8 @@ html, body { height: 100%; }
   #toc {
     width: 100%;
     color: #000;
+
+
     background-image: -webkit-gradient(
       linear,
       left top,
