@@ -1,18 +1,15 @@
-.highlight { 
+.highlight {
   background-color: #efefef;
   padding: 7px 7px 7px 10px;
-  border: 1px solid #ddd;
-  -moz-box-shadow: 3px 3px rgba(0,0,0,0.1);
-  -webkit-box-shadow: 3px 3px rgba(0,0,0,0.1);
-  box-shadow: 3px 3px rgba(0,0,0,0.1);
+  border: 1px dashed #999;
   margin: 20px 0 20px 0;
   overflow: hidden;
 }
- 
+
 pre code *{
   font-family:'Bitstream Vera Sans Mono','Courier', monospace;
 }
-.highlight  { background: #ffffff; }
+.highlight  { background: #fafafa; }
 .highlight .c { color: #999988; font-style: italic } /* Comment */
 .highlight .err { color: #a61717; background-color: #e3d2d2 } /* Error */
 .highlight .k { font-weight: bold } /* Keyword */

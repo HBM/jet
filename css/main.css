@@ -183,11 +183,19 @@ html, body { height: 100%; }
   }
 
   .site h1 {
-      margin-bottom: 1em;
-      margin-top: 3em;
-      padding-bottom: 4px;
-border-bottom: 1px solid rgb(163, 211, 165);
-    }
+    margin-bottom: 1em;
+    margin-top: 3em;
+    padding-bottom: 10px;
+    border-bottom: 1px dashed;
+    font-size: 44px;
+    font-weight: 500;
+  }
+  
+  .site h2 {
+    padding-top: 50px;
+    font-weight: 500;
+    font-size: 30px;
+  }
   p { margin: 1em 0; }
 
   a         { color: #00a; }
