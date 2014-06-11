@@ -8,14 +8,15 @@ title: Jet
 Jet is a lightweight message protocol for realtime communication between apps.
 These apps may run within browsers, on servers or even on embedded systems with
 very limited ressources. It may be considered a realtime auto-sync database like
-[Firebase](http://firebase.com) or as a web-enabled system bus like [DBus](dbus.freedesktop.org).
+[Firebase](http://firebase.com) or as a web-enabled system bus like
+[DBus](dbus.freedesktop.org).
 
 It employs Websockets as transport and JSON-RPC 2.0 as message format.
 On top, Jet adds few simple concepts and a handfull of message definitions which
 allow efficient, flexible and transparent information flow. Implementations are
 pretty small, e.g. the full-featured Javascript Peer for
-[Browsers](http://https://github.com/lipp/jet-js/blob/master/peer.js) has <1k
-lines of code (SLOC).
+[Browsers](https://github.com/lipp/jet-js/blob/master/peer.js) has < 700
+lines of code (SLOC) and uses minified and gzipped < 2k bytes.
 
 # Jet in 10 Minutes
 
@@ -50,7 +51,7 @@ Whenever someone tries to set a State to a new value, the corresponding `set`
 callback function will be invoked. If a State does not provide a set callback
 function, it is considered read-only and an appropriate error response will be emitted.
 Per default, when the `set` callback does not throw an error, a State change is
-posted automaticlly, thus keeping all other Peers and the Daemon in sync.
+posted automatically, thus keeping all other Peers and the Daemon in sync.
 
 States may also change at any time spontaneously.
 
@@ -167,18 +168,60 @@ Peers will be informed.
 
 ```javascript
 foo.remove();
+```
+
+## Remove Method
+
+Methods can be removed by the owning Peer. Methods are also implicitly removed by
+the Daemon if the network connection to a Peer breaks. In any case, all fetching
+Peers will be informed.
+
+```javascript
 greet.remove();
 ```
 
+
 # Concepts
 
-Jet is built around some simple but powerful concepts.
+Jet is built around some simple but powerful concepts. There are two kinds of
+"players" involved in a Jet setup:
+- A Daemon
+- Any Number of Peers
+All Peers which are able to connect to the Daemon's Jet Websocket service can join
+the party. Whereas the Daemon provides the infrastructure, the Peers provide the
+content:
+- States
+- Methods
+Either one must have a unique path to avoid name clashes
+(which would introduce ambiguous routes) and can be considered
+services/information offered by the Peer. Once setup the Daemon takes care of
+the message routing and keeps track of a cache with all the stuff added. When the
+Daemon loses network connection to a Peer, every ressource (fetch rules, States,
+Methods, outstanding messages) are properly cleaned up.
+
+The one and only mean to query information about States and Methods from the Daemon
+is by using the powerful fetch command. By design there is no "get" command,
+which may tempt the user to poll. This keeps the traffic and the work for the Daemon
+low, but at the same time enables fast-as-possible push messages for relevant
+events.
+
 
 ## Daemon
 
-The center of communication. All messages flow between a Peer and the Daemon. The Daemon is able to route messages if required and keeps track of all Methods and States (and its associated values). It is much like a phonebook as you can (try) to set a State or call a Method based on its unique Path. The daemon also manages ownership of States and Methods as no Peer may remove a State or Method which was not added by the very same Peer in the first place. Also States and Methods are automatically removed if a Peer closes the connection to the daemon. Fetch rules are stored and processed as well.
+The Daemon is the center of all communication. All messages flow between Peers
+and the Daemon. Anyhow, in most cases a Peer has not to be aware of the Daemon inner workings,
+but just has to know where it is running (Websocket URL).
 
-There are implementations available for Lua ([lua-jet](http://github.com/lipp/lua-jet)) and for Node.js ([node-jet](http://github.com/lipp/node-jet)).
+The Daemon is able to route messages if required and keeps track
+of all Methods and States (and its associated values). It is much like a
+phonebook as you can (try) to set a State or call a Method based on its unique
+Path. The daemon also manages ownership of States and Methods as no Peer may
+remove a State or Method which was not added by the very same Peer in the first
+place. Also, States and Methods are automatically removed if a Peer closes the
+connection to the daemon. Fetch rules are stored and processed as well.
+
+There are implementations available for Lua ([lua-jet](http://github.com/lipp/lua-jet))
+and for Node.js ([node-jet](http://github.com/lipp/node-jet)).
 
 ## Peer
 
@@ -253,7 +296,7 @@ A State change is always a replacement. The Daemon manages a State cache and sto
 
 ## Fetch
 
-# Protocol (Version 0.9)
+# Protocol
 
 Jet heavily relies on [JSON-RPC 2.0](http://www.jsonrpc.org/specification) semantics for all of its messages. There are some minor changes to the spec, however. To be able to follow the protocol details, the reader must be familiar with the (JSON-RPC 2.0) terms: Request, Response, Notification, Error Object and Batch.
 
