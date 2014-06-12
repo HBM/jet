@@ -249,6 +249,19 @@ html, body { height: 100%; }
     line-height: 1.5em;
   }
 
+  @media (max-width: 1200px) {
+    .site {
+      max-width: 80%;
+    }
+  }
+
+  @media (max-width: 790px) {
+    .site {
+      max-width: 90%;
+    }
+  }
+
+
   .header a {
     font-weight: bold;
     text-decoration: none;
