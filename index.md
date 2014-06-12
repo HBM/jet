@@ -8,7 +8,7 @@ title: Jet
 Jet is a lightweight message protocol for realtime communication between apps.
 These apps may run within browsers, on servers or even on embedded systems with
 very limited ressources. It may be considered a realtime auto-sync database like
-[Firebase](http://firebase.com) or a web-enabled system bus like
+[Firebase](http://firebase.com) or a web-capable system bus like
 [DBus](dbus.freedesktop.org).
 
 It employs Websockets as transport and JSON-RPC 2.0 as message format.
@@ -357,16 +357,27 @@ Depending on the Fetch rule, there are two types of Fetch Notifications:
 - sorted
 
 The simpler ones are the non-sorted Fetch Notifications. They always provide
-the same information:
+the this information:
 
-- **path** of State / Method
-- **event**,  either "add", "remove" or "change" (only for States)
-- **value** (only for States)
+- **path**: Path of the State / Method
+- **event**: Can be either "add", "remove" or "change" (only for States)
+- **value**: The current State value (undefined for Methods)
 
-The more complicated ones are the sorted Fetch Notifications.
+The more complicated ones are the sorted Fetch Notifications. They always provide
+this information:
 
-The fetch rules can be tuned very fine-grained and are able to match against
-paths and/or values. Available path matching "operators" are:
+- **n**: The number of States/Methods matching
+- **changes**: An array of changed States/Methods like this:
+  - **path**: Path of the State / Method
+  - **index**: The index (within the specified from-to range)
+  - **value**: The current State value (undefined for Methods)
+
+The sorted Fetch Notification contains all the changes compared to the last one.
+This allows to just handle States/Methods which have actually changed in some way
+(index or value) without having to figure out the differences manually.
+
+Fetch rules can be tuned very fine-grained and are able to match against
+paths and/or values. Available path matching "predicates" are:
 
 - equals
 - equalsNot
@@ -381,6 +392,9 @@ paths and/or values. Available path matching "operators" are:
 - equalsOneOf
 - equalsNotOneOf
 
+These "predicates" can be combined. If all predicates specified are truthy, the
+path is considered matching. The path matching process can be made
+case-insensitive by setting the option "caseInsensitive" to true.
 
 # Protocol
 
