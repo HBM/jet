@@ -8,7 +8,7 @@ title: Jet
 Jet is a lightweight message protocol for realtime communication between apps.
 These apps may run within browsers, on servers or even on embedded systems with
 very limited ressources. It may be considered a realtime auto-sync database like
-[Firebase](http://firebase.com) or as a web-enabled system bus like
+[Firebase](http://firebase.com) or a web-enabled system bus like
 [DBus](dbus.freedesktop.org).
 
 It employs Websockets as transport and JSON-RPC 2.0 as message format.
@@ -16,11 +16,12 @@ On top, Jet adds few simple concepts and a handfull of message definitions which
 allow efficient, flexible and transparent information flow. Implementations are
 pretty small, e.g. the full-featured Javascript Peer for
 [Browsers](https://github.com/lipp/jet-js/blob/master/peer.js) has < 700
-lines of code (SLOC) and uses minified and gzipped < 2k bytes.
+lines of code (SLOC) and requires minified and gzipped < 2k bytes.
+
 
 # Jet in 10 Minutes
 
-This is a quick start for writing Peers using the or Javascript Peer API for
+This is a quick start guide for writing Peers using the Javascript Peer API for
 [Browsers](http://github.com/lipp/jet-js) and [Node.js](http://github.com/lipp/node-jet).
 It may help you getting a basic understanding even if your are not planing to use
 one of this Peer implementations. The full documentation can be found
@@ -35,25 +36,31 @@ var jet = require('jet');
 ## Create a Peer
 
 To interact with a Jet Daemon you need a Peer. The constructor sets up a network
-connection to the Daemon. Peers always communicate with the Daemon and never
-communicate directly.
+connection to the Daemon. All further actions using the Peer will be based on
+sending and receiving messages to/from the Daemon. If necessary, the Daemon routes
+messages to Peers.
 
 ```javascript
-var peer = new jet.Peer();
+var peer = new jet.Peer({
+  url: 'ws://jet.nodejitsu.com:80'
+});
 ```
 
 ## Add States
 
-Peers can add States to the Daemon connected. A State must have a **unique path**
-and a **value**, which can be of any (non-function) type. States are visible to other
+Peers can add States to the Daemon. A State must have a **unique path**
+and a **value**, which can be of any non-function type. States are visible to other
 Peers (by fetching) and any Peer may try to **set** the State to a new value.
 Whenever someone tries to set a State to a new value, the corresponding `set`
 callback function will be invoked. If a State does not provide a set callback
-function, it is considered read-only and an appropriate error response will be emitted.
-Per default, when the `set` callback does not throw an error, a State change is
-posted automatically, thus keeping all other Peers and the Daemon in sync.
+function, it is considered read-only and an appropriate error response will be
+emitted. Per default, when the `set` callback does not throw an error,
+a State change is posted automatically, thus keeping all other Peers and the
+Daemon in sync.
 
-States may also change at any time spontaneously.
+States may also change spontaneously at will, without someone trying to
+**set** the State. E.g. one could add a "cpu-load" State, which changes very
+frequently.
 
 ```javascript
 // add a state
@@ -75,10 +82,10 @@ setTimeout(function () {
 
 ## Add Methods
 
-Peers may also add Methods. Like States, Methods must have a **unique path** and
-are visible to other Peers (by fetching). Whenever someone calls the Method
-(through the Jet Daemon), the `call` callback will be invoked.
-Method arguments can be of any (non-function) type and the number of arguments
+Peers can also add Methods to the Daemon. Like States, Methods must have a
+**unique path** and are visible to other Peers (by fetching). Whenever some Peer
+calls the Method, the `call` callback function will be invoked.
+Method arguments can be of any non-function type and the number of arguments
 is flexible. The Method may return a value of any type or an exception might be
 thrown during execution.
 
@@ -105,11 +112,12 @@ invoked if:
 
 - a State/Method is added
 - a State/Method is removed
-- a State changed its value
+- a State's value has changed
 
-Fetch expressions can be based on paths and/or values. Note the Daemon caches all
-States and Methods and thus is able to "fake" add events for Peers joining the
-party lately. This feature allows Peers to have hotplug-like behaviour.
+Thus Peers are always in sync! Fetch expressions can be based on paths and/or
+values. Note that the Daemon caches all States and Methods and thus is able to
+"fake" add events for Peers joining the party lately. This feature allows Peers
+to have hotplug-like behaviour, dependency based start-up sequences etc.
 
 ```javascript
 peer.fetch({
@@ -324,6 +332,55 @@ who join the party lately.
 ## Methods
 
 ## Fetch
+
+Fetching is the one and only mean for Peers to get information (States/Methods)
+from the Daemon. In particular, there is no "get" method to prevent Peers from
+polling and thus keeping network traffic and cpu load for the Daemon low.
+Peers can setup up as many Fetches as they want. The Peer must provide
+(per Peer) unique fetch id to allow forwarding the Fetch Notification to the
+correct message handler.
+
+The Daemon may generate Fetch Notifications if one of three events
+happen:
+
+- a State or Method is added
+- a State or Method is removed
+- a State's value has changed
+
+If one of these events happen and the event is considered "relevant" based on the
+Fetch rule, the Daemon creates a Fetch Notification and sends it to the respective
+Peer.
+
+Depending on the Fetch rule, there are two types of Fetch Notifications:
+
+- non-sorted
+- sorted
+
+The simpler ones are the non-sorted Fetch Notifications. They always provide
+the same information:
+
+- **path** of State / Method
+- **event**,  either "add", "remove" or "change" (only for States)
+- **value** (only for States)
+
+The more complicated ones are the sorted Fetch Notifications.
+
+The fetch rules can be tuned very fine-grained and are able to match against
+paths and/or values. Available path matching "operators" are:
+
+- equals
+- equalsNot
+- endsWith
+- startsWith
+- contains
+- containsNot
+- containsAllOf
+- containsOneOf
+- startsNotWith
+- endsNotWith
+- equalsOneOf
+- equalsNotOneOf
+
 
 # Protocol
 
