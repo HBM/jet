@@ -38,7 +38,7 @@ var jet = require('jet');
 To interact with a Jet Daemon you need a Peer. The constructor sets up a network
 connection to the Daemon. All further actions using the Peer will be based on
 sending and receiving messages to/from the Daemon. If necessary, the Daemon routes
-messages to Peers.
+messages from Peer to Peer.
 
 ```javascript
 var peer = new jet.Peer({
