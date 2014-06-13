@@ -349,8 +349,9 @@ to the Daemon.
 Fetching is the one and only mean for Peers to get information (States/Methods)
 from the Daemon. In particular, there is no "get" method to prevent Peers from
 polling and thus keeping network traffic and cpu load for the Daemon low.
+Fetching is by far the most complex command, but it offers great possibilities.
 Peers can setup up as many Fetches as they want. The Peer must provide
-(per Peer) unique fetch id to allow forwarding the Fetch Notification to the
+(per Peer) unique fetch ids to allow forwarding the Fetch Notification to the
 correct message handler.
 
 The Daemon may generate Fetch Notifications if one of three events
@@ -390,7 +391,11 @@ This allows to just handle States/Methods which have actually changed in some wa
 (index or value) without having to figure out the differences manually.
 
 Fetch rules can be tuned very fine-grained and are able to match against
-paths and/or values. Available path matching "predicates" are:
+paths and/or values.
+
+### Path based
+
+Available path matching predicates are:
 
 - equals
 - equalsNot
@@ -398,16 +403,78 @@ paths and/or values. Available path matching "predicates" are:
 - startsWith
 - contains
 - containsNot
-- containsAllOf
-- containsOneOf
+- containsAllOf (Array)
+- containsOneOf (Array)
 - startsNotWith
 - endsNotWith
-- equalsOneOf
-- equalsNotOneOf
+- equalsOneOf (Array)
+- equalsNotOneOf (Array)
 
-These "predicates" can be combined. If all predicates specified are truthy, the
+These predicates can be combined. If all predicates specified are truthy, the
 path is considered matching. The path matching process can be made
 case-insensitive by setting the option "caseInsensitive" to true.
+
+### Value based
+
+It is possible to match against an entire State value by defining a `value` field
+within the fetch rule. For State values of type `Object`, it is also possible to
+match against one or more sub fields, which are specified by an "index string"
+(see below).
+
+
+Available value matching predicates are:
+
+- lessThan
+- greaterThan
+- equals
+- equalsNot
+- isType
+
+E.g. imagine a person State which may look
+like this:
+
+```javascript
+{
+  "age": 25,
+  "name": {
+    "first": "John",
+    "last": "Mitchell"
+  }
+}
+```
+
+One could match against the age:
+
+```javascript
+{
+  "method": "fetch",
+  "params": {
+    "id": "asstw6", // some fetch id
+    "valueField" : {
+      "age": { // field name
+        "lessThan": 21 // predicate
+      }
+    }
+  }
+}
+```
+
+Or against the last name:
+
+```javascript
+{
+  "method": "fetch",
+  "params": {
+    "id": "asst61", // some fetch id
+    "valueField" : {
+      "name.last": { // field name
+        "equals": "Mitchell" // predicate
+      }
+    }
+  }
+}
+```
+
 
 # Protocol
 
@@ -420,29 +487,29 @@ As a reminder: Don't be confused by the term Notification. A Notification is
 simply a Request without an __id__  specified, thus indicating no Response to
 the Request is expected.
 
-There are two types of messages to distinguish:
+There are two categories of Requests to distinguish:
 
 -  __Active__: The Peer sends a Request to the Daemon
 -  __Passive__: The Daemon sends a Request to the Peer
 
-The __Active__ messages always originate from Peers and are send to the Daemon.
-Eventually the Daemon may send __Passive__ messages to one or more Peers as a
-result of processing an __Active__ message. For instance: If a Peer __adds__ a
+The __Active__ Request always originate from Peers and are send to the Daemon.
+As a result of adding States/Methods or Fetching, the Daemon may send
+__Passive__ Requests to Peers. For instance: If a Peer __adds__ a
 State, another __fetching__ Peer with matching fetch rules is informed by means
-of a __Passive__ message.
+of a __Passive__ Request.
 
-The __Passive__ messages are:
+The __Passive__ Requests are:
 
 - Fetch based messages
 - (Routed) Requests to set (change) a State
 - (Routed) Requests to call a Method
 
-The `method` field of __Passive__ messages are Peer defined
+The `method` field of __Passive__ Requests are Peer defined
 (via __add__ and __fetch__), whereas the method name field of __Active__
-messages is always on of __add__, __remove__, __fetch__, __unfetch__, __set__,
+Requests is always either __add__, __remove__, __fetch__, __unfetch__, __set__,
 __call__, __change__ or __config__.
 
-Note: Batches can contain __Active__ and/or __Passive__ messages.
+Note: Batches can contain __Active__ and/or __Passive__ Requests.
 
 ## Example for Active Message
 
