@@ -80,6 +80,10 @@ setTimeout(function () {
 },3000);
 ```
 
+In opposite to [Firebase](http://firebase.com) there is no persistency layer.
+Jet States are "runtime" States as they die with the Peer. Adding persistency
+would be a task for the respective Peer to implement.
+
 ## Add Methods
 
 Peers can also add Methods to the Daemon. Like States, Methods must have a
