@@ -27,7 +27,7 @@ It may help you getting a basic understanding even if your are not planing to us
 one of this Peer implementations. The full documentation can be found
 [here](#API).
 
-Note that Node.js users have to require the jet module.
+Note that Node.js users have to require the Jet module.
 
 ```javascript
 var jet = require('jet');
@@ -174,7 +174,7 @@ Method (or reply with an error if the Method is not available).
 peer.call('greet', 'Rupert');
 ```
 
-## Remove State
+## Remove States
 
 States can be removed by the owning Peer. States are also implicitly removed by
 the Daemon if the network connection to a Peer breaks. In any case, all fetching
@@ -188,7 +188,7 @@ var foo = peer.state({
 foo.remove();
 ```
 
-## Remove Method
+## Remove Methods
 
 Methods can be removed by the owning Peer. Methods are also implicitly removed by
 the Daemon if the network connection to a Peer breaks. In any case, all fetching
@@ -205,8 +205,16 @@ greet.remove();
 
 # Concepts
 
-Jet is built around some simple but powerful concepts: Daemon, Peer, States,
-Methods and Fetching.
+Jet is built around some simple but powerful concepts:
+
+- Daemon
+- Peer
+- States
+- Methods
+- Fetching
+
+Each concept has its own sub-chapter. But let's start with a short overview, about
+how these concepts work together and are related to each other.
 
 There are two kinds of "players" involved in a Jet setup:
 
@@ -238,98 +246,102 @@ events.
 
 The Daemon is the center of all communication. All messages flow between Peers
 and the Daemon. Anyhow, in most cases a Peer has not to be aware of the Daemon inner workings,
-but just has to know where it is running (Websocket URL).
+but just has to know where it is running (Websocket URL). A Daemon instance may
+run everywhere, except within a Browser, since Browsers cannot accept incoming
+network connection  request.
 
 The Daemon is able to route messages if required and keeps track
 of all Methods and States (and its associated values). It is much like a
 phonebook as you can (try) to set a State or call a Method based on its unique
-Path. The daemon also manages ownership of States and Methods as no Peer may
+Path. The Daemon also manages ownership of States and Methods as no Peer may
 remove a State or Method which was not added by the very same Peer in the first
 place. Also, States and Methods are automatically removed if a Peer closes the
-connection to the daemon. Fetch rules are stored and processed as well.
+connection to the Daemon. Fetch rules are stored and processed as well.
 
 There are implementations available for Lua ([lua-jet](http://github.com/lipp/lua-jet))
 and for Node.js ([node-jet](http://github.com/lipp/node-jet)).
 
 ## Peer
 
-There can be any number of Peers. Peers bring the Jet bus to life. They can do
-any of the following things:
+Peers bring the Jet bus to life. There can be any number of Peers and there are
+no restrictions to their "location". As a network connection to the Daemon is
+established, a Peer instance starts to exist. As soon as the connection to the
+Daemon is closed, the Daemon frees all ressources which have been associated
+with the respective Peer.
+
+Peers can do any combination of the following things:
 
 - Add / Remove States and Methods
 - Call Methods
 - Set States
 - Fetch / Unfetch States and Methods
 
+A Peer may do all the above things, or just use a subset.
+E.g. a Peer, which just logs everything what is going on to console could look
+like this:
+
+```javascript
+// the first argument is the "special" empty fetch rule,
+// which just matches everything.
+peer.fetch({}, function(path, event, value){
+  console.log('Jet Event@' + new Date(), path, event, value);
+});
+```
+
 ## States
 
-A State is made up a unique Path and an optional value. The value of a State can
-be any valid JSON, as primitive Types (Boolean, Numbers, Strings) or nested
-Objects are. Peers can add States to the bus by calling __add__, e.g.:
+A State is made up a **unique path** and a value. The value of a State can
+be any non-function (JSON) type, such as primitive Types (Boolean, Numbers, Strings) or nested
+Objects. Peers can add States by sending an __add__ Request to the Daemon,
+providing the State path and value.
 
-```javascript
-{
-  "method": "add",
-  "params": {
-    "path": "foo/bar",
-    "value": 123
-  }
-  "id": 41
-}
-```
+Everytime a Peer calls **set** with a corresponding path, the Daemon will route
+the Request to the Peer, who added the State. The Request's `method` field will
+have the specified path and the parameters are simply forwarded.
 
-```javascript
-{
-  "method": "add",
-  "params": {
-    "path": "person/Xop",
-    "value": {
-      "name": "Bob",
-      "age": 26,
-      "hobbies": ["Hiking", "Swimming"]
-    }
-  }
-  // Note that this is a Notification as there is no "id"
-}
-```
+The Peer, who added the State, is supposed to handle this routed message and
+- if it is not a Notification - send back a Response with a "truish" `result` or
+an `error` field defined. In this case the Daemon will forward the Response to
+the Peer who made the initial Request.
 
-As time goes by, States are most probably subject to change. States are allowed
-(or even expected) to change at any time to any new value. The Peer has just to
-inform the daemon (and thus eventually other Peers) by calling __change__ making
-a state change public, e.g.
-
-```javascript
-{
-  "method": "change",
-  "params": {
-    "path": "foo/bar",
-    "value": false // yes, state values may change type
-  }
-  "id": 41
-}
-```
-
-```javascript
-{
-  "method": "change",
-  "params": {
-    "path": "person/Xop",
-    "value": {
-      "name": "Bob",
-      "age": 27,
-      "hobbies": ["Computer Games", "Climbing"]
-    }
-  }
-  // Note that this is a Notification as there is no "id"
-}
-```
+The Peer should issue a **change** Request / Notification, if the State value
+changed. This may happen immediately after a forwarded **set** Request has been
+handled, or spontaneously at any time for any reason. This makes the State
+change public and visible for all Peers interested (by fetching).
 
 A State change is always a replacement. The Daemon manages a State cache and
 stores the current (last known) value of all States currently added. This
-enables the daemon to provide the correct and complete information for fetchers
+enables the Daemon to provide the correct and complete information for fetchers
 who join the party lately.
 
+A Peer who __set__s a State to a new value without getting an error Reponse
+must not make any assumptions about the State's "real" new value! The one and
+only truth about State's value can be queried through a __fetch__. State
+providers are explcitly allowed to "adjust" the value contained in the forwarded
+__set__ message. E.g. a Peer may decide to the accept a new value of `5.1` but
+actually sets the value to `5.0`, still returning a "truish" result.
+
+Further, a State can be removed at any time by sending a __remove__ message
+to the Daemon.
+
+
 ## Methods
+
+A Method is made up a **unique path**. Peers can add Methods by sending an __add__ Request to the Daemon,
+providing the Method path.
+
+Everytime a Peer calls **call** with a corresponding path, the Daemon will route
+the Request to the Peer, who added the Method. The Request's `method` field will
+have the specified path and the parameters are simply forwarded.
+
+The Peer, who added the Method, is supposed to handle this routed message and
+- if it is not a Notification - send back a Response with any `result` or an
+`error` field defined. In this case the Daemon will forward the Response to
+the Peer who made the initial Request.
+
+Further, a Method can be removed at any time by sending a __remove__ message
+to the Daemon.
+
 
 ## Fetch
 
@@ -478,12 +490,107 @@ In opposite to the [JSON-RPC 2.0 spec](http://www.jsonrpc.org/specification) the
 Further __Batch__ Messages are not subject of any order requirements are may be
 processed and send at any time. This allows to minimize message framing overhead (e.g. Websockets).
 
+## Messages
+
+### add
+
+Use the __add__ message for adding States or Methods to the Daemon.
+
+```javascript
+// add a simple state
+{
+  "method": "add",
+  "params": {
+    "path": "foo/bar", //unique path
+    "value": 123 // any non-function value
+  }
+  "id": 41
+}
+// add a more complicate state
+{
+  "method": "add",
+  "params": {
+    "path": "person/Xop",
+    "value": {
+      "name": "Bob",
+      "age": 26,
+      "hobbies": ["Hiking", "Swimming"]
+    }
+  }
+  // Note that this is a Notification as there is no "id"
+}
+// add a method (just leave-out the value)
+{
+  "method": "add",
+  "params": {
+    "path": "addNumbers"
+  }
+  // Note that this is a Notification as there is no "id"
+}
+
+```
+
+### remove
+
+Use the __remove__ message for removing States or Methods from the Daemon.
+
+```javascript
+// remove a method or state
+{
+  "method": "remove",
+  "params": {
+    "path": "addNumbers"
+  }
+  // Note that this is a Notification as there is no "id"
+}
+
+// remove a method or state
+{
+  "method": "remove",
+  "params": {
+    "path": "persons/xyz"
+  }
+  "id": "ajsykw"
+}
+
+```
+
+### change
+
+Use the __change__ message to make a State value change public.
+
+```javascript
+{
+  "method": "change",
+  "params": {
+    "path": "foo/bar",
+    "value": false // yes, state values may change type
+  }
+  "id": 41
+}
+```
+
+```javascript
+{
+  "method": "change",
+  "params": {
+    "path": "person/Xop",
+    "value": {
+      "name": "Bob",
+      "age": 27,
+      "hobbies": ["Computer Games", "Climbing"]
+    }
+  }
+  // Note that this is a Notification as there is no "id"
+}
+```
+
 # Live Examples
 
 The following examples demonstrate Javascript peer API usage and (protocol) messages.
 They actually run in your browser. You can edit them on [codepen](http://codepen.io) if desired.
 Most of them use the Jet Daemon hosted at [nodejitsu](http://nodejitsu.com) with the
-Daemon URL: `ws://jet.nodejitsu.com` (Port 80). The nodejitsu jet daemon is public
+Daemon URL: `ws://jet.nodejitsu.com` (Port 80). The nodejitsu Jet Daemon is public
 and you may notice activity of other peers "playing" with it.
 
 ## Connect
@@ -524,7 +631,7 @@ $(&#x27;input&#x27;).change(function(e) {
   connect($(&#x27;input&#x27;).val());
 });
 
-// initially try to reach the jet daemon hosted at nodejitsu.com (which listens on port 80)
+// initially try to reach the Jet Daemon hosted at nodejitsu.com (which listens on port 80)
 connect(&#x27;ws://jet.nodejitsu.com&#x27;);</code></pre>
 <p>See the Pen <a href='http://codepen.io/lipp/pen/GEyuq/'>Jet Connect</a> by Gerhard Preuss (<a href='http://codepen.io/lipp'>@lipp</a>) on <a href='http://codepen.io'>CodePen</a>.</p>
 </div><script async src="//codepen.io/assets/embed/ei.js"></script>
@@ -540,7 +647,7 @@ The most relevant code snippet is:
 
 ```javascript
 // create read-only state (no set callback provided)
-// ignore the daemon response by leaving out the callback object.
+// ignore the Daemon response by leaving out the callback object.
 // the request is a notification.
 peer.state({
   path: 'foo',
@@ -549,7 +656,7 @@ peer.state({
 
 // create writable state,
 // provide callback object with error and success handlers.
-// the daemon will send a response, as the request is not a
+// the Daemon will send a response, as the request is not a
 // notification.
 var bar = 'hello';
 peer.state({
@@ -620,7 +727,7 @@ $(&#x27;input&#x27;).change(function(e) {
   connect($(&#x27;input&#x27;).val());
 });
 
-// initially try to reach the jet daemon hosted at nodejitsu.com (which listens on port 80)
+// initially try to reach the Jet Daemon hosted at nodejitsu.com (which listens on port 80)
 connect(&#x27;ws://jet.nodejitsu.com&#x27;);
 var off;
 var addLogEntry = function(direction, message) {
@@ -639,10 +746,10 @@ var addLogEntry = function(direction, message) {
 <p>See the Pen <a href='http://codepen.io/lipp/pen/kLlfB/'>Jet Add State</a> by Gerhard Preuss (<a href='http://codepen.io/lipp'>@lipp</a>) on <a href='http://codepen.io'>CodePen</a>.</p>
 </div><script async src="//codepen.io/assets/embed/ei.js"></script>
 
-## Fetch everything
+## Fetch Simple
 
 This examples creates a Peer, adds two States with random name (so that at least
-these State is available for fetching) and fetches everything with a path starting
+these State are available for fetching) and fetches everything with a path starting
 with "random". The message traffic between the Daemon and the Peer is visible
 in the result window bottom. Compare the (fetch) `id` of the `fetch` message
 with the incoming messages' `method` field. The incoming messages can be

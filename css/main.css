@@ -18,6 +18,10 @@
   src: local('Open Sans'), local('OpenSans'), url(http://themes.googleusercontent.com/static/fonts/opensans/v7/cJZKeOuBrn4kERxqtaUH3bO3LdcAZYWl9Si6vvxL-qU.woff) format('woff');
 }
 
+code {
+  font-family: Menlo, Monaco, "Andale Mono", "lucida console", "Courier New", monospace;
+  font-weight: bold;
+}
 
 /* Global Reset */
 * {
@@ -167,6 +171,7 @@ html, body { height: 100%; }
   .site strong {
     color: rgb(8, 180, 187);
     font-weight: inherit;
+    font-style: italic;
   }
 
   body {

@@ -10,6 +10,7 @@ pre code *{
   font-family: Menlo, Monaco, "Andale Mono", "lucida console", "Courier New", monospace;
   font-size: 14px;
   line-height: 1.45;
+  font-weight: initial;
   /*font-family:'Bitstream Vera Sans Mono','Courier', monospace;*/
 }
 .highlight  { background: #fafafa; }
