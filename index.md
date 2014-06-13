@@ -158,7 +158,17 @@ to the Peer which added the State (or reply with an error if the State is not
 available).
 
 ```javascript
-peer.set('foo', 6271);
+peer.set('foo', 6271, {
+  success: function() {
+    console.log('great success');
+  },
+  error: function(err) {
+    console.log('omg', err);
+  }
+});
+
+//if you dont care about the result, leave the callbacks out
+peer.set('foo', 416);
 ```
 
 You must not make any assumptions about side-effects of a set call without error
@@ -171,7 +181,17 @@ respective Method. The Daemon will route the request to the Peer which added the
 Method (or reply with an error if the Method is not available).
 
 ```javascript
-peer.call('greet', 'Rupert');
+peer.call('greet', 'Rupert', {
+  success: function() {
+    console.log('great success');
+  },
+  error: function(err) {
+    console.log('omg', err);
+  }
+});
+
+//if you dont care about the result, leave the callbacks out
+peer.call('greet', 'Santa');
 ```
 
 ## Remove States
