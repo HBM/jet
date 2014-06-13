@@ -38,7 +38,7 @@ var jet = require('jet');
 To interact with a Jet Daemon you need a Peer. The constructor sets up a network
 connection to the Daemon. All further actions using the Peer will be based on
 sending and receiving messages to/from the Daemon. If necessary, the Daemon routes
-messages to Peers.
+messages from Peer to Peer.
 
 ```javascript
 var peer = new jet.Peer({
@@ -79,6 +79,10 @@ setTimeout(function () {
   foo.value(fooVal);
 },3000);
 ```
+
+In opposite to [Firebase](http://firebase.com) there is no persistency layer.
+Jet States are "runtime" States as they die with the Peer. Adding persistency
+would be a task for the respective Peer to implement.
 
 ## Add Methods
 
@@ -158,7 +162,17 @@ to the Peer which added the State (or reply with an error if the State is not
 available).
 
 ```javascript
-peer.set('foo', 6271);
+peer.set('foo', 6271, {
+  success: function() {
+    console.log('great success');
+  },
+  error: function(err) {
+    console.log('omg', err);
+  }
+});
+
+//if you dont care about the result, leave the callbacks out
+peer.set('foo', 416);
 ```
 
 You must not make any assumptions about side-effects of a set call without error
@@ -171,7 +185,17 @@ respective Method. The Daemon will route the request to the Peer which added the
 Method (or reply with an error if the Method is not available).
 
 ```javascript
-peer.call('greet', 'Rupert');
+peer.call('greet', 'Rupert', {
+  success: function() {
+    console.log('great success');
+  },
+  error: function(err) {
+    console.log('omg', err);
+  }
+});
+
+//if you dont care about the result, leave the callbacks out
+peer.call('greet', 'Santa');
 ```
 
 ## Remove States
