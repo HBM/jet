@@ -264,10 +264,11 @@ and for Node.js ([node-jet](http://github.com/lipp/node-jet)).
 ## Peer
 
 Peers bring the Jet bus to life. There can be any number of Peers and there are
-no restrictions to their "location". As a network connection to the Daemon is
-established, a Peer instance starts to exist. As soon as the connection to the
-Daemon is closed, the Daemon frees all ressources which have been associated
-with the respective Peer.
+no restrictions to their "location". Peers can run on the same machine as the
+Daemon or on remote machines - even within Browsers.
+As a network connection to the Daemon is established, a Peer instance starts to
+exist. As soon as the connection to the Daemon is closed, the Daemon frees all
+ressources which have been associated with the respective Peer.
 
 Peers can do any combination of the following things:
 
