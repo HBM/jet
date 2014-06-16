@@ -24,8 +24,8 @@ lines of code (SLOC) and requires minified and gzipped < 2k bytes.
 This is a quick start guide for writing Peers using the Javascript Peer API for
 [Browsers](http://github.com/lipp/jet-js) and [Node.js](http://github.com/lipp/node-jet).
 It may help you getting a basic understanding even if your are not planing to use
-one of this Peer implementations. The full documentation can be found
-[here](#API).
+one of this Peer implementations. The full Peer API documentation can be found
+[here](https://github.com/lipp/jet-js#api).
 
 Note that Node.js users have to require the Jet module.
 
