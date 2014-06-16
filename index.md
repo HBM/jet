@@ -395,24 +395,26 @@ Depending on the Fetch rule, there are two types of Fetch Notifications:
 - sorted
 
 The simpler ones are the non-sorted Fetch Notifications. They always provide
-the this information:
+the same set of information:
 
 - **path**: Path of the State / Method
 - **event**: Can be either "add", "remove" or "change" (only for States)
 - **value**: The current State value (undefined for Methods)
 
-The more complicated ones are the sorted Fetch Notifications. They always provide
-this information:
+The more complicated ones are the sorted Fetch Notifications. To save bandwidth
+the Notification contains only the relevant differences to the previous
+Notification:
 
 - **n**: The number of States/Methods matching
-- **changes**: An array of changed States/Methods like this:
+- **changes**: An array of changed States/Methods with entries like this:
   - **path**: Path of the State / Method
   - **index**: The index (within the specified from-to range)
   - **value**: The current State value (undefined for Methods)
 
-The sorted Fetch Notification contains all the changes compared to the last one.
 This allows to just handle States/Methods which have actually changed in some way
-(index or value) without having to figure out the differences manually.
+(index or value) without having to figure out the differences manually. E.g.
+just updating the display parts (Dom-Nodes, etc.) for the stuff which actually changed,
+instead of replacing all of it.
 
 Fetch rules can be tuned very fine-grained and are able to match against
 paths and/or values.
@@ -498,6 +500,11 @@ Or against the last name:
   }
 }
 ```
+
+### special "fetch all"
+
+If you want to fetch everything, just leave out the `path` and `value` fields
+entirely.
 
 
 # Protocol
@@ -586,7 +593,9 @@ processed and send at any time. This allows to minimize message framing overhead
 
 ### add
 
-Use the __add__ message for adding States or Methods to the Daemon.
+Use the __add__ message for adding States or Methods to the Daemon. The Daemon
+will route all set/call messages to the Peer, changing the method to the
+respective path.
 
 ```javascript
 // add a simple state
@@ -624,7 +633,8 @@ Use the __add__ message for adding States or Methods to the Daemon.
 
 ### remove
 
-Use the __remove__ message for removing States or Methods from the Daemon.
+Use the __remove__ message for removing States or Methods from the Daemon. The
+Daemon will stop to route set/call messages for the respective path.
 
 ```javascript
 // remove a method or state
@@ -675,6 +685,112 @@ Use the __change__ message to make a State value change public.
   }
   // Note that this is a Notification as there is no "id"
 }
+```
+
+### fetch
+
+Use the __fetch__ message to create a new fetch rule. The Daemon sends
+fetch Notifications with the specified fetch id as method, whenever appropriate.
+
+```javascript
+// some path based case insensitive fetch
+{
+  "method": "fetch",
+  "params": {
+    "id": "f1000",  // a peer defined fetch id
+    "path": {
+      "startsWith": "abc",
+      "contains": "foo"
+    },
+    "caseInsensitive": true
+  },
+  "id": 3412
+}
+
+// some path based fetch (setup as Notification)
+{
+  "method": "fetch",
+  "params": {
+    "id": "__321_f",  // a peer defined fetch id
+    "path": {
+      "endsWith": "abc"
+    }  
+  }
+  // no id -> Notification, no Response if fetch setup is ok
+}
+
+// some path / value based fetch
+{
+  "method": "fetch",
+  "params": {
+    "id": "f123",  // a peer defined fetch id
+    "path": {
+      "endsWith": "/temperature"
+    },
+    "value": {
+      "lessThan": 7
+    }
+  }
+  "id": "pasdp3"
+}
+
+// some path / valuefield based fetch
+{
+  "method": "fetch",
+  "params": {
+    "id": "f1pq23",  // a peer defined fetch id
+    "path": {
+      "startsWith": "persons/"
+    },
+    "valueField": {
+      "age": {
+        "greaterThan": 20
+      },
+      "name.first": {
+        "equals": "Micheal"
+      }
+    }  
+  }
+  "id": "pa223"
+}
+
+// some path based sorted fetch
+{
+  "method": "fetch",
+  "params": {
+    "id": "f1pq23",  // a peer defined fetch id
+    "path": {
+      "startsWith": "persons/"
+    },
+    "sort": {
+      "from": 20, // paginating
+      "to": 40,
+      "byPath": true // this is default
+    }
+  }
+  "id": "pa223"
+}
+
+// some path based sorted (byValueField) fetch
+{
+  "method": "fetch",
+  "params": {
+    "id": "f1pq23",  // a peer defined fetch id
+    "path": {
+      "startsWith": "persons/"
+    },
+    "sort": {
+      "from": 1, // paginating
+      "to": 10,
+      "byValueField": {
+        "age": "number" // type is required for sorting: "number", "string" or "boolean"
+      },
+      "descending": true
+    }
+  }
+  "id": "pa123"
+}
+
 ```
 
 # Live Examples
