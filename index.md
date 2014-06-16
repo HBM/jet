@@ -977,3 +977,101 @@ peer.fetch({
 
 <p data-height="660" data-theme-id="0" data-slug-hash="Cglby" data-default-tab="js" class='codepen'>See the Pen <a href='http://codepen.io/lipp/pen/Cglby/'>Jet Fetch State</a> by Gerhard Preuss (<a href='http://codepen.io/lipp'>@lipp</a>) on <a href='http://codepen.io'>CodePen</a>.</p>
 <script async src="//codepen.io/assets/embed/ei.js"></script>
+
+## Change State
+
+This examples creates a Peer, adds a "ticker" States with random name (so that at least
+these State are available for fetching) and fetches everything with a path starting
+with "ticker". Every second the ticker value is incremented by one.
+The message traffic between the Daemon and the Peer is visible
+in the result window bottom.
+
+This is the most relevant snippet:
+
+```javascript
+var ticker = peer.state({
+  path: 'ticker',
+  value: 1
+});
+
+setInterval(function() {
+  var old = ticker.value();
+  ticker.value(++old); // post state change
+}, 1000);
+```
+
+<div data-height="602" data-theme-id="0" data-slug-hash="ucJFm" data-default-tab="js" class='codepen'><pre><code>var tickTimer;
+var connect = function(url) {
+  try {
+    $(&#x27;#status&#x27;).text(&#x27;disconnected&#x27;);
+    // create a Jet Peer, providing the Jet (Daemon) Websocket URL
+    var peer = new jet.Peer({
+      url: url,
+      onOpen: function() {
+        $(&#x27;#status&#x27;).text(&#x27;connected&#x27;);
+      },
+      onSend: function(message) {
+        addLogEntry(&#x27;Out&#x27;,message);
+      },
+      onReceive: function(message) {
+        addLogEntry(&#x27;In&#x27;,message);
+      }
+    });
+    var path = &#x27;ticker_#&#x27; + new Date().getTime();
+    // add as notification
+    var ticker = peer.state({
+      path: path,
+      value: 1
+    });
+
+    if (tickTimer) {
+      clearInterval(tickTimer);
+    }
+    tickTimer = setInterval(function() {
+      debugger;
+      var old = ticker.value();
+      ticker.value(++old);
+    },1000);
+
+    peer.fetch({
+      path: {
+        startsWith: &#x27;ticker&#x27;
+      }
+    },function(path, event, value) {
+      console.log(&#x27;fetch&#x27;, path, event, value);
+    });
+  } catch(err) {
+    $(&#x27;#status&#x27;).text(&#x27;error &#x27; + err);
+  }
+};
+
+
+
+// try to (re-)connect when button is clicked
+$(&#x27;button&#x27;).click(function(e) {
+  connect($(&#x27;input&#x27;).val());
+});
+
+// try to (re-)connect when input field changed
+$(&#x27;input&#x27;).change(function(e) {
+  connect($(&#x27;input&#x27;).val());
+});
+
+// initially try to reach the jet daemon hosted at nodejitsu.com (which listens on port 80)
+connect(&#x27;ws://jet.nodejitsu.com&#x27;);
+var off;
+var addLogEntry = function(direction, message) {
+  var now = new Date().getTime();
+  if (!off) {
+    off = now;
+  }
+  var tr = $(&#x27;&lt;tr&gt;&lt;/tr&gt;&#x27;);
+  tr.append(&#x27;&lt;td&gt;&#x27; + (now-off) + &#x27;&lt;/td&gt;&#x27;);
+  tr.append(&#x27;&lt;td&gt;&#x27; + direction + &#x27;&lt;/td&gt;&#x27;);
+  tr.append(&#x27;&lt;td&gt;&#x27; + message + &#x27;&lt;/td&gt;&#x27;);
+  $(&#x27;#log tbody&#x27;).append(tr);
+};
+
+</code></pre>
+<p>See the Pen <a href='http://codepen.io/lipp/pen/ucJFm/'>Jet Change State</a> by Gerhard Preuss (<a href='http://codepen.io/lipp'>@lipp</a>) on <a href='http://codepen.io'>CodePen</a>.</p>
+</div><script async src="//codepen.io/assets/embed/ei.js"></script>
