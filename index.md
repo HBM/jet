@@ -996,7 +996,7 @@ setInterval(function() {
 }, 1000);
 ```
 
-<div data-height="602" data-theme-id="0" data-slug-hash="ucJFm" data-default-tab="js" class='codepen'><pre><code>var tickTimer;
+<div data-height="616" data-theme-id="0" data-slug-hash="eKBpG" data-default-tab="js" class='codepen'><pre><code>var tickTimer;
 var connect = function(url) {
   try {
     $(&#x27;#status&#x27;).text(&#x27;disconnected&#x27;);
@@ -1024,10 +1024,9 @@ var connect = function(url) {
       clearInterval(tickTimer);
     }
     tickTimer = setInterval(function() {
-      debugger;
       var old = ticker.value();
       ticker.value(++old);
-    },1000);
+    }, 1000);
 
     peer.fetch({
       path: {
@@ -1069,5 +1068,5 @@ var addLogEntry = function(direction, message) {
 };
 
 </code></pre>
-<p>See the Pen <a href='http://codepen.io/lipp/pen/ucJFm/'>Jet Change State</a> by Gerhard Preuss (<a href='http://codepen.io/lipp'>@lipp</a>) on <a href='http://codepen.io'>CodePen</a>.</p>
+<p>See the Pen <a href='http://codepen.io/lipp/pen/eKBpG/'>Jet Change State</a> by Gerhard Preuss (<a href='http://codepen.io/lipp'>@lipp</a>) on <a href='http://codepen.io'>CodePen</a>.</p>
 </div><script async src="//codepen.io/assets/embed/ei.js"></script>
