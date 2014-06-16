@@ -956,23 +956,19 @@ var addLogEntry = function(direction, message) {
 
 ## Fetch Simple
 
-This examples creates a Peer, adds two States with random name (so that at least
-these State are available for fetching) and fetches everything with a path starting
-with "random". The message traffic between the Daemon and the Peer is visible
-in the result window bottom. Compare the (fetch) `id` of the `fetch` message
-with the incoming messages' `method` field. The incoming messages can be
-considered __Passive__ as they are Requests targeted at the Peer, embedding a
-Peer defined `method` field value.
+This examples creates a Peer, adds two States with random name ("random...")
+and fetches everything with a path starting with "random".
+The message traffic between the Daemon and the Peer is visible in the result
+window bottom. Compare the (fetch) `id` of the `fetch` message with the incoming
+messages' `method` field. The incoming messages can be considered __Passive__ as
+they are Requests targeted at the Peer, embedding a Peer defined `method` field
+value.
 
 This is the most relevant snippet:
 
 ```javascript
 // fetch and provide: 1) fetch rule, 2) callback for fetching
-peer.fetch({
-    startsWith: 'random',
-  }, function(path, event, value){
-
-});
+peer.fetch({path: {startsWith: 'random'}}, function(path, event, value){});
 ```
 
 <p data-height="660" data-theme-id="0" data-slug-hash="Cglby" data-default-tab="js" class='codepen'>See the Pen <a href='http://codepen.io/lipp/pen/Cglby/'>Jet Fetch State</a> by Gerhard Preuss (<a href='http://codepen.io/lipp'>@lipp</a>) on <a href='http://codepen.io'>CodePen</a>.</p>
