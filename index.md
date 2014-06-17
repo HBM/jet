@@ -5,29 +5,33 @@ title: Jet
 
 # About
 
-Jet is a lightweight message protocol for realtime communication between apps.
-These apps may run within browsers, on servers or even on embedded systems with
-very limited ressources. It may be considered a realtime auto-sync database like
-[Firebase](http://firebase.com) or a web-capable system bus like
-[DBus](dbus.freedesktop.org).
+Jet is a lightweight message protocol for fast and simple realtime communication
+between apps. These apps may run within browsers, on servers or even on embedded
+systems with very limited ressources. It may be considered a realtime auto-sync
+database like [Firebase](http://firebase.com) or a web-capable system bus variant
+of [DBus](dbus.freedesktop.org).
+
+With Jet you can implement Internet of Things like apps, realtime chats, online
+games or anything else where stuff is in flux and fast communication is
+key.
 
 It employs Websockets as transport and JSON-RPC 2.0 as message format.
 On top, Jet adds few simple concepts and a handfull of message definitions which
 allow efficient, flexible and transparent information flow. Implementations are
 pretty small, e.g. the full-featured Javascript Peer for
 [Browsers](https://github.com/lipp/jet-js/blob/master/peer.js) has < 700
-lines of code (SLOC) and requires minified and gzipped < 2k bytes.
+lines of code (SLOC) and the production version requires < 2k bytes.
 
 
 # Jet in 10 Minutes
 
 This is a quick start guide for writing Peers using the Javascript Peer API for
 [Browsers](http://github.com/lipp/jet-js) and [Node.js](http://github.com/lipp/node-jet).
-It may help you getting a basic understanding even if your are not planing to use
-one of this Peer implementations. The full Peer API documentation can be found
-[here](https://github.com/lipp/jet-js#api).
+It may help you getting a basic understanding of Jet even if your are not
+planing to use one of this Peer implementations.
+The full Peer API documentation can be found [here](https://github.com/lipp/jet-js#api).
 
-Note that Node.js users have to require the Jet module.
+Note, that Node.js users have to require the Jet module.
 
 ```javascript
 var jet = require('jet');
@@ -52,31 +56,37 @@ Peers can add States to the Daemon. A State must have a **unique path**
 and a **value**, which can be of any non-function type. States are visible to other
 Peers (by fetching) and any Peer may try to **set** the State to a new value.
 Whenever someone tries to set a State to a new value, the corresponding `set`
-callback function will be invoked. If a State does not provide a set callback
-function, it is considered read-only and an appropriate error response will be
-emitted. Per default, when the `set` callback does not throw an error,
+callback function will be invoked. Per default, when the `set` callback does not throw an error,
 a State change is posted automatically, thus keeping all other Peers and the
 Daemon in sync.
 
+```javascript
+var machineName = 'Animal';
+var machineNameState = peer.state({
+  path: 'machine/name',
+  value: machineName,
+  set: function(newName) {
+    machineName = newName;
+  }
+});
+```
+
+If a State does not provide a set callback function, it is considered read-only
+and an appropriate error response will be emitted.
 States may also change spontaneously at will, without someone trying to
 **set** the State. E.g. one could add a "cpu-load" State, which changes very
 frequently.
 
 ```javascript
 // add a state
-var fooVal = 1234;
-var foo = peer.state({
-  path: 'foo',
-  value: fooVal,
-  set: function (newVal) {
-    fooVal = newVal;
-  }
+var cpuLoadState = peer.state({
+  path: 'cpu/load',
+  value: readCpuLoad()
 });
 
-// async set to a new value
+// async post new value
 setTimeout(function () {
-  fooVal = 627;
-  foo.value(fooVal);
+  cpuLoadState.value(readCpuLoad());
 },3000);
 ```
 
@@ -98,10 +108,10 @@ thrown during execution.
 var greet = peer.method({
   path: 'greet',
   call: function (name) {
-    if (name === 'John') {
+    if (name.first === 'John') {
       throw 'John is a bad guy!';
     }
-    var greeting = 'Hello ' + name;
+    var greeting = 'Hello ' + name.first + ' ' + name.last;
     console.log(greeting);
     return greeting;
   }
@@ -185,7 +195,7 @@ respective Method. The Daemon will route the request to the Peer which added the
 Method (or reply with an error if the Method is not available).
 
 ```javascript
-peer.call('greet', 'Rupert', {
+peer.call('greet', {first: 'Jim', last: 'White'}, {
   success: function() {
     console.log('great success');
   },
@@ -195,7 +205,7 @@ peer.call('greet', 'Rupert', {
 });
 
 //if you dont care about the result, leave the callbacks out
-peer.call('greet', 'Santa');
+peer.call('greet', {first: 'John', last: 'Carter'});
 ```
 
 ## Remove States
