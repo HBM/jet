@@ -22,6 +22,21 @@ pretty small, e.g. the full-featured Javascript Peer for
 [Browsers](https://github.com/lipp/jet-js/blob/master/peer.js) has < 700
 lines of code (SLOC) and the production version requires < 2k bytes.
 
+## Try this
+
+Open [this page](http://jetbus.io) multiple times to see Jet in action. Every
+connected client/browser adds a random "Tick" State, which can be reseted to 0.
+Notice the instant update of all clients. As all the Live Example, the code is
+available at [codepen.io](http://codepen.io/lipp/pen/wvkre).
+
+<div id="demo">
+  <div>
+    <input type="text" value="ws://jet.nodejitsu.com" id="url"></input>
+  </div>
+  <ul id="tickers">
+  </ul>
+  <p>You are: <span id="yourid"></span></p>
+</div>
 
 # Jet in 10 Minutes
 

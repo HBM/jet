@@ -27,7 +27,6 @@ code {
 * {
   margin: 0;
   padding: 0;
-  font-family: 'Open Sans',sans serif;
 }
 
 html, body { height: 100%; }
@@ -59,6 +58,61 @@ html, body { height: 100%; }
   margin-bottom: 30px;
 }
 
+#demo > * {
+  color: black;
+  text-align: center;
+}
+
+input#url {
+
+margin-top: 23px;
+margin-bottom: 23px;
+width: 100%;
+font-family: 'Open Sans';
+font-size: 18px;
+
+text-align: center;
+border: none;
+text-decoration: underline;
+}
+
+#tickers .reset {
+  font-family: 'Raleway', sans-serif;
+  font-weight: 100;
+}
+
+#tickers .count {
+  font-weight: 100;
+  font-family: 'Open Sans', sans-serif;
+}
+
+#tickers .path {
+  font-family: 'Raleway', sans-serif;
+font-weight: 100;
+}
+
+#tickers {
+  list-style: none;
+  padding-left: 0px;
+}
+
+#tickers li.yours .circle-text{
+
+}
+
+#tickers li {
+  font-size: 25px;
+  justify-content: center;
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+#tickers li span {
+  width: 100px;
+  margin: 0px 10px;
+}
+
 .circle-text {
   width:50%;
 }
@@ -80,7 +134,6 @@ html, body { height: 100%; }
   line-height:1em;
   margin-top:-0.5em;
   text-align:center;
-  color:white;
 }
 
 .downloads {
@@ -133,7 +186,7 @@ html, body { height: 100%; }
   margin: 0 10px;
 }
 
-#hero > div {
+#logo {
   display: flex;
   display: -webkit-flex;
   align-items: center;
@@ -194,7 +247,7 @@ html, body { height: 100%; }
 
   .site h1 {
     margin-bottom: 1em;
-    margin-top: 3em;
+    margin-top: 2em;
     padding-bottom: 10px;
     border-bottom: 1px dashed;
     font-size: 44px;
@@ -202,10 +255,15 @@ html, body { height: 100%; }
   }
 
   .site h2 {
-    padding-top: 50px;
+    padding-top: 40px;
     font-weight: 500;
     font-size: 30px;
   }
+
+  .site p {
+    font-family: 'Open Sans',sans serif;
+  }
+
   p { margin: 1em 0; }
 
   .site a {
