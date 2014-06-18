@@ -15,10 +15,11 @@
 </head>
 <body>
   <div id="hero">
-    <div>
+    <div id="logo">
       <h1 id="brand">Jet</h1>
       <div><h2 id="tagline">Lightweight, Realtime Message Bus for the Web</h2></div>
     </div>
+
     <div class="downloads">
       <div class="downloads-category">
         <h3>Daemon</h3>
@@ -40,7 +41,6 @@
   <div id="toc">
   </div>
 
-
   <div class="site">
 
     {{ content }}
@@ -53,7 +53,7 @@
       </div>
       <div class="contact">
         <p>
-        Copyright (c) 2013, 2014 by Gerhard Preuss. License is MIT.
+          Copyright (c) 2013, 2014 by Gerhard Preuss. License is MIT.
         </p>
       </div>
       <div class="contact">
@@ -67,19 +67,107 @@
 </body>
 <script src="js/jquery-2.0.3.js"></script>
 <script src="js/jquery.toc.min.js"></script>
+<script src="https://rawgit.com/lipp/jet-js/master/peer.js"></script>
 <script>
 $('#toc').toc({
   selectors:'h1',container:'.site',highlightOffset:70
 });
 </script>
 <script>
-  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+// from here: http://stackoverflow.com/questions/6248666/how-to-generate-short-uid-like-ax4j9z-in-js
+function generateUIDNotMoreThan1million() {
+  return ("0000" + (Math.random()*Math.pow(36,4) << 0).toString(36)).slice(-4)
+}
+
+var tickerInterval;
+var peer;
+var connect = function(url) {
+  try {
+    if (peer) {
+      try {
+        peer.close();
+      } catch(e) {}
+    }
+    $('#tickers').empty();
+    // create a Jet Peer, providing the Jet (Daemon) Websocket URL
+    peer = new jet.Peer({
+      url: url,
+      onOpen: function() {
+        $('#demo').fadeIn();
+      }
+    });
+    var tickerPath = 'tickerfun' +  generateUIDNotMoreThan1million();
+    $('#yourid').text(tickerPath.split('tickerfun')[1].toUpperCase());
+    // add as notification
+    var ticker = peer.state({
+      path: tickerPath,
+      value: 0,
+      set: function(val) {
+
+      }
+    });
+    if (tickerInterval) {
+      clearInterval(tickerInterval);
+    }
+    tickerInterval = setInterval(function() {
+      var old = ticker.value();
+      ticker.value(++old);
+    },1000);
+    peer.fetch({
+      path: {
+        startsWith: 'tickerfun'
+      }
+    }, function(path, event, value) {
+      var li;
+      var shortPath = path.split('tickerfun')[1].toUpperCase();
+      if (event === 'add') {
+        li = $('<li id="' + path + '"></li>');
+        var label = $('<span class="circle-text path"><div>' + shortPath + '</div></span>');
+        if (path === tickerPath) {
+          li.addClass('yours');
+        }
+        var resetButton = $('<span class="circle-text reset"><div>Reset</div></span>');
+        resetButton.click(function() {
+          peer.set(path, 0);
+        })
+        var count = $('<span class="circle-text count"><div>' + value +
+        '</div></span>');
+        li.append(label);
+        li.append(count);
+        li.append(resetButton);
+        $('#tickers').append(li);
+      } else if (event === 'change') {
+        $('#'+ path + ' .count > div').text(value);
+      } else {
+        $('#'+path).remove();
+      }
+
+    });
+  } catch(err) {
+    $('#status').text('error ' + err);
+  }
+};
+
+
+// try to (re-)connect when input field changed
+$('#url').change(function(e) {
+  connect($('#url').val());
+});
+
+
+// initially try to reach the jet daemon hosted at nodejitsu.com (which listens on port 80)
+connect('ws://jet.nodejitsu.com');
+//connect('ws://hbm-000a40:11123');
+
+</script>
+<script>
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
   (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
   m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
 
-  ga('create', 'UA-42875905-1', 'jetbus.io');
-  ga('send', 'pageview');
+ga('create', 'UA-42875905-1', 'jetbus.io');
+ga('send', 'pageview');
 
 </script>
 </html>
