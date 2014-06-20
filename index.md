@@ -9,7 +9,7 @@ Jet is a lightweight message protocol for fast and simple realtime communication
 between apps. These apps may run within browsers, on servers or even on embedded
 systems with very limited ressources. It may be considered a realtime auto-sync
 database like [Firebase](http://firebase.com) or a web-capable system bus variant
-of [DBus](dbus.freedesktop.org).
+of [DBus](http://dbus.freedesktop.org).
 
 With Jet you can implement Internet of Things like apps, realtime chats, online
 games or anything else where stuff is in flux and fast communication is
@@ -17,7 +17,7 @@ key.
 
 It employs Websockets as transport and JSON-RPC 2.0 as message format.
 On top, Jet adds few simple concepts and a handfull of message definitions which
-allow efficient, flexible and transparent information flow. Implementations are
+allow for efficient, flexible and transparent information flow. Implementations are
 pretty small, e.g. the full-featured Javascript Peer for
 [Browsers](https://github.com/lipp/jet-js/blob/master/peer.js) has < 700
 lines of code (SLOC) and the production version requires < 2k bytes.
