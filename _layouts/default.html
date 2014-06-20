@@ -63,14 +63,14 @@
       </div>
     </div>
   </div>
-
+  <a href="https://github.com/you"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://camo.githubusercontent.com/365986a132ccd6a44c23a9169022c0b5c890c387/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f7265645f6161303030302e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_red_aa0000.png"></a>
 </body>
 <script src="js/jquery-2.0.3.js"></script>
 <script src="js/jquery.toc.min.js"></script>
 <script src="https://rawgit.com/lipp/jet-js/master/peer.js"></script>
 <script>
 $('#toc').toc({
-  selectors:'h1',container:'.site',highlightOffset:70
+  selectors:'h1',container:'.site',highlightOffset:0
 });
 </script>
 <script>
@@ -82,7 +82,11 @@ function generateUIDNotMoreThan1million() {
 var tickerInterval;
 var peer;
 var connect = function(url) {
+  $('#status').text('Connecting');
   try {
+    if (tickerInterval) {
+      clearInterval(tickerInterval);
+    }
     if (peer) {
       try {
         peer.close();
@@ -92,8 +96,23 @@ var connect = function(url) {
     // create a Jet Peer, providing the Jet (Daemon) Websocket URL
     peer = new jet.Peer({
       url: url,
+      onClose: function() {
+        // var oldPeer = peer;
+        // if (oldPeer === peer) {
+        //   $('#status').text('Disconnected');
+        //   $('#tickers').fadeOut();
+        //   $('#status').fadeIn();
+        //   clearInterval(tickerInterval);
+        // }
+      },
       onOpen: function() {
-        $('#demo').fadeIn();
+        tickerInterval = setInterval(function() {
+          var old = ticker.value();
+          ticker.value(++old);
+        },1000);
+        $('#status').text('Connected');
+        $('#status').fadeOut();
+        $('#tickers').fadeIn();
       }
     });
     var tickerPath = 'tickerfun' +  generateUIDNotMoreThan1million();
@@ -106,13 +125,7 @@ var connect = function(url) {
 
       }
     });
-    if (tickerInterval) {
-      clearInterval(tickerInterval);
-    }
-    tickerInterval = setInterval(function() {
-      var old = ticker.value();
-      ticker.value(++old);
-    },1000);
+
     peer.fetch({
       path: {
         startsWith: 'tickerfun'
@@ -150,7 +163,7 @@ var connect = function(url) {
 
 
 // try to (re-)connect when input field changed
-$('#url').change(function(e) {
+$('#connect').click(function(e) {
   connect($('#url').val());
 });
 
