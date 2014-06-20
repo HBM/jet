@@ -71,15 +71,15 @@ html, body { height: 100%; }
 
 input#url {
 
-margin-top: 23px;
-margin-bottom: 23px;
-width: 100%;
-font-family: 'Open Sans';
-font-size: 18px;
+  margin-top: 23px;
+  margin-bottom: 23px;
+  width: 100%;
+  font-family: 'Open Sans';
+  font-size: 18px;
 
-text-align: center;
-border: none;
-text-decoration: underline;
+  text-align: center;
+  border: none;
+  text-decoration: underline;
 }
 
 #tickers .reset {
@@ -94,7 +94,7 @@ text-decoration: underline;
 
 #tickers .path {
   font-family: 'Raleway', sans-serif;
-font-weight: 100;
+  font-weight: 100;
 }
 
 #tickers {
