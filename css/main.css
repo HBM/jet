@@ -29,6 +29,12 @@ code {
   padding: 0;
 }
 
+html {
+  -webkit-text-size-adjust: 100%;
+  /* Prevent font scaling in landscape while allowing user zoom */
+}
+
+
 html, body { height: 100%; }
 
 #hero #brand {
