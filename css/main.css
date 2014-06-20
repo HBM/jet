@@ -29,6 +29,12 @@ code {
   padding: 0;
 }
 
+html {
+  -webkit-text-size-adjust: 100%;
+  /* Prevent font scaling in landscape while allowing user zoom */
+}
+
+
 html, body { height: 100%; }
 
 #hero #brand {
@@ -103,6 +109,8 @@ font-weight: 100;
 #tickers li {
   font-size: 25px;
   justify-content: center;
+  -webkit-justify-content: center;
+  display: -webkit-flex;
   display: flex;
   align-items: center;
   margin-bottom: 20px;
@@ -137,6 +145,7 @@ font-weight: 100;
 }
 
 .downloads {
+  display: -webkit-flex;
   display: flex;
   color: white;
   width: 100%;
@@ -448,6 +457,8 @@ font-weight: 100;
     #toc ul {
       margin: 0;
       list-style: none;
+      display: -webkit-flex;
+      -webkit-justify-content: space-around;
       display: flex;
       justify-content: space-around;
       padding: 10px;
