@@ -30,11 +30,13 @@ Notice the instant update of all clients. As all the Live Example, the code is
 available at [codepen.io](http://codepen.io/lipp/pen/wvkre).
 
 <div id="demo">
-  <div>
+  <div id="control">
     <input type="text" value="ws://jet.nodejitsu.com" id="url"></input>
+    <button id="connect">Connect</button>
   </div>
   <ul id="tickers">
   </ul>
+  <h1 id="status"></h1>
   <p>You are: <span id="yourid"></span></p>
 </div>
 
