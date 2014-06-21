@@ -841,7 +841,7 @@ var peer = new jet.Peer({
     });
 ```
 
-<div data-height="619" data-theme-id="0" data-slug-hash="GEyuq" data-default-tab="js" class='codepen'><pre><code>var connect = function(url) {
+<div data-height="345" data-theme-id="0" data-slug-hash="GEyuq" data-default-tab="js" class='codepen'><pre><code>var connect = function(url) {
    try {
     $(&#x27;#status&#x27;).text(&#x27;disconnected&#x27;);
     // create a Jet Peer, providing the Jet (Daemon) Websocket URL
@@ -859,15 +859,14 @@ var peer = new jet.Peer({
 // try to (re-)connect when button is clicked
 $(&#x27;button&#x27;).click(function(e) {
   connect($(&#x27;input&#x27;).val());
+  e.preventDefault();
 });
 
 // try to (re-)connect when input field changed
 $(&#x27;input&#x27;).change(function(e) {
   connect($(&#x27;input&#x27;).val());
 });
-
-// initially try to reach the Jet Daemon hosted at nodejitsu.com (which listens on port 80)
-connect(&#x27;ws://jet.nodejitsu.com&#x27;);</code></pre>
+</code></pre>
 <p>See the Pen <a href='http://codepen.io/lipp/pen/GEyuq/'>Jet Connect</a> by Gerhard Preuss (<a href='http://codepen.io/lipp'>@lipp</a>) on <a href='http://codepen.io'>CodePen</a>.</p>
 </div><script async src="//codepen.io/assets/embed/ei.js"></script>
 
@@ -906,7 +905,7 @@ peer.state({
 });
 ```
 
-<div data-height="591" data-theme-id="0" data-slug-hash="kLlfB" data-default-tab="js" class='codepen'><pre><code>var connect = function(url) {
+<div data-height="870" data-theme-id="0" data-slug-hash="kLlfB" data-default-tab="js" class='codepen'><pre><code>var connect = function(url) {
    try {
     $(&#x27;#status&#x27;).text(&#x27;disconnected&#x27;);
     // create a Jet Peer, providing the Jet (Daemon) Websocket URL
@@ -933,10 +932,7 @@ peer.state({
      // add as request
      peer.state({
        path: random,
-       value: 123,
-       set: function(newValue) {
-         random = newValue;
-       }
+       value: 123
      },{
        success: function() {
          console.log(&#x27;ok&#x27;);
@@ -955,6 +951,7 @@ peer.state({
 // try to (re-)connect when button is clicked
 $(&#x27;button&#x27;).click(function(e) {
   connect($(&#x27;input&#x27;).val());
+  e.preventDefault();
 });
 
 // try to (re-)connect when input field changed
@@ -962,8 +959,7 @@ $(&#x27;input&#x27;).change(function(e) {
   connect($(&#x27;input&#x27;).val());
 });
 
-// initially try to reach the Jet Daemon hosted at nodejitsu.com (which listens on port 80)
-connect(&#x27;ws://jet.nodejitsu.com&#x27;);
+
 var off;
 var addLogEntry = function(direction, message) {
   var now = new Date().getTime();
@@ -998,8 +994,78 @@ This is the most relevant snippet:
 peer.fetch({path: {startsWith: 'random'}}, function(path, event, value){});
 ```
 
-<p data-height="660" data-theme-id="0" data-slug-hash="Cglby" data-default-tab="js" class='codepen'>See the Pen <a href='http://codepen.io/lipp/pen/Cglby/'>Jet Fetch State</a> by Gerhard Preuss (<a href='http://codepen.io/lipp'>@lipp</a>) on <a href='http://codepen.io'>CodePen</a>.</p>
-<script async src="//codepen.io/assets/embed/ei.js"></script>
+<div data-height="923" data-theme-id="0" data-slug-hash="Cglby" data-default-tab="js" class='codepen'><pre><code>var connect = function(url) {
+   try {
+    $(&#x27;#status&#x27;).text(&#x27;disconnected&#x27;);
+    // create a Jet Peer, providing the Jet (Daemon) Websocket URL
+    var peer = new jet.Peer({
+      url: url,
+      onOpen: function() {
+        $(&#x27;#status&#x27;).text(&#x27;connected&#x27;);
+      },
+      onSend: function(message) {
+        addLogEntry(&#x27;Out&#x27;,message);
+      },
+      onReceive: function(message) {
+        addLogEntry(&#x27;In&#x27;,message);
+      }
+    });
+     var random = &#x27;random&#x27; + new Date().getTime();
+     // add as notification
+     peer.state({
+       path: random,
+       value: 123
+     });
+
+     random = &#x27;random_2_&#x27; + new Date().getTime();
+     // add as request
+     peer.state({
+       path: random,
+       value: 123
+     });
+
+     peer.fetch({
+       path: {
+         startsWith: &#x27;random&#x27;
+       }
+     },function(path, event, value) {
+       console.log(&#x27;fetch&#x27;, path, event, value);
+     });
+  } catch(err) {
+    $(&#x27;#status&#x27;).text(&#x27;error &#x27; + err);
+  }
+};
+
+
+
+// try to (re-)connect when button is clicked
+$(&#x27;button&#x27;).click(function(e) {
+  connect($(&#x27;input&#x27;).val());
+  e.preventDefault();
+});
+
+// try to (re-)connect when input field changed
+$(&#x27;input&#x27;).change(function(e) {
+  connect($(&#x27;input&#x27;).val());
+});
+
+
+var off;
+var addLogEntry = function(direction, message) {
+  var now = new Date().getTime();
+  if (!off) {
+    off = now;
+  }
+  var tr = $(&#x27;&lt;tr&gt;&lt;/tr&gt;&#x27;);
+  tr.append(&#x27;&lt;td&gt;&#x27; + (now-off) + &#x27;&lt;/td&gt;&#x27;);
+  tr.append(&#x27;&lt;td&gt;&#x27; + direction + &#x27;&lt;/td&gt;&#x27;);
+  tr.append(&#x27;&lt;td&gt;&#x27; + message + &#x27;&lt;/td&gt;&#x27;);
+  $(&#x27;#log tbody&#x27;).append(tr);
+};
+
+</code></pre>
+<p>See the Pen <a href='http://codepen.io/lipp/pen/Cglby/'>Jet Fetch State</a> by Gerhard Preuss (<a href='http://codepen.io/lipp'>@lipp</a>) on <a href='http://codepen.io'>CodePen</a>.</p>
+</div><script async src="//codepen.io/assets/embed/ei.js"></script>
 
 ## Change State
 
@@ -1023,7 +1089,7 @@ setInterval(function() {
 }, 1000);
 ```
 
-<div data-height="616" data-theme-id="0" data-slug-hash="eKBpG" data-default-tab="js" class='codepen'><pre><code>var tickTimer;
+<div data-height="945" data-theme-id="0" data-slug-hash="eKBpG" data-default-tab="js" class='codepen'><pre><code>var tickTimer;
 var connect = function(url) {
   try {
     $(&#x27;#status&#x27;).text(&#x27;disconnected&#x27;);
@@ -1057,10 +1123,10 @@ var connect = function(url) {
 
     peer.fetch({
       path: {
-        startsWith: &#x27;ticker&#x27;
+        startsWith: &#x27;ticker_&#x27;
       }
     },function(path, event, value) {
-      console.log(&#x27;fetch&#x27;, path, event, value);
+      // console.log(&#x27;fetch&#x27;, path, event, value);
     });
   } catch(err) {
     $(&#x27;#status&#x27;).text(&#x27;error &#x27; + err);
@@ -1072,6 +1138,7 @@ var connect = function(url) {
 // try to (re-)connect when button is clicked
 $(&#x27;button&#x27;).click(function(e) {
   connect($(&#x27;input&#x27;).val());
+  e.preventDefault();
 });
 
 // try to (re-)connect when input field changed
@@ -1079,8 +1146,7 @@ $(&#x27;input&#x27;).change(function(e) {
   connect($(&#x27;input&#x27;).val());
 });
 
-// initially try to reach the jet daemon hosted at nodejitsu.com (which listens on port 80)
-connect(&#x27;ws://jet.nodejitsu.com&#x27;);
+
 var off;
 var addLogEntry = function(direction, message) {
   var now = new Date().getTime();
