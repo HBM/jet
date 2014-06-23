@@ -92,11 +92,16 @@ var connect = function(url) {
         peer.close();
       } catch(e) {}
     }
-    $('#tickers').empty();
     // create a Jet Peer, providing the Jet (Daemon) Websocket URL
     peer = new jet.Peer({
       url: url,
       onClose: function() {
+        $('#tickers li').each( function(index, li) {
+          li = $(li);
+          li.find('.path > div').text('--');
+          li.find('.count > div').text('0');
+          li.find('.reset').off('click');
+        });
         // var oldPeer = peer;
         // if (oldPeer === peer) {
         //   $('#status').text('Disconnected');
@@ -113,10 +118,11 @@ var connect = function(url) {
         $('#status').text('Connected');
         $('#status').fadeOut();
         $('#tickers').fadeIn();
+        $('#demo .info').fadeIn();
       }
     });
     var tickerPath = 'tickerfun' +  generateUIDNotMoreThan1million();
-    $('#yourid').text(tickerPath.split('tickerfun')[1].toUpperCase());
+
     // add as notification
     var ticker = peer.state({
       path: tickerPath,
@@ -126,34 +132,47 @@ var connect = function(url) {
       }
     });
 
+    var short = function(path) {
+      return path.split('tickerfun')[1].toUpperCase();
+    };
+
+    peer.fetch({
+      path: {
+        equals: tickerPath
+      }
+    }, function(path, event, value) {
+      $('#yourid').text(short(tickerPath) + ' ' + value);
+    });
+
     peer.fetch({
       path: {
         startsWith: 'tickerfun'
+      },
+      sort: {
+        byValue: 'number',
+        descending: true,
+        from: 1,
+        to: 5
       }
-    }, function(path, event, value) {
-      var li;
-      var shortPath = path.split('tickerfun')[1].toUpperCase();
-      if (event === 'add') {
-        li = $('<li id="' + path + '"></li>');
-        var label = $('<span class="circle-text path"><div>' + shortPath + '</div></span>');
-        if (path === tickerPath) {
-          li.addClass('yours');
+    }, function(changes, n) {
+      changes.forEach( function(change) {
+        var shortPath = short(change.path);
+        var li = $($('#tickers li:nth-child(' + change.index + ')')[0]);
+        li.find('.path > div').text(shortPath);
+        li.find('.count > div').text(change.value);
+        li.find('.reset').off('click').on('click', function() {
+          peer.set(change.path, 0);
+        });
+      });
+
+      $('#tickers li').each( function(index, li) {
+        if (index >= n) {
+          li = $(li);
+          li.find('.path > div').text('--');
+          li.find('.count > div').text('0');
+          li.find('.reset').off('click');
         }
-        var resetButton = $('<span class="circle-text reset"><div>Reset</div></span>');
-        resetButton.click(function() {
-          peer.set(path, 0);
-        })
-        var count = $('<span class="circle-text count"><div>' + value +
-        '</div></span>');
-        li.append(label);
-        li.append(count);
-        li.append(resetButton);
-        $('#tickers').append(li);
-      } else if (event === 'change') {
-        $('#'+ path + ' .count > div').text(value);
-      } else {
-        $('#'+path).remove();
-      }
+      });
 
     });
   } catch(err) {
@@ -183,4 +202,5 @@ ga('create', 'UA-42875905-1', 'jetbus.io');
 ga('send', 'pageview');
 
 </script>
+
 </html>
