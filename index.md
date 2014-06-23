@@ -56,7 +56,7 @@ available at [codepen.io](http://codepen.io/lipp/pen/wvkre).
     </li>
   </ul>
   <p class="info">You are: <span id="yourid"></span></p>
-  <h1 id="status"></h1>
+  <h2 id="status"></h2>
 </div>
 
 
