@@ -88,6 +88,14 @@
     text-decoration: underline;
   }
 
+  #demo #tickers {
+    display: none;
+  }
+
+  #demo .info {
+    display: none;
+  }
+
   #control > #connect {
     border: 1px solid;
     border-radius: 3px;

@@ -22,12 +22,15 @@ pretty small, e.g. the full-featured Javascript Peer for
 [Browsers](https://github.com/lipp/jet-js/blob/master/peer.js) has < 700
 lines of code (SLOC) and the production version requires < 2k bytes.
 
-## Try this
+## Mini Demo
 
 Open [this page](http://jetbus.io) multiple times to see Jet in action. Every
 connected client/browser adds a random "Tick" State, which can be reseted to 0.
-Notice the instant update of all clients. As all the Live Example, the code is
-available at [codepen.io](http://codepen.io/lipp/pen/wvkre).
+The 3 clients with the highest tick value a displayed in order of their tick
+value.
+Watch the instant update of all clients, try to reset client ticks or close
+client windows. As all the Live Example, the code is
+available at [codepen.io](http://codepen.io/lipp/pen/wvkre) BLABLA.
 
 <div id="demo">
   <div id="control">
@@ -35,10 +38,27 @@ available at [codepen.io](http://codepen.io/lipp/pen/wvkre).
     <button id="connect">Connect</button>
   </div>
   <ul id="tickers">
+    <li>
+      <span class="circle-text path"><div>--</div></span>
+      <span class="circle-text count"><div>0</div></span>
+      <span class="circle-text reset"><div>Reset</div></span>
+    </li>
+    <li>
+      <span class="circle-text path"><div>--</div></span>
+      <span class="circle-text count"><div>0</div></span>
+      <span class="circle-text reset"><div>Reset</div></span>
+
+    </li>
+    <li>
+      <span class="circle-text path"><div>--</div></span>
+      <span class="circle-text count"><div>0</div></span>
+      <span class="circle-text reset"><div>Reset</div></span>
+    </li>
   </ul>
+  <p class="info">You are: <span id="yourid"></span></p>
   <h1 id="status"></h1>
-  <p>You are: <span id="yourid"></span></p>
 </div>
+
 
 # Jet in 10 Minutes
 
