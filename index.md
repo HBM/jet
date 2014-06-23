@@ -30,7 +30,7 @@ The 3 clients with the highest tick value a displayed in order of their tick
 value.
 Watch the instant update of all clients, try to reset client ticks or close
 client windows. As all the Live Example, the code is
-available at [codepen.io](http://codepen.io/lipp/pen/wvkre) BLABLA.
+available at [codepen.io](http://codepen.io/lipp/pen/wvkre).
 
 <div id="demo">
   <div id="control">
