@@ -96,6 +96,23 @@
     display: none;
   }
 
+  #demo .reset {
+    cursor: pointer;
+    background-image: none;
+    transition: all 0.1s ease;
+  }
+
+  #demo .reset:hover:after {
+
+    background-color: #6EE4AB;
+    transition: all 0.1s ease;
+    color: white;
+  }
+
+  #demo .reset:hover * {
+    color: white;
+  }
+
   #control > #connect {
     border: 1px solid;
     border-radius: 3px;
@@ -205,6 +222,7 @@
     text-decoration: none;
     font-size: 18px;
     font-weight: 100;
+
   }
 
   .downloads-category li {

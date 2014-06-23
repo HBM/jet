@@ -56,7 +56,7 @@ available at [codepen.io](http://codepen.io/lipp/pen/wvkre).
     </li>
   </ul>
   <p class="info">You are: <span id="yourid"></span></p>
-  <h1 id="status"></h1>
+  <h2 id="status"></h2>
 </div>
 
 
@@ -637,6 +637,8 @@ Further __Batch__ Messages are not subject of any order requirements are may be
 processed and send at any time. This allows to minimize message framing overhead (e.g. Websockets).
 
 ## Messages
+
+This chapter lists an overview of all __active__ messsages by example.
 
 ### add
 
