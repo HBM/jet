@@ -638,6 +638,8 @@ processed and send at any time. This allows to minimize message framing overhead
 
 ## Messages
 
+This chapter lists an overview of all __active__ messsages by example.
+
 ### add
 
 Use the __add__ message for adding States or Methods to the Daemon. The Daemon
