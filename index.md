@@ -57,7 +57,9 @@ available at [codepen.io](http://codepen.io/lipp/pen/wvkre).
     </li>
   </ul>
   <p class="info">You are: <span id="yourid"></span></p>
-  <h2 id="status"></h2>
+  <h2 id="status">
+  </h2>
+  <h5 id="help"><a href="http://websocketstest.com/">Check Websockets</a></h5>
 </div>
 
 
