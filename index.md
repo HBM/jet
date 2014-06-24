@@ -196,7 +196,7 @@ peer.fetch({
       byValueField: {
         score: 'number'
       }
-    }, function (sorted) {
+    }, function (changes, n) {
   }
 });
 ```
