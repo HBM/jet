@@ -22,14 +22,15 @@ pretty small, e.g. the full-featured Javascript Peer for
 [Browsers](https://github.com/lipp/jet-js/blob/master/peer.js) has < 700
 lines of code (SLOC) and the production version requires < 2k bytes.
 
-## Mini Demo
+## Demo
 
 Open [this page](http://jetbus.io) multiple times to see Jet in action. Every
 connected client/browser adds a random "Tick" State, which can be reseted to 0.
 The 3 clients with the highest tick value a displayed in order of their tick
 value.
 Watch the instant update of all clients, try to reset client ticks or close
-client windows. As all the Live Example, the code is
+client windows. It works on all devices (iPad/Android/etc) with Browser which
+support Websockets. As all the Live Example, the code is
 available at [codepen.io](http://codepen.io/lipp/pen/wvkre).
 
 <div id="demo">
