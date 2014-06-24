@@ -624,8 +624,7 @@ above. Note the method name, which has been specified earlier in the fetch call.
       "name": "Paul",
       "age": 63
     }
-  },
-  "id": 762
+  }
 }
 ```
 
