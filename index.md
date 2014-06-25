@@ -26,12 +26,12 @@ lines of code (SLOC) and the production version requires < 2k bytes.
 
 Open [this page](http://jetbus.io) multiple times to see Jet in action. Every
 connected client/browser adds a random "Tick" State, which can be reseted to 0.
-The 3 clients with the highest tick value a displayed in order of their tick
+The 3 clients with the highest tick value are displayed in order of their "Tick"
 value.
 Watch the instant update of all clients, try to reset client ticks or close
-client windows. It works on all devices (iPad/Android/etc) with Browser which
-support Websockets. As all the Live Example, the code is
-available at [codepen.io](http://codepen.io/lipp/pen/wvkre).
+client windows to see them disappear. The demo works on all devices
+(iPad/Android/etc) with Browser which support Websockets. As all the other
+Live Examples, the code is available at [codepen.io](http://codepen.io/lipp/pen/wvkre).
 
 <div id="demo">
   <div id="control">
