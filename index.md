@@ -11,11 +11,14 @@ systems with very limited ressources. It may be considered a realtime auto-sync
 database like [Firebase](http://firebase.com) or a web-capable system bus variant
 of [DBus](http://dbus.freedesktop.org).
 
-With Jet you can implement Internet of Things like apps, realtime chats, online
-games or anything else where stuff is in flux and fast communication is
-key.
+With Jet you can implement IoT (Internet of Things) like apps, realtime chats, online
+games or anything else where stuff is in flux and fast communication is a
+key requirement. It is also intended to be a web-accessable configuration interface,
+which is working multi-client and asynchronous as a connection based alternative to
+REST based solutions.
 
-It employs Websockets as transport and JSON-RPC 2.0 as message format.
+It employs JSON-RPC 2.0 as message format and Websockets as transport. Other
+transport can be easily added, as long as they are message based and pertain connection.
 On top, Jet adds few simple concepts and a handfull of message definitions which
 allow for efficient, flexible and transparent information flow. Implementations are
 pretty small, e.g. the full-featured Javascript Peer for
@@ -225,7 +228,9 @@ peer.set('foo', 6271, {
 peer.set('foo', 416);
 ```
 
-You must not make any assumptions about side-effects of a set call without error
+You must not make any assumptions about side-effects of a set call without error.
+In particular, the actual value of a State can only be determined by fetching
+it.
 
 ## Call Methods
 
@@ -705,6 +710,86 @@ Daemon will stop to route set/call messages for the respective path.
   }
   "id": "ajsykw"
 }
+
+```
+
+### set
+
+Use the __set__ message for (trying) to set a State to a new value. The Daemon
+will route the Request to the responsible Peer. Accepting the new value is solely
+up to the Peer. In case of an error-less dispatching / assigning, the Peer
+posts a __change__ Notification, thus informing all fetching Peers about the
+actual new value.
+
+```javascript
+// set a state to a new value
+{
+  "method": "set",
+  "params": {
+    "path": "foo/bar",
+    "value": 920
+  }
+  // Note that this is a Notification as there is no "id"
+}
+
+// set a state to a new value
+{
+  "method": "set",
+  "params": {
+    "path": "foo/bar",
+    "value": { // the value can be any non-function type
+      age: 22,
+      gender: "female"
+    }
+  }
+  "id": "92s"
+}
+
+```
+
+### call
+
+Use the __call__ message for calling a Method. The Daemon
+will route the Request to the responsible Peer.
+
+```javascript
+// call a method
+{
+  "method": "call",
+  "params": {
+    "path": "logStuff",
+    "args": ["WARN",{
+      "system": "cpu",
+      "category": "epicFail"
+    }]
+  }
+  // Note that this is a Notification as there is no "id"
+}
+
+// call a method
+{
+  "method": "call",
+  "params": {
+    "path": "addNumbers",
+    "args": [1,2]
+  }
+  "id": "91s"
+}
+
+// call a method with object args
+{
+  "method": "call",
+  "params": {
+    "path": "createPerson",
+    "args": {
+      "name": "Jefferson",
+      "age": 22,
+      "hobbies": ["soccer","stamps"]
+    }
+  }
+  "id": "911s"
+}
+
 
 ```
 
