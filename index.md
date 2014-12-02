@@ -630,7 +630,8 @@ above. Note the method name, which has been specified earlier in the fetch call.
     "value": {
       "name": "Paul",
       "age": 63
-    }
+    },
+    "event": "add"
   }
 }
 ```
