@@ -22,7 +22,7 @@ transport can be easily added, as long as they are message based and pertain con
 On top, Jet adds few simple concepts and a handfull of message definitions which
 allow for efficient, flexible and transparent information flow. Implementations are
 pretty small, e.g. the full-featured Javascript Peer for
-[Browsers](https://github.com/lipp/jet-js/blob/master/peer.js) has < 700
+[Browsers](https://github.com/lipp/jet-js/blob/master/src/) has < 700
 lines of code (SLOC) and the production version requires < 2k bytes.
 
 ## Demo
@@ -397,7 +397,7 @@ who join the party lately.
 A Peer who __set__s a State to a new value without getting an error Reponse
 must not make any assumptions about the State's "real" new value! The one and
 only truth about State's value can be queried through a __fetch__. State
-providers are explcitly allowed to "adjust" the value contained in the forwarded
+providers are explicitly allowed to "adjust" the value contained in the forwarded
 __set__ message. E.g. a Peer may decide to the accept a new value of `5.1` but
 actually sets the value to `5.0`, still returning a "truish" result.
 
@@ -630,7 +630,8 @@ above. Note the method name, which has been specified earlier in the fetch call.
     "value": {
       "name": "Paul",
       "age": 63
-    }
+    },
+    "event": "add"
   }
 }
 ```
