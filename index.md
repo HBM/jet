@@ -22,7 +22,7 @@ transport can be easily added, as long as they are message based and pertain con
 On top, Jet adds few simple concepts and a handfull of message definitions which
 allow for efficient, flexible and transparent information flow. Implementations are
 pretty small, e.g. the full-featured Javascript Peer for
-[Browsers](https://github.com/lipp/jet-js/blob/master/peer.js) has < 700
+[Browsers](https://github.com/lipp/jet-js/blob/master/src/) has < 700
 lines of code (SLOC) and the production version requires < 2k bytes.
 
 ## Demo
