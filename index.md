@@ -77,7 +77,7 @@ The full Peer API documentation can be found [here](https://github.com/lipp/jet-
 Note, that Node.js users have to require the Jet module.
 
 ```javascript
-var jet = require('jet');
+var jet = require('node-jet');
 ```
 
 ## Create a Peer
