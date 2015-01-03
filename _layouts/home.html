@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title>{{ page.title }}</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
+  <link href='http://fonts.googleapis.com/css?family=Raleway:400,100' rel='stylesheet' type='text/css'>
+  <!-- syntax highlighting CSS -->
+  <link rel="stylesheet" href="/css/syntax.css">
+
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="/css/main.css">
+
+</head>
+<body>
+  <div id="hero">
+    <div id="logo">
+      <h1 id="brand">Jet</h1>
+      <div><h2 id="tagline">Lightweight, Realtime Message Bus for the Web</h2></div>
+      <iframe id="github-star"  src="http://ghbtns.com/github-btn.html?user=lipp&repo=jet&type=watch&count=true&size=large"
+  allowtransparency="true" frameborder="0" scrolling="0" width="120" height="40"></iframe>
+    </div>
+
+  </div>
+  <div id="toc">
+  </div>
+
+    <div class="highlights">
+      <ul>
+        <li>
+          <img src="/images/ic_search_48px.svg"/>
+          <div>
+          <h3>Filter & Sorting</h3>
+          <p>Powerful filter and sorting mechanisms help you getting only the relevant data,
+            pagination included.
+            Let the Jet Daemon do the heavy work and save bandwidth.
+          </p>
+        </div>
+        </li>
+                <li>
+          <img src="/images/ic_public_48px.svg"/>
+          <div>
+          <h3>Web Native</h3>
+          <p>Your Data is JSON. The API is JSON. Everything is traveling over WebSockets.
+          </p>
+        </div>
+        </li>
+        <li>
+          <img src="/images/ic_sort_48px.svg"/>
+          <div>
+          <h3>Easy Integration</h3>
+          <p>Jet Daemon can be very easily integrated into your server environment.
+            <i>Any</i> Webserver is suitable, since the WebSocket communication optionally may use another port
+            than your webserver.
+          </p>
+        </div>
+        </li>
+        <li>
+          <img src="/images/ic_autorenew_48px.svg"/>
+          <div>
+          <h3>Sync</h3>
+          <p>"Dont call us. We call you!". Strictly publish/subscribe based mechanisms at work.
+            Stay in sync when states or methods gets added, removed or changed.
+          </p>
+        </div>
+        </li>
+        <li>
+          <img src="/images/ic_attachment_48px.svg"/>
+          <div>
+          <h3>Small</h3>
+          <p>Powerfull things kept simple. Complete Javascript for Browser implementation
+            has less than 700 lines of code and is less than 9k in production.
+          </p>
+        </div>
+        </li>
+        <li>
+          <img src="/images/ic_memory_48px.svg"/>
+          <div>
+          <h3>SoC</h3>
+          <p>Runs very nice on RaspberryPi-class SoCs. Jet was designed
+            as a realtime configration and status Bus for embedded devices.
+          </p>
+        </div>
+        </li>
+
+      </ul>
+    </div>
+
+        <div class="downloads">
+          <ul>
+            <li>
+          <a href="http://github.com/lipp/jet-js">
+            <img src="images/HTML5_Badge.svg" alt="HTML5 Powered with Connectivity / Realtime, and Device Access" title="HTML5 Powered with Connectivity / Realtime, and Device Access">
+          </a>
+        </li>
+          <li>
+          <a href="http://github.com/lipp/node-jet">
+            <img src="images/Node.js_Logo.svg" alt="Node.js" title="node-jet"></img>
+          </a>
+        </li>
+          <li>
+          <a href="http://github.com/lipp/lua-jet">
+            <img src="images/Lua-logo-nolabel.svg" alt="Lua" title="lua-jet"></img>
+          </a>
+        </li>
+
+        </ul>
+    </div>
+
+    <iframe id="todo" src="/todo/index.html"></iframe>
+
+
+  <div class="site">
+
+
+
+    {{ content }}
+
+    <div class="footer">
+      <div class="contact">
+        <p>
+          gelipp@gmail.com
+        </p>
+      </div>
+      <div class="contact">
+        <p>
+          Copyright (c) 2013, 2014 by Gerhard Preuss. License is MIT.
+        </p>
+      </div>
+      <div class="contact">
+        <p>
+          <a href="https://github.com/lipp">github.com/lipp</a><br />
+        </p>
+      </div>
+    </div>
+  </div>
+  <a href="https://github.com/lipp/jet"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://camo.githubusercontent.com/365986a132ccd6a44c23a9169022c0b5c890c387/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f7265645f6161303030302e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_red_aa0000.png"></a>
+</body>
+<script src="js/jquery-2.0.3.js"></script>
+<script src="js/jquery.toc.min.js"></script>
+<script src="https://rawgit.com/lipp/jet-js/master/deploy/jet.js"></script>
+<script>
+$('#toc').toc({
+  selectors:'h1',container:'.site',highlightOffset:0
+});
+</script>
+<script>
+// from here: http://stackoverflow.com/questions/6248666/how-to-generate-short-uid-like-ax4j9z-in-js
+function generateUIDNotMoreThan1million() {
+  return ("0000" + (Math.random()*Math.pow(36,4) << 0).toString(36)).slice(-4)
+}
+
+var tickerInterval;
+var peer;
+var connect = function(url) {
+  $('#status').text('Connecting');
+  try {
+    if (tickerInterval) {
+      clearInterval(tickerInterval);
+    }
+    if (peer) {
+      try {
+        peer.close();
+      } catch(e) {}
+    }
+    // create a Jet Peer, providing the Jet (Daemon) Websocket URL
+    peer = new jet.Peer({
+      url: url,
+      onClose: function() {
+        $('#tickers li').each( function(index, li) {
+          li = $(li);
+          li.find('.path > div').text('--');
+          li.find('.count > div').text('0');
+          li.find('.reset').off('click');
+        });
+        // var oldPeer = peer;
+        // if (oldPeer === peer) {
+        //   $('#status').text('Disconnected');
+        //   $('#tickers').fadeOut();
+        //   $('#status').fadeIn();
+        //   clearInterval(tickerInterval);
+        // }
+      },
+      onOpen: function() {
+        tickerInterval = setInterval(function() {
+          var old = ticker.value();
+          ticker.value(++old);
+        },1000);
+        $('#status').text('Connected');
+        $('#status').fadeOut();
+        $('#help').fadeOut();
+        $('#tickers').fadeIn();
+        $('#demo .info').fadeIn();
+      }
+    });
+    var tickerPath = 'tickerfun' +  generateUIDNotMoreThan1million();
+
+    // add as notification
+    var ticker = peer.state({
+      path: tickerPath,
+      value: 0,
+      set: function(val) {
+
+      }
+    });
+
+    var short = function(path) {
+      return path.split('tickerfun')[1].toUpperCase();
+    };
+
+    peer.fetch({
+      path: {
+        equals: tickerPath
+      }
+    }, function(path, event, value) {
+      $('#yourid').text(short(tickerPath) + ' ' + value);
+    });
+
+    peer.fetch({
+      path: {
+        startsWith: 'tickerfun'
+      },
+      sort: {
+        byValue: 'number',
+        descending: true,
+        from: 1,
+        to: 5
+      }
+    }, function(changes, n) {
+      changes.forEach( function(change) {
+        var shortPath = short(change.path);
+        var li = $($('#tickers li:nth-child(' + change.index + ')')[0]);
+        li.find('.path > div').text(shortPath);
+        li.find('.count > div').text(change.value);
+        li.find('.reset').off('click').on('click', function() {
+          peer.set(change.path, 0);
+        });
+      });
+
+      $('#tickers li').each( function(index, li) {
+        if (index >= n) {
+          li = $(li);
+          li.find('.path > div').text('--');
+          li.find('.count > div').text('0');
+          li.find('.reset').off('click');
+        }
+      });
+
+    });
+  } catch(err) {
+    $('#status').text('error ' + err);
+  }
+};
+
+
+// try to (re-)connect when input field changed
+$('#connect').click(function(e) {
+  connect($('#url').val());
+});
+
+
+// initially try to reach the jet daemon hosted at nodejitsu.com (which listens on port 80)
+connect('ws://jet.nodejitsu.com');
+//connect('ws://hbm-000a40:11123');
+
+</script>
+<script>
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-42875905-1', 'jetbus.io');
+ga('send', 'pageview');
+
+</script>
+
+</html>
