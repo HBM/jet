@@ -5,6 +5,7 @@ title_hidden: true
 sections:
  - hero.html
  - push.html
+ - push.html
  - todo.html
 order: 0
 ---

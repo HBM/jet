@@ -134,20 +134,29 @@ section:first-of-type
   padding-bottom: 30px
   display: flex
   width: 100%
-  .decription p
+  min-height: 400px
+  .description
+    width: 40%
+  .visual
+    width: 60%
+
+  .description p
     font-size: 20px
+    //line-height: 1.5em
+    font-weight: 100
+    color: gray
   h3
     font-size: 22px
     font-weight: 800
 
-.split:nth-child(2n)
+.sec:nth-of-type(2n)
   .visual
-    width: 40%
+    order: 1
   .description
-    width: 60%
+    order: 2
 
-.split:nth-child(2n+1)
+.sec:nth-of-type(2n+1)
   .visual
-    width: 40%
+    order: 2
   .description
-    width: 60%
+    order: 1
