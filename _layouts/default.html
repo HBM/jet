@@ -1,84 +1,28 @@
 <!DOCTYPE html>
 <html>
-<head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-  <title>Jet</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
-
-  <!-- syntax highlighting CSS -->
-  <link rel="stylesheet" href="/css/syntax.css">
-
-  <!-- reset CSS -->
-  <link rel="stylesheet" href="/css/reset.css">
-
-  <!-- Custom CSS -->
-  <!-- <link rel="stylesheet" href="/css/main.css"> -->
-  <link rel="stylesheet" href="/css/style.css">
-
-</head>
+{% include head.html %}
 <body>
-    <header>
-      <nav id="main-nav">
-        <ul>
-          {% for node in site.pages | sort: 'order' %}
-          {% if page.url == node.url %}
-          <li class="active"><a href="{{node.url}}" class="active">{{node.title}}</a></li>
-          {% else %}
-          <li><a href="{{node.url}}">{{node.title}}</a></li>
-          {% endif %}
-          {% endfor %}
-
-          <!-- <li><a href="/index.html">Jet</a></li>
-          <li><a href="/quickstart.html">Get Started</a></li>
-          <li><a href="/concepts.html">Concepts</a></li>
-          <li><a href="/examples.html">Examples</a></li>
-          <li><a href="/protocol.html">Protocol</a></li> -->
-        </ul>
-        <iframe id="github-star"  src="http://ghbtns.com/github-btn.html?user=lipp&repo=jet&type=watch&count=true&size=large"
-          allowtransparency="true" frameborder="0" scrolling="0" width="120" height="30"></iframe>
-      </nav>
-    </header>
+  {% include header.html %}
+  {% if page.title_hidden != true %}
   <section class="sec-title">
     <h1>{{page.title}}</h1>
   </section>
-  <section>
-    <nav id="toc">
-    </nav>
+  {% endif %}
+  {% if page.sections != null %}
+  {% for sec in page.sections %}
+  <section class="{{sec | remove: '.html'}}">
+    {% include {{sec}} %}
   </section>
+  {% endfor %}
+  {% else %}
   <section>
     <article>
-      {{ content }}
+    {{content}}
     </article>
   </section>
-    <footer>
-      <div class="contact">
-        <p>
-          gelipp@gmail.com
-        </p>
-      </div>
-      <div class="contact">
-        <p>
-          Copyright (c) 2013, 2014, 2015 by Gerhard Preuss. License is MIT.
-        </p>
-      </div>
-      <div class="contact">
-        <p>
-          <a href="https://github.com/lipp">github.com/lipp</a><br />
-        </p>
-      </div>
-    </footer>
+  {% endif %}
+  {% include footer.html %}
 </body>
-
-<script src="js/jquery-2.0.3.js"></script>
-
-<script src="js/jquery.toc.min.js"></script>
-
-<script>
-$('#toc').toc({
-  selectors:'h1',container:'.site',highlightOffset:0
-});
-</script>
 
 <script>
 (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
@@ -88,7 +32,6 @@ $('#toc').toc({
 
 ga('create', 'UA-42875905-1', 'jetbus.io');
 ga('send', 'pageview');
-
 </script>
 
 </html>

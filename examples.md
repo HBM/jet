@@ -1,6 +1,7 @@
 ---
 layout: default
 title: Examples
+order: 3
 ---
 
 The following examples demonstrate Javascript peer API usage and (protocol) messages.

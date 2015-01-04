@@ -1,6 +1,7 @@
 ---
 layout: default
 title: Get Started
+order: 2
 ---
 
 This is a quick start guide for writing Peers using the Javascript Peer API for

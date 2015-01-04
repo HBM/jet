@@ -1,7 +1,10 @@
 ---
 layout: default
 title: Jet
-order: 1
+title_hidden: true
+sections:
+ - hero.html
+order: 0
 ---
 
 <div id="hero">
