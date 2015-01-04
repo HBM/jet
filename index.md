@@ -4,6 +4,8 @@ title: Jet
 title_hidden: true
 sections:
  - hero.html
+ - push.html
+ - todo.html
 order: 0
 ---
 
