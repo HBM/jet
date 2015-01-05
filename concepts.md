@@ -1,6 +1,9 @@
 ---
 layout: default
 title: Concepts
+sections:
+ - daemon.html
+ - peer.html
 order: 1
 ---
 
