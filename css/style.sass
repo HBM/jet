@@ -25,7 +25,7 @@ body
 
 p
   font-size: 16px
-  text-align: justify
+  //text-align: justify
   line-height: 1.5em
 
 section, header, footer
@@ -133,21 +133,38 @@ section:first-of-type
   padding-top: 30px
   padding-bottom: 30px
   display: flex
+  justify-content: space-between
   width: 100%
+  align-items: center
   min-height: 400px
   .description
-    width: 40%
+    width: 59%
+    padding-bottom: 20px
   .visual
-    width: 60%
+    width: 39%
 
   .description p
-    font-size: 20px
+    padding-top: 20px
+    font-size: 18px
     //line-height: 1.5em
     font-weight: 100
     color: gray
+    strong
+      font-weight: 400
+    em
+      color: rgb(216, 52, 214)
+      font-style: italic
   h3
-    font-size: 22px
-    font-weight: 800
+    font-family: "Raleway"
+    font-size: 30px
+    font-weight: 400
+    padding-bottom: 25px
+    color: rgb(121, 121, 121)
+  h3::before
+    content: "\201e"
+  h3::after
+    content: "\201D"
+
 
 .sec:nth-of-type(2n)
   .visual
@@ -155,7 +172,8 @@ section:first-of-type
   .description
     order: 2
 
-.sec:nth-of-type(2n+1)
+.sec:nth-of-type(2n+1):not(.hero)
+  background-color: rgb(237, 237, 237)
   .visual
     order: 2
   .description

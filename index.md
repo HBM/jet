@@ -4,8 +4,9 @@ title: Jet
 title_hidden: true
 sections:
  - hero.html
- - push.html
- - push.html
+ - all-in.html
+ - free.html
+ - bus.html
  - todo.html
 order: 0
 ---
