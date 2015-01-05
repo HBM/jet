@@ -4,6 +4,8 @@ title: Concepts
 sections:
  - daemon.html
  - peer.html
+ - state.html
+ - fetching.html
 order: 1
 ---
 
