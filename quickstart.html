@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title>Jet</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
+
+  <!-- syntax highlighting CSS -->
+  <link rel="stylesheet" href="/css/syntax.css">
+
+  <!-- reset CSS -->
+  <link rel="stylesheet" href="/css/reset.css">
+
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+      <header>
+      <nav id="main-nav">
+        <ul>
+          
+          
+          
+          
+          
+          
+          <li><a href="/index.html">Jet</a></li>
+          
+          
+          
+          
+          
+          <li><a href="/concepts.html">Concepts</a></li>
+          
+          
+          
+          
+          
+          <li class="active"><a href="/quickstart.html" class="active">Get Started</a></li>
+          
+          
+          
+          
+          
+          <li><a href="/examples.html">Examples</a></li>
+          
+          
+          
+          
+          
+          <li><a href="/protocol.html">Protocol</a></li>
+          
+          
+          
+        </ul>
+        <iframe id="github-star"  src="http://ghbtns.com/github-btn.html?user=lipp&repo=jet&type=watch&count=true&size=large"
+          allowtransparency="true" frameborder="0" scrolling="0" width="120" height="30"></iframe>
+      </nav>
+    </header>
+
+  
+  <section class="sec-title">
+    <h1>Get Started</h1>
+  </section>
+  
+  
+  <section>
+    <article>
+    <p>This is a quick start guide for writing Peers using the Javascript Peer API for
+<a href="http://github.com/lipp/jet-js">Browsers</a> and <a href="http://github.com/lipp/node-jet">Node.js</a>.
+It may help you getting a basic understanding of Jet even if your are not
+planing to use one of this Peer implementations.
+The full Peer API documentation can be found <a href="https://github.com/lipp/jet-js#api">here</a>.</p>
+
+<p>Note, that Node.js users have to require the Jet module.</p>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">jet</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;node-jet&#39;</span><span class="p">);</span>
+</code></pre></div>
+<h2>Create a Peer</h2>
+
+<p>To interact with a Jet Daemon you need a Peer. The constructor sets up a network
+connection to the Daemon. All further actions using the Peer will be based on
+sending and receiving messages to/from the Daemon. If necessary, the Daemon routes
+messages from Peer to Peer.</p>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">peer</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">jet</span><span class="p">.</span><span class="nx">Peer</span><span class="p">({</span>
+  <span class="nx">url</span><span class="o">:</span> <span class="s1">&#39;ws://jet.nodejitsu.com:80&#39;</span>
+<span class="p">});</span>
+</code></pre></div>
+<h2>Add States</h2>
+
+<p>Peers can add States to the Daemon. A State must have a <strong>unique path</strong>
+and a <strong>value</strong>, which can be of any non-function type. States are visible to other
+Peers (by fetching) and any Peer may try to <strong>set</strong> the State to a new value.
+Whenever someone tries to set a State to a new value, the corresponding <code>set</code>
+callback function will be invoked. Per default, when the <code>set</code> callback does not throw an error,
+a State change is posted automatically, thus keeping all other Peers and the
+Daemon in sync.</p>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">machineName</span> <span class="o">=</span> <span class="s1">&#39;Animal&#39;</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">machineNameState</span> <span class="o">=</span> <span class="nx">peer</span><span class="p">.</span><span class="nx">state</span><span class="p">({</span>
+  <span class="nx">path</span><span class="o">:</span> <span class="s1">&#39;machine/name&#39;</span><span class="p">,</span>
+  <span class="nx">value</span><span class="o">:</span> <span class="nx">machineName</span><span class="p">,</span>
+  <span class="nx">set</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">newName</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">machineName</span> <span class="o">=</span> <span class="nx">newName</span><span class="p">;</span>
+  <span class="p">}</span>
+<span class="p">});</span>
+</code></pre></div>
+<p>If a State does not provide a set callback function, it is considered read-only
+and an appropriate error response will be emitted.
+States may also change spontaneously at will, without someone trying to
+<strong>set</strong> the State. E.g. one could add a &quot;cpu-load&quot; State, which changes very
+frequently.</p>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="c1">// add a state</span>
+<span class="kd">var</span> <span class="nx">cpuLoadState</span> <span class="o">=</span> <span class="nx">peer</span><span class="p">.</span><span class="nx">state</span><span class="p">({</span>
+  <span class="nx">path</span><span class="o">:</span> <span class="s1">&#39;cpu/load&#39;</span><span class="p">,</span>
+  <span class="nx">value</span><span class="o">:</span> <span class="nx">readCpuLoad</span><span class="p">()</span>
+<span class="p">});</span>
+
+<span class="c1">// async post new value</span>
+<span class="nx">setTimeout</span><span class="p">(</span><span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+  <span class="nx">cpuLoadState</span><span class="p">.</span><span class="nx">value</span><span class="p">(</span><span class="nx">readCpuLoad</span><span class="p">());</span>
+<span class="p">},</span><span class="mi">3000</span><span class="p">);</span>
+</code></pre></div>
+<p>In opposite to <a href="http://firebase.com">Firebase</a> there is no persistency layer.
+Jet States are &quot;runtime&quot; States as they die with the Peer. Adding persistency
+would be a task for the respective Peer to implement.</p>
+
+<h2>Add Methods</h2>
+
+<p>Peers can also add Methods to the Daemon. Like States, Methods must have a
+<strong>unique path</strong> and are visible to other Peers (by fetching). Whenever some Peer
+calls the Method, the <code>call</code> callback function will be invoked.
+Method arguments can be of any non-function type and the number of arguments
+is flexible. The Method may return a value of any type or an exception might be
+thrown during execution.</p>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="c1">// add a method</span>
+<span class="kd">var</span> <span class="nx">greet</span> <span class="o">=</span> <span class="nx">peer</span><span class="p">.</span><span class="nx">method</span><span class="p">({</span>
+  <span class="nx">path</span><span class="o">:</span> <span class="s1">&#39;greet&#39;</span><span class="p">,</span>
+  <span class="nx">call</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">name</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">name</span><span class="p">.</span><span class="nx">first</span> <span class="o">===</span> <span class="s1">&#39;John&#39;</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">throw</span> <span class="s1">&#39;John is a bad guy!&#39;</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="kd">var</span> <span class="nx">greeting</span> <span class="o">=</span> <span class="s1">&#39;Hello &#39;</span> <span class="o">+</span> <span class="nx">name</span><span class="p">.</span><span class="nx">first</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span> <span class="o">+</span> <span class="nx">name</span><span class="p">.</span><span class="nx">last</span><span class="p">;</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">greeting</span><span class="p">);</span>
+    <span class="k">return</span> <span class="nx">greeting</span><span class="p">;</span>
+  <span class="p">}</span>
+<span class="p">});</span>
+</code></pre></div>
+<h2>Fetch States and Methods</h2>
+
+<p>Other Peers can fetch States and Methods. Fetching is like having a realtime
+query with automatic push notifications for changes. The fetch callback will be
+invoked if:</p>
+
+<ul>
+<li>a State/Method is added</li>
+<li>a State/Method is removed</li>
+<li>a State&#39;s value has changed</li>
+</ul>
+
+<p>Thus Peers are always in sync! Fetch expressions can be based on paths and/or
+values. Note that the Daemon caches all States and Methods and thus is able to
+&quot;fake&quot; add events for Peers joining the party lately. This feature allows Peers
+to have hotplug-like behaviour, dependency based start-up sequences etc.</p>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="nx">peer</span><span class="p">.</span><span class="nx">fetch</span><span class="p">({</span>
+  <span class="nx">path</span><span class="o">:</span> <span class="p">{</span>
+    <span class="nx">equalsOneOf</span><span class="o">:</span> <span class="p">[</span><span class="s1">&#39;foo&#39;</span><span class="p">,</span><span class="s1">&#39;addNumbers&#39;</span><span class="p">]</span>
+  <span class="p">},</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">path</span><span class="p">,</span> <span class="nx">event</span><span class="p">,</span> <span class="nx">value</span><span class="p">)</span> <span class="p">{</span>
+      <span class="c1">// the value is undefined for methods</span>
+  <span class="p">}</span>
+<span class="p">});</span>
+</code></pre></div>
+<p>If desired, the fetched elements can also be delivered sorted, e.g. querying the
+top ten players could look like:</p>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="nx">peer</span><span class="p">.</span><span class="nx">fetch</span><span class="p">({</span>
+    <span class="nx">path</span><span class="o">:</span> <span class="p">{</span>
+      <span class="nx">startsWith</span><span class="o">:</span> <span class="s1">&#39;players/&#39;</span>
+    <span class="p">},</span>
+    <span class="nx">sort</span><span class="o">:</span> <span class="p">{</span>
+      <span class="nx">from</span><span class="o">:</span> <span class="mi">1</span><span class="p">,</span>
+      <span class="nx">to</span><span class="o">:</span> <span class="mi">10</span><span class="p">,</span>
+      <span class="nx">descending</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
+      <span class="nx">byValueField</span><span class="o">:</span> <span class="p">{</span>
+        <span class="nx">score</span><span class="o">:</span> <span class="s1">&#39;number&#39;</span>
+      <span class="p">}</span>
+    <span class="p">},</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">changes</span><span class="p">,</span> <span class="nx">n</span><span class="p">)</span> <span class="p">{</span>
+  <span class="p">}</span>
+<span class="p">});</span>
+</code></pre></div>
+<h2>Set States</h2>
+
+<p>Any Peer may (try) to set States to other values. This operation may succeed
+or fail as determined by the implementation of the <code>set</code> callback function defined
+by the owning Peer of the respective State. The Daemon will route the request
+to the Peer which added the State (or reply with an error if the State is not
+available).</p>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="nx">peer</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s1">&#39;foo&#39;</span><span class="p">,</span> <span class="mi">6271</span><span class="p">,</span> <span class="p">{</span>
+  <span class="nx">success</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;great success&#39;</span><span class="p">);</span>
+  <span class="p">},</span>
+  <span class="nx">error</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;omg&#39;</span><span class="p">,</span> <span class="nx">err</span><span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">});</span>
+
+<span class="c1">//if you dont care about the result, leave the callbacks out</span>
+<span class="nx">peer</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s1">&#39;foo&#39;</span><span class="p">,</span> <span class="mi">416</span><span class="p">);</span>
+</code></pre></div>
+<p>You must not make any assumptions about side-effects of a set call without error.
+In particular, the actual value of a State can only be determined by fetching
+it.</p>
+
+<h2>Call Methods</h2>
+
+<p>Any Peer may (try) to call Methods. The return value is determined by the
+implementation of the <code>call</code> callback function defined by the owning Peer of the
+respective Method. The Daemon will route the request to the Peer which added the
+Method (or reply with an error if the Method is not available).</p>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="nx">peer</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="s1">&#39;greet&#39;</span><span class="p">,</span> <span class="p">{</span><span class="nx">first</span><span class="o">:</span> <span class="s1">&#39;Jim&#39;</span><span class="p">,</span> <span class="nx">last</span><span class="o">:</span> <span class="s1">&#39;White&#39;</span><span class="p">},</span> <span class="p">{</span>
+  <span class="nx">success</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;great success&#39;</span><span class="p">);</span>
+  <span class="p">},</span>
+  <span class="nx">error</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;omg&#39;</span><span class="p">,</span> <span class="nx">err</span><span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">});</span>
+
+<span class="c1">//if you dont care about the result, leave the callbacks out</span>
+<span class="nx">peer</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="s1">&#39;greet&#39;</span><span class="p">,</span> <span class="p">{</span><span class="nx">first</span><span class="o">:</span> <span class="s1">&#39;John&#39;</span><span class="p">,</span> <span class="nx">last</span><span class="o">:</span> <span class="s1">&#39;Carter&#39;</span><span class="p">});</span>
+</code></pre></div>
+<h2>Remove States</h2>
+
+<p>States can be removed by the owning Peer. States are also implicitly removed by
+the Daemon if the network connection to a Peer breaks. In any case, all fetching
+Peers will be informed.</p>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">foo</span> <span class="o">=</span> <span class="nx">peer</span><span class="p">.</span><span class="nx">state</span><span class="p">({</span>
+  <span class="nx">path</span><span class="o">:</span> <span class="s1">&#39;foo&#39;</span><span class="p">,</span>
+  <span class="nx">value</span><span class="o">:</span> <span class="mi">123</span>
+<span class="p">});</span>
+<span class="nx">foo</span><span class="p">.</span><span class="nx">remove</span><span class="p">();</span>
+</code></pre></div>
+<h2>Remove Methods</h2>
+
+<p>Methods can be removed by the owning Peer. Methods are also implicitly removed by
+the Daemon if the network connection to a Peer breaks. In any case, all fetching
+Peers will be informed.</p>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">greet</span> <span class="o">=</span> <span class="nx">peer</span><span class="p">.</span><span class="nx">method</span><span class="p">({</span>
+  <span class="nx">path</span><span class="o">:</span> <span class="s1">&#39;greet&#39;</span><span class="p">,</span>
+  <span class="nx">call</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{}</span>
+<span class="p">});</span>
+<span class="nx">greet</span><span class="p">.</span><span class="nx">remove</span><span class="p">();</span>
+</code></pre></div>
+    </article>
+  </section>
+  
+  <footer>
+  <nav>
+  <p class="copyright">
+    &copy;2015 <a href="https://github.com/lipp">Gerhard Preuss</a> under the terms
+    of the <a href="https://github.com/lipp/jet/blob/master/LICENSE">MIT License</a>
+  </p>
+  <div>
+    <a href="https://github.com/lipp/jet"><img src="images/github2.svg"/></a>
+    <a href="https://twitter.com/gelipp2000"><img src="images/twitter2.svg"/></a>
+    <a href="https://plus.google.com/u/0/+GerhardPreuss/"><img src="images/google+.svg"/></a>
+  </div>
+</nav>
+</footer>
+
+</body>
+
+<script>
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-42875905-1', 'jetbus.io');
+ga('send', 'pageview');
+</script>
+
+</html>

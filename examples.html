@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title>Jet</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
+
+  <!-- syntax highlighting CSS -->
+  <link rel="stylesheet" href="/css/syntax.css">
+
+  <!-- reset CSS -->
+  <link rel="stylesheet" href="/css/reset.css">
+
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+      <header>
+      <nav id="main-nav">
+        <ul>
+          
+          
+          
+          
+          
+          
+          <li><a href="/index.html">Jet</a></li>
+          
+          
+          
+          
+          
+          <li><a href="/concepts.html">Concepts</a></li>
+          
+          
+          
+          
+          
+          <li><a href="/quickstart.html">Get Started</a></li>
+          
+          
+          
+          
+          
+          <li class="active"><a href="/examples.html" class="active">Examples</a></li>
+          
+          
+          
+          
+          
+          <li><a href="/protocol.html">Protocol</a></li>
+          
+          
+          
+        </ul>
+        <iframe id="github-star"  src="http://ghbtns.com/github-btn.html?user=lipp&repo=jet&type=watch&count=true&size=large"
+          allowtransparency="true" frameborder="0" scrolling="0" width="120" height="30"></iframe>
+      </nav>
+    </header>
+
+  
+  <section class="sec-title">
+    <h1>Examples</h1>
+  </section>
+  
+  
+  <section>
+    <article>
+    <p>The following examples demonstrate Javascript peer API usage and (protocol) messages.
+They actually run in your browser. You can edit them on <a href="http://codepen.io">codepen</a> if desired.
+Most of them use the Jet Daemon hosted at <a href="http://nodejitsu.com">nodejitsu</a> with the
+Daemon URL: <code>ws://jet.nodejitsu.com</code> (Port 80). The nodejitsu Jet Daemon is public
+and you may notice activity of other peers &quot;playing&quot; with it.</p>
+
+<h1>Connect</h1>
+
+<p>This example creates a peer and reports back the connection status.</p>
+
+<p>The most relevant code snippet is:</p>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">peer</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">jet</span><span class="p">.</span><span class="nx">Peer</span><span class="p">({</span>
+      <span class="nx">url</span><span class="o">:</span> <span class="s1">&#39;ws://jet.nodejitsu.com:80&#39;</span><span class="p">,</span>
+      <span class="nx">onOpen</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{}</span>
+    <span class="p">});</span>
+</code></pre></div>
+<p><div data-height="345" data-theme-id="0" data-slug-hash="GEyuq" data-default-tab="js" class='codepen'><pre><code>var connect = function(url) {
+   try {
+    $(&#x27;#status&#x27;).text(&#x27;disconnected&#x27;);
+    // create a Jet Peer, providing the Jet (Daemon) Websocket URL
+    var peer = new jet.Peer({
+      url: url,
+      onOpen: function() {
+        $(&#x27;#status&#x27;).text(&#x27;connected&#x27;);
+      },
+    });
+  } catch(err) {
+    $(&#x27;#status&#x27;).text(&#x27;error &#x27; + err);
+  }
+};</p>
+
+<p>// try to (re-)connect when button is clicked
+$(&#x27;button&#x27;).click(function(e) {
+  connect($(&#x27;input&#x27;).val());
+  e.preventDefault();
+});</p>
+
+<p>// try to (re-)connect when input field changed
+$(&#x27;input&#x27;).change(function(e) {
+  connect($(&#x27;input&#x27;).val());
+});
+</code></pre>
+<p>See the Pen <a href='http://codepen.io/lipp/pen/GEyuq/'>Jet Connect</a> by Gerhard Preuss (<a href='http://codepen.io/lipp'>@lipp</a>) on <a href='http://codepen.io'>CodePen</a>.</p>
+</div><script async src="//codepen.io/assets/embed/ei.js"></script></p>
+
+<h1>Add States</h1>
+
+<p>This example creates a Peer and adds two States with random. One, ignoring the
+Daemon response, the other one logging the Daemon response to console. The message
+traffic between the Daemon and the Peer is visible in the result window bottom.</p>
+
+<p>The most relevant code snippet is:</p>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="c1">// create read-only state (no set callback provided)</span>
+<span class="c1">// ignore the Daemon response by leaving out the callback object.</span>
+<span class="c1">// the request is a notification.</span>
+<span class="nx">peer</span><span class="p">.</span><span class="nx">state</span><span class="p">({</span>
+  <span class="nx">path</span><span class="o">:</span> <span class="s1">&#39;foo&#39;</span><span class="p">,</span>
+  <span class="nx">value</span><span class="o">:</span> <span class="mi">123</span>
+<span class="p">});</span>
+
+<span class="c1">// create writable state,</span>
+<span class="c1">// provide callback object with error and success handlers.</span>
+<span class="c1">// the Daemon will send a response, as the request is not a</span>
+<span class="c1">// notification.</span>
+<span class="kd">var</span> <span class="nx">bar</span> <span class="o">=</span> <span class="s1">&#39;hello&#39;</span><span class="p">;</span>
+<span class="nx">peer</span><span class="p">.</span><span class="nx">state</span><span class="p">({</span>
+  <span class="nx">path</span><span class="o">:</span> <span class="s1">&#39;bar&#39;</span><span class="p">,</span>
+  <span class="nx">value</span><span class="o">:</span> <span class="nx">bar</span><span class="p">,</span>
+  <span class="nx">set</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">newVal</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">bar</span> <span class="o">=</span> <span class="nx">newVal</span><span class="p">;</span>
+  <span class="p">}</span>
+  <span class="p">},</span> <span class="p">{</span>
+  <span class="nx">success</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{},</span>
+  <span class="nx">error</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="p">{}</span>
+<span class="p">});</span>
+</code></pre></div>
+<p><div data-height="870" data-theme-id="0" data-slug-hash="kLlfB" data-default-tab="js" class='codepen'><pre><code>var connect = function(url) {
+   try {
+    $(&#x27;#status&#x27;).text(&#x27;disconnected&#x27;);
+    // create a Jet Peer, providing the Jet (Daemon) Websocket URL
+    var peer = new jet.Peer({
+      url: url,
+      onOpen: function() {
+        $(&#x27;#status&#x27;).text(&#x27;connected&#x27;);
+      },
+      onSend: function(message) {
+        addLogEntry(&#x27;Out&#x27;,message);
+      },
+      onReceive: function(message) {
+        addLogEntry(&#x27;In&#x27;,message);
+      }
+    });
+     var random = &#x27;random&#x27; + new Date().getTime();
+     // add as notification
+     peer.state({
+       path: random,
+       value: 123
+     });</p>
+<div class="highlight"><pre><code class="language-text" data-lang="text"> random = &amp;#x27;random_2_&amp;#x27; + new Date().getTime();
+ // add as request
+ peer.state({
+   path: random,
+   value: 123
+ },{
+   success: function() {
+     console.log(&amp;#x27;ok&amp;#x27;);
+   },
+   error: function(err) {
+     console.log(err);
+   }
+ });
+</code></pre></div>
+<p>} catch(err) {
+    $(&#x27;#status&#x27;).text(&#x27;error &#x27; + err);
+  }
+};</p>
+
+<p>// try to (re-)connect when button is clicked
+$(&#x27;button&#x27;).click(function(e) {
+  connect($(&#x27;input&#x27;).val());
+  e.preventDefault();
+});</p>
+
+<p>// try to (re-)connect when input field changed
+$(&#x27;input&#x27;).change(function(e) {
+  connect($(&#x27;input&#x27;).val());
+});</p>
+
+<p>var off;
+var addLogEntry = function(direction, message) {
+  var now = new Date().getTime();
+  if (!off) {
+    off = now;
+  }
+  var tr = $(&#x27;&lt;tr&gt;&lt;/tr&gt;&#x27;);
+  tr.append(&#x27;&lt;td&gt;&#x27; + (now-off) + &#x27;&lt;/td&gt;&#x27;);
+  tr.append(&#x27;&lt;td&gt;&#x27; + direction + &#x27;&lt;/td&gt;&#x27;);
+  tr.append(&#x27;&lt;td&gt;&#x27; + message + &#x27;&lt;/td&gt;&#x27;);
+  $(&#x27;#log tbody&#x27;).append(tr);
+};</p>
+
+<p></code></pre>
+<p>See the Pen <a href='http://codepen.io/lipp/pen/kLlfB/'>Jet Add State</a> by Gerhard Preuss (<a href='http://codepen.io/lipp'>@lipp</a>) on <a href='http://codepen.io'>CodePen</a>.</p>
+</div><script async src="//codepen.io/assets/embed/ei.js"></script></p>
+
+<h1>Fetch Simple</h1>
+
+<p>This examples creates a Peer, adds two States with random name (&quot;random...&quot;)
+and fetches everything with a path starting with &quot;random&quot;.
+The message traffic between the Daemon and the Peer is visible in the result
+window bottom. Compare the (fetch) <code>id</code> of the <code>fetch</code> message with the incoming
+messages&#39; <code>method</code> field. The incoming messages can be considered <strong>Passive</strong> as
+they are Requests targeted at the Peer, embedding a Peer defined <code>method</code> field
+value.</p>
+
+<p>This is the most relevant snippet:</p>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="c1">// fetch and provide: 1) fetch rule, 2) callback for fetching</span>
+<span class="nx">peer</span><span class="p">.</span><span class="nx">fetch</span><span class="p">({</span><span class="nx">path</span><span class="o">:</span> <span class="p">{</span><span class="nx">startsWith</span><span class="o">:</span> <span class="s1">&#39;random&#39;</span><span class="p">}},</span> <span class="kd">function</span><span class="p">(</span><span class="nx">path</span><span class="p">,</span> <span class="nx">event</span><span class="p">,</span> <span class="nx">value</span><span class="p">){});</span>
+</code></pre></div>
+<p><div data-height="923" data-theme-id="0" data-slug-hash="Cglby" data-default-tab="js" class='codepen'><pre><code>var connect = function(url) {
+   try {
+    $(&#x27;#status&#x27;).text(&#x27;disconnected&#x27;);
+    // create a Jet Peer, providing the Jet (Daemon) Websocket URL
+    var peer = new jet.Peer({
+      url: url,
+      onOpen: function() {
+        $(&#x27;#status&#x27;).text(&#x27;connected&#x27;);
+      },
+      onSend: function(message) {
+        addLogEntry(&#x27;Out&#x27;,message);
+      },
+      onReceive: function(message) {
+        addLogEntry(&#x27;In&#x27;,message);
+      }
+    });
+     var random = &#x27;random&#x27; + new Date().getTime();
+     // add as notification
+     peer.state({
+       path: random,
+       value: 123
+     });</p>
+<div class="highlight"><pre><code class="language-text" data-lang="text"> random = &amp;#x27;random_2_&amp;#x27; + new Date().getTime();
+ // add as request
+ peer.state({
+   path: random,
+   value: 123
+ });
+
+ peer.fetch({
+   path: {
+     startsWith: &amp;#x27;random&amp;#x27;
+   }
+ },function(path, event, value) {
+   console.log(&amp;#x27;fetch&amp;#x27;, path, event, value);
+ });
+</code></pre></div>
+<p>} catch(err) {
+    $(&#x27;#status&#x27;).text(&#x27;error &#x27; + err);
+  }
+};</p>
+
+<p>// try to (re-)connect when button is clicked
+$(&#x27;button&#x27;).click(function(e) {
+  connect($(&#x27;input&#x27;).val());
+  e.preventDefault();
+});</p>
+
+<p>// try to (re-)connect when input field changed
+$(&#x27;input&#x27;).change(function(e) {
+  connect($(&#x27;input&#x27;).val());
+});</p>
+
+<p>var off;
+var addLogEntry = function(direction, message) {
+  var now = new Date().getTime();
+  if (!off) {
+    off = now;
+  }
+  var tr = $(&#x27;&lt;tr&gt;&lt;/tr&gt;&#x27;);
+  tr.append(&#x27;&lt;td&gt;&#x27; + (now-off) + &#x27;&lt;/td&gt;&#x27;);
+  tr.append(&#x27;&lt;td&gt;&#x27; + direction + &#x27;&lt;/td&gt;&#x27;);
+  tr.append(&#x27;&lt;td&gt;&#x27; + message + &#x27;&lt;/td&gt;&#x27;);
+  $(&#x27;#log tbody&#x27;).append(tr);
+};</p>
+
+<p></code></pre>
+<p>See the Pen <a href='http://codepen.io/lipp/pen/Cglby/'>Jet Fetch State</a> by Gerhard Preuss (<a href='http://codepen.io/lipp'>@lipp</a>) on <a href='http://codepen.io'>CodePen</a>.</p>
+</div><script async src="//codepen.io/assets/embed/ei.js"></script></p>
+
+<h1>Change State</h1>
+
+<p>This examples creates a Peer, adds a &quot;ticker&quot; States with random name (so that at least
+these State are available for fetching) and fetches everything with a path starting
+with &quot;ticker&quot;. Every second the ticker value is incremented by one.
+The message traffic between the Daemon and the Peer is visible
+in the result window bottom.</p>
+
+<p>This is the most relevant snippet:</p>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">ticker</span> <span class="o">=</span> <span class="nx">peer</span><span class="p">.</span><span class="nx">state</span><span class="p">({</span>
+  <span class="nx">path</span><span class="o">:</span> <span class="s1">&#39;ticker&#39;</span><span class="p">,</span>
+  <span class="nx">value</span><span class="o">:</span> <span class="mi">1</span>
+<span class="p">});</span>
+
+<span class="nx">setInterval</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+  <span class="kd">var</span> <span class="nx">old</span> <span class="o">=</span> <span class="nx">ticker</span><span class="p">.</span><span class="nx">value</span><span class="p">();</span>
+  <span class="nx">ticker</span><span class="p">.</span><span class="nx">value</span><span class="p">(</span><span class="o">++</span><span class="nx">old</span><span class="p">);</span> <span class="c1">// post state change</span>
+<span class="p">},</span> <span class="mi">1000</span><span class="p">);</span>
+</code></pre></div>
+<p><div data-height="945" data-theme-id="0" data-slug-hash="eKBpG" data-default-tab="js" class='codepen'><pre><code>var tickTimer;
+var connect = function(url) {
+  try {
+    $(&#x27;#status&#x27;).text(&#x27;disconnected&#x27;);
+    // create a Jet Peer, providing the Jet (Daemon) Websocket URL
+    var peer = new jet.Peer({
+      url: url,
+      onOpen: function() {
+        $(&#x27;#status&#x27;).text(&#x27;connected&#x27;);
+      },
+      onSend: function(message) {
+        addLogEntry(&#x27;Out&#x27;,message);
+      },
+      onReceive: function(message) {
+        addLogEntry(&#x27;In&#x27;,message);
+      }
+    });
+    var path = &#x27;ticker_#&#x27; + new Date().getTime();
+    // add as notification
+    var ticker = peer.state({
+      path: path,
+      value: 1
+    });</p>
+<div class="highlight"><pre><code class="language-text" data-lang="text">if (tickTimer) {
+  clearInterval(tickTimer);
+}
+tickTimer = setInterval(function() {
+  var old = ticker.value();
+  ticker.value(++old);
+}, 1000);
+
+peer.fetch({
+  path: {
+    startsWith: &amp;#x27;ticker_&amp;#x27;
+  }
+},function(path, event, value) {
+  // console.log(&amp;#x27;fetch&amp;#x27;, path, event, value);
+});
+</code></pre></div>
+<p>} catch(err) {
+    $(&#x27;#status&#x27;).text(&#x27;error &#x27; + err);
+  }
+};</p>
+
+<p>// try to (re-)connect when button is clicked
+$(&#x27;button&#x27;).click(function(e) {
+  connect($(&#x27;input&#x27;).val());
+  e.preventDefault();
+});</p>
+
+<p>// try to (re-)connect when input field changed
+$(&#x27;input&#x27;).change(function(e) {
+  connect($(&#x27;input&#x27;).val());
+});</p>
+
+<p>var off;
+var addLogEntry = function(direction, message) {
+  var now = new Date().getTime();
+  if (!off) {
+    off = now;
+  }
+  var tr = $(&#x27;&lt;tr&gt;&lt;/tr&gt;&#x27;);
+  tr.append(&#x27;&lt;td&gt;&#x27; + (now-off) + &#x27;&lt;/td&gt;&#x27;);
+  tr.append(&#x27;&lt;td&gt;&#x27; + direction + &#x27;&lt;/td&gt;&#x27;);
+  tr.append(&#x27;&lt;td&gt;&#x27; + message + &#x27;&lt;/td&gt;&#x27;);
+  $(&#x27;#log tbody&#x27;).append(tr);
+};</p>
+
+<p></code></pre>
+<p>See the Pen <a href='http://codepen.io/lipp/pen/eKBpG/'>Jet Change State</a> by Gerhard Preuss (<a href='http://codepen.io/lipp'>@lipp</a>) on <a href='http://codepen.io'>CodePen</a>.</p>
+</div><script async src="//codepen.io/assets/embed/ei.js"></script></p>
+
+    </article>
+  </section>
+  
+  <footer>
+  <nav>
+  <p class="copyright">
+    &copy;2015 <a href="https://github.com/lipp">Gerhard Preuss</a> under the terms
+    of the <a href="https://github.com/lipp/jet/blob/master/LICENSE">MIT License</a>
+  </p>
+  <div>
+    <a href="https://github.com/lipp/jet"><img src="images/github2.svg"/></a>
+    <a href="https://twitter.com/gelipp2000"><img src="images/twitter2.svg"/></a>
+    <a href="https://plus.google.com/u/0/+GerhardPreuss/"><img src="images/google+.svg"/></a>
+  </div>
+</nav>
+</footer>
+
+</body>
+
+<script>
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-42875905-1', 'jetbus.io');
+ga('send', 'pageview');
+</script>
+
+</html>

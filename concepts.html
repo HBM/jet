@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title>Jet</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
+
+  <!-- syntax highlighting CSS -->
+  <link rel="stylesheet" href="/css/syntax.css">
+
+  <!-- reset CSS -->
+  <link rel="stylesheet" href="/css/reset.css">
+
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+      <header>
+      <nav id="main-nav">
+        <ul>
+          
+          
+          
+          
+          
+          
+          <li><a href="/index.html">Jet</a></li>
+          
+          
+          
+          
+          
+          <li class="active"><a href="/concepts.html" class="active">Concepts</a></li>
+          
+          
+          
+          
+          
+          <li><a href="/quickstart.html">Get Started</a></li>
+          
+          
+          
+          
+          
+          <li><a href="/examples.html">Examples</a></li>
+          
+          
+          
+          
+          
+          <li><a href="/protocol.html">Protocol</a></li>
+          
+          
+          
+        </ul>
+        <iframe id="github-star"  src="http://ghbtns.com/github-btn.html?user=lipp&repo=jet&type=watch&count=true&size=large"
+          allowtransparency="true" frameborder="0" scrolling="0" width="120" height="30"></iframe>
+      </nav>
+    </header>
+
+  
+  <section class="sec-title">
+    <h1>Concepts</h1>
+  </section>
+  
+  
+  
+  <section class="sec daemon">
+    <div class="split">
+  <a class="visual" title="See page for author [Public domain], via Wikimedia Commons" href="http://commons.wikimedia.org/wiki/File%3APSM_V46_D167_Outer_surface_of_the_human_brain.jpg">
+    <img  src="images/daemon.jpg"/>
+  </a>
+  <div class="description">
+    <h3>Daemon</h3>
+    <p>Aka Server. The Daemon is the <em>center of communications</em> as Peers connect to it. When
+      Peers communicate with each other, the Daemon handles the message routing.
+      All the heavy-lifting like <em>filtering and sorting</em> happens inside the daemon. Most likely the Daemon
+      runs on the same machine as your webserver.
+    </p>
+    <p>
+      The Daemon itself does not provide any content at all, but provides means for <em>content
+      registration</em>. Technically it maybe described as a publish-subscribe engine with built-in
+      <em>content cache</em>.
+    </p>
+  </div>
+</div>
+
+  </section>
+  
+  <section class="sec peer">
+    <div class="split">
+  <a class="visual" title="See page for author [Public domain], via Wikimedia Commons" href="http://commons.wikimedia.org/wiki/File%3APSM_V12_D583_Bell_telephone_in_use.jpg">
+    <img src="/images/peert3.png"/>
+  </a>
+  <div class="description">
+    <h3>Peer</h3>
+    <p>Aka Client. Peers can <em>provide and/or consume content</em>. They have to connect to a
+      Daemon to be part of the Jet bus. To provide content Peers can register States and/or Methods.
+      Consuming content means either <em>fetching</em>, <em>calling</em> or
+      <em>setting</em> States/Methods.
+    </p>
+    <p>
+      Peers can run on the same machine as the Daemon or on remote machines, possibly within Browsers.
+      A common usage scenario is that the Peers running on the same machine as the Daemon
+      provide content (as the <a href="https://github.com/lipp/node-jet/blob/master/examples/todo-server.js">Todo-Server</a>)
+      and other Peers consume this content from a Browser (as the
+      <a href="https://github.com/lipp/jet/blob/master/todo/js/controllers/todoCtrl.js">Todo-Client</a>).
+    </p>
+  </div>
+</div>
+
+  </section>
+  
+  <section class="sec state">
+    <div class="split">
+  <a class="visual" title="See page for author [Public domain], via Wikimedia Commons" href="http://commons.wikimedia.org/wiki/File:Distillation_by_Retort.png#file">
+    <img src="images/state.png"/>
+  </a>
+  <div class="description">
+    <h3>State</h3>
+    <p>A logical piece of information (value), identified by a <em>unique name (path)</em>.
+      A State's value can be of <em>any Javascript type</em>.
+      Peers can add States to the Jet Bus by registrating them to the Daemon.
+      States may change its value <em>spontaneously</em> or on behalf of another Peer by calling <strong>set</strong>.
+      States are subject to fetching and thus are <em>observable</em> by other Peers.
+    </p>
+    <p>
+      States may represent things like <strong>user records</strong>, <strong>CPU temperature</strong>
+      or <strong>network settings</strong>. The Peer adding the State defines the
+      behaviour when a <strong>set</strong> request comes in and is free to do anything
+      that is appropriate.
+    </p>
+  </div>
+</div>
+
+  </section>
+  
+  <section class="sec method">
+    <div class="split">
+  <a class="visual" title="See page for author [Public domain], via Wikimedia Commons" href="http://commons.wikimedia.org/wiki/File%3ARollstuhl_Farfler_1655.jpg">
+    <img src="images/tricyclet.png"/>
+  </a>
+  <div class="description">
+    <h3>Method</h3>
+    <p>An action identified by a <em>unique name (path)</em>.
+      Methods can have <em>any number and any type of parameters</em>.
+      Peers can add Methods to the Jet Bus by registrating them to the Daemon.
+      Unlike States, Methods have no associated value.
+      Methods are subject to fetching and thus are <em>observable</em> by other Peers.
+    </p>
+    <p>
+      A method may do just anything. It could light an LED, create States
+      (e.g. <a href="https://github.com/lipp/node-jet/blob/master/examples/todo-server.js#L29">"todo/add"</a>) or
+      perform a system update.
+      However, it <strong>should not</strong> behave like classical "getter/setter" as States
+      are intended for this purpose.
+    </p>
+  </div>
+</div>
+
+  </section>
+  
+  <section class="sec fetching">
+    <div class="split">
+  <div class="split">
+  <a class="visual" title="See page for author [Public domain or Public domain], via Wikimedia Commons" href="http://commons.wikimedia.org/wiki/File%3ALibraries_in_the_Medieval_and_Renaissance_Periods_Figure_4.jpg">
+    <img  src="images/bookst.png"/>
+  </a>
+  <div class="description">
+    <h3>Fetching</h3>
+    <p>Fetching is the process of <em>continuously gathering information</em>.
+      Peers can <strong>fetch</strong> to obtain content from a Daemon, which in turn is provided by Peers.
+      This is much like a database query as you can exactly define what content you want
+      based on <em>name (path)</em> and/or <em>values</em> of States and Methods.
+      The Jet Daemon can also <em>sort and paginate</em> your data based on State values.
+    </p>
+    <p>
+      The best thing is, that the content gets <em>updated</em> as soon as something relevant
+      concerning your fetch rule changes (new content gets added or removed, values changed).
+      Imagine a score board, which should display the female top ten players ordered
+      by their score. With Jet this is piece of cake!
+    </p>
+  </div>
+</div>
+
+  </section>
+  
+  
+  <footer>
+  <nav>
+  <p class="copyright">
+    &copy;2015 <a href="https://github.com/lipp">Gerhard Preuss</a> under the terms
+    of the <a href="https://github.com/lipp/jet/blob/master/LICENSE">MIT License</a>
+  </p>
+  <div>
+    <a href="https://github.com/lipp/jet"><img src="images/github2.svg"/></a>
+    <a href="https://twitter.com/gelipp2000"><img src="images/twitter2.svg"/></a>
+    <a href="https://plus.google.com/u/0/+GerhardPreuss/"><img src="images/google+.svg"/></a>
+  </div>
+</nav>
+</footer>
+
+</body>
+
+<script>
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-42875905-1', 'jetbus.io');
+ga('send', 'pageview');
+</script>
+
+</html>

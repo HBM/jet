@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title>Jet</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
+
+  <!-- syntax highlighting CSS -->
+  <link rel="stylesheet" href="/css/syntax.css">
+
+  <!-- reset CSS -->
+  <link rel="stylesheet" href="/css/reset.css">
+
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+      <header>
+      <nav id="main-nav">
+        <ul>
+          
+          
+          
+          
+          
+          
+          <li><a href="/index.html">Jet</a></li>
+          
+          
+          
+          
+          
+          <li><a href="/concepts.html">Concepts</a></li>
+          
+          
+          
+          
+          
+          <li><a href="/quickstart.html">Get Started</a></li>
+          
+          
+          
+          
+          
+          <li><a href="/examples.html">Examples</a></li>
+          
+          
+          
+          
+          
+          <li class="active"><a href="/protocol.html" class="active">Protocol</a></li>
+          
+          
+          
+        </ul>
+        <iframe id="github-star"  src="http://ghbtns.com/github-btn.html?user=lipp&repo=jet&type=watch&count=true&size=large"
+          allowtransparency="true" frameborder="0" scrolling="0" width="120" height="30"></iframe>
+      </nav>
+    </header>
+
+  
+  <section class="sec-title">
+    <h1>Protocol</h1>
+  </section>
+  
+  
+  <section>
+    <article>
+    <h1>Transport</h1>
+
+<p>Jet heavily relies on <a href="http://www.jsonrpc.org/specification">JSON-RPC 2.0</a>
+semantics for all of its messages. There are some minor changes to the spec,
+however. To be able to follow the protocol details, the reader must be familiar
+with the (JSON-RPC 2.0) terms: Request, Response, Notification, Error Object and Batch.</p>
+
+<p>As a reminder: Don&#39;t be confused by the term Notification. A Notification is
+simply a Request without an <strong>id</strong>  specified, thus indicating no Response to
+the Request is expected.</p>
+
+<p>There are two categories of Requests to distinguish:</p>
+
+<ul>
+<li> <strong>Active</strong>: The Peer sends a Request to the Daemon</li>
+<li> <strong>Passive</strong>: The Daemon sends a Request to the Peer</li>
+</ul>
+
+<p>The <strong>Active</strong> Request always originate from Peers and are send to the Daemon.
+As a result of adding States/Methods or Fetching, the Daemon may send
+<strong>Passive</strong> Requests to Peers. For instance: If a Peer <strong>adds</strong> a
+State, another <strong>fetching</strong> Peer with matching fetch rules is informed by means
+of a <strong>Passive</strong> Request.</p>
+
+<p>The <strong>Passive</strong> Requests are:</p>
+
+<ul>
+<li>Fetch based messages</li>
+<li>(Routed) Requests to set (change) a State</li>
+<li>(Routed) Requests to call a Method</li>
+</ul>
+
+<p>The <code>method</code> field of <strong>Passive</strong> Requests are Peer defined
+(via <strong>add</strong> and <strong>fetch</strong>), whereas the method name field of <strong>Active</strong>
+Requests is always either <strong>add</strong>, <strong>remove</strong>, <strong>fetch</strong>, <strong>unfetch</strong>, <strong>set</strong>,
+<strong>call</strong>, <strong>change</strong> or <strong>config</strong>.</p>
+
+<p>Note: Batches can contain <strong>Active</strong> and/or <strong>Passive</strong> Requests.</p>
+
+<h2>Example for Active Message</h2>
+
+<p>In this example a Peer fetches all persons (all states and methods, where the
+path starts with &quot;person&quot;). The side-effect of this message is that, the Daemon
+may send a <strong>Passive</strong> message with <code>&quot;method&quot;:&quot;personFetcher&quot;</code> to the peer
+whenever appropriate.</p>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="p">{</span>
+  <span class="s2">&quot;method&quot;</span><span class="o">:</span> <span class="s2">&quot;fetch&quot;</span><span class="p">,</span>
+  <span class="s2">&quot;params&quot;</span><span class="o">:</span> <span class="p">{</span>
+    <span class="s2">&quot;id&quot;</span><span class="o">:</span> <span class="s2">&quot;personFetcher&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;path&quot;</span><span class="o">:</span> <span class="p">{</span>
+      <span class="s2">&quot;startsWith&quot;</span><span class="o">:</span> <span class="s2">&quot;person&quot;</span>
+    <span class="p">}</span>
+  <span class="p">},</span>
+  <span class="s2">&quot;id&quot;</span><span class="o">:</span> <span class="mi">762</span>
+<span class="p">}</span>
+</code></pre></div>
+<h2>Example for Passive Message</h2>
+
+<p>This is a <strong>Passive</strong> message which is issued based on the fetch rule defined
+above. Note the method name, which has been specified earlier in the fetch call.</p>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="p">{</span>
+  <span class="s2">&quot;method&quot;</span><span class="o">:</span> <span class="s2">&quot;personFetcher&quot;</span><span class="p">,</span>
+  <span class="s2">&quot;params&quot;</span><span class="o">:</span> <span class="p">{</span>
+    <span class="s2">&quot;path&quot;</span><span class="o">:</span> <span class="s2">&quot;person/asdlkjasdk92&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;value&quot;</span><span class="o">:</span> <span class="p">{</span>
+      <span class="s2">&quot;name&quot;</span><span class="o">:</span> <span class="s2">&quot;Paul&quot;</span><span class="p">,</span>
+      <span class="s2">&quot;age&quot;</span><span class="o">:</span> <span class="mi">63</span>
+    <span class="p">},</span>
+    <span class="s2">&quot;event&quot;</span><span class="o">:</span> <span class="s2">&quot;add&quot;</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<h2>Differences to JSON-RPC 2.0</h2>
+
+<p>In opposite to the <a href="http://www.jsonrpc.org/specification">JSON-RPC 2.0 spec</a> the
+<code>&quot;jsonrpc&quot;: &quot;2.0&quot;</code> field is considered optional and can be simply ignored.</p>
+
+<p>Further <strong>Batch</strong> Messages are not subject of any order requirements are may be
+processed and send at any time. This allows to minimize message framing overhead (e.g. Websockets).</p>
+
+<h1>Messages</h1>
+
+<p>This chapter lists an overview of all <strong>active</strong> messsages by example.</p>
+
+<h2>add</h2>
+
+<p>Use the <strong>add</strong> message for adding States or Methods to the Daemon. The Daemon
+will route all set/call messages to the Peer, changing the method to the
+respective path.</p>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="c1">// add a simple state</span>
+<span class="p">{</span>
+  <span class="s2">&quot;method&quot;</span><span class="o">:</span> <span class="s2">&quot;add&quot;</span><span class="p">,</span>
+  <span class="s2">&quot;params&quot;</span><span class="o">:</span> <span class="p">{</span>
+    <span class="s2">&quot;path&quot;</span><span class="o">:</span> <span class="s2">&quot;foo/bar&quot;</span><span class="p">,</span> <span class="c1">//unique path</span>
+    <span class="s2">&quot;value&quot;</span><span class="o">:</span> <span class="mi">123</span> <span class="c1">// any non-function value</span>
+  <span class="p">}</span>
+  <span class="s2">&quot;id&quot;</span><span class="o">:</span> <span class="mi">41</span>
+<span class="p">}</span>
+<span class="c1">// add a more complicate state</span>
+<span class="p">{</span>
+  <span class="s2">&quot;method&quot;</span><span class="o">:</span> <span class="s2">&quot;add&quot;</span><span class="p">,</span>
+  <span class="s2">&quot;params&quot;</span><span class="o">:</span> <span class="p">{</span>
+    <span class="s2">&quot;path&quot;</span><span class="o">:</span> <span class="s2">&quot;person/Xop&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;value&quot;</span><span class="o">:</span> <span class="p">{</span>
+      <span class="s2">&quot;name&quot;</span><span class="o">:</span> <span class="s2">&quot;Bob&quot;</span><span class="p">,</span>
+      <span class="s2">&quot;age&quot;</span><span class="o">:</span> <span class="mi">26</span><span class="p">,</span>
+      <span class="s2">&quot;hobbies&quot;</span><span class="o">:</span> <span class="p">[</span><span class="s2">&quot;Hiking&quot;</span><span class="p">,</span> <span class="s2">&quot;Swimming&quot;</span><span class="p">]</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+  <span class="c1">// Note that this is a Notification as there is no &quot;id&quot;</span>
+<span class="p">}</span>
+<span class="c1">// add a method (just leave-out the value)</span>
+<span class="p">{</span>
+  <span class="s2">&quot;method&quot;</span><span class="o">:</span> <span class="s2">&quot;add&quot;</span><span class="p">,</span>
+  <span class="s2">&quot;params&quot;</span><span class="o">:</span> <span class="p">{</span>
+    <span class="s2">&quot;path&quot;</span><span class="o">:</span> <span class="s2">&quot;addNumbers&quot;</span>
+  <span class="p">}</span>
+  <span class="c1">// Note that this is a Notification as there is no &quot;id&quot;</span>
+<span class="p">}</span>
+</code></pre></div>
+<h2>remove</h2>
+
+<p>Use the <strong>remove</strong> message for removing States or Methods from the Daemon. The
+Daemon will stop to route set/call messages for the respective path.</p>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="c1">// remove a method or state</span>
+<span class="p">{</span>
+  <span class="s2">&quot;method&quot;</span><span class="o">:</span> <span class="s2">&quot;remove&quot;</span><span class="p">,</span>
+  <span class="s2">&quot;params&quot;</span><span class="o">:</span> <span class="p">{</span>
+    <span class="s2">&quot;path&quot;</span><span class="o">:</span> <span class="s2">&quot;addNumbers&quot;</span>
+  <span class="p">}</span>
+  <span class="c1">// Note that this is a Notification as there is no &quot;id&quot;</span>
+<span class="p">}</span>
+
+<span class="c1">// remove a method or state</span>
+<span class="p">{</span>
+  <span class="s2">&quot;method&quot;</span><span class="o">:</span> <span class="s2">&quot;remove&quot;</span><span class="p">,</span>
+  <span class="s2">&quot;params&quot;</span><span class="o">:</span> <span class="p">{</span>
+    <span class="s2">&quot;path&quot;</span><span class="o">:</span> <span class="s2">&quot;persons/xyz&quot;</span>
+  <span class="p">}</span>
+  <span class="s2">&quot;id&quot;</span><span class="o">:</span> <span class="s2">&quot;ajsykw&quot;</span>
+<span class="p">}</span>
+</code></pre></div>
+<h2>set</h2>
+
+<p>Use the <strong>set</strong> message for (trying) to set a State to a new value. The Daemon
+will route the Request to the responsible Peer. Accepting the new value is solely
+up to the Peer. In case of an error-less dispatching / assigning, the Peer
+posts a <strong>change</strong> Notification, thus informing all fetching Peers about the
+actual new value.</p>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="c1">// set a state to a new value</span>
+<span class="p">{</span>
+  <span class="s2">&quot;method&quot;</span><span class="o">:</span> <span class="s2">&quot;set&quot;</span><span class="p">,</span>
+  <span class="s2">&quot;params&quot;</span><span class="o">:</span> <span class="p">{</span>
+    <span class="s2">&quot;path&quot;</span><span class="o">:</span> <span class="s2">&quot;foo/bar&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;value&quot;</span><span class="o">:</span> <span class="mi">920</span>
+  <span class="p">}</span>
+  <span class="c1">// Note that this is a Notification as there is no &quot;id&quot;</span>
+<span class="p">}</span>
+
+<span class="c1">// set a state to a new value</span>
+<span class="p">{</span>
+  <span class="s2">&quot;method&quot;</span><span class="o">:</span> <span class="s2">&quot;set&quot;</span><span class="p">,</span>
+  <span class="s2">&quot;params&quot;</span><span class="o">:</span> <span class="p">{</span>
+    <span class="s2">&quot;path&quot;</span><span class="o">:</span> <span class="s2">&quot;foo/bar&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;value&quot;</span><span class="o">:</span> <span class="p">{</span> <span class="c1">// the value can be any non-function type</span>
+      <span class="nx">age</span><span class="o">:</span> <span class="mi">22</span><span class="p">,</span>
+      <span class="nx">gender</span><span class="o">:</span> <span class="s2">&quot;female&quot;</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+  <span class="s2">&quot;id&quot;</span><span class="o">:</span> <span class="s2">&quot;92s&quot;</span>
+<span class="p">}</span>
+</code></pre></div>
+<h2>call</h2>
+
+<p>Use the <strong>call</strong> message for calling a Method. The Daemon
+will route the Request to the responsible Peer.</p>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="c1">// call a method</span>
+<span class="p">{</span>
+  <span class="s2">&quot;method&quot;</span><span class="o">:</span> <span class="s2">&quot;call&quot;</span><span class="p">,</span>
+  <span class="s2">&quot;params&quot;</span><span class="o">:</span> <span class="p">{</span>
+    <span class="s2">&quot;path&quot;</span><span class="o">:</span> <span class="s2">&quot;logStuff&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;args&quot;</span><span class="o">:</span> <span class="p">[</span><span class="s2">&quot;WARN&quot;</span><span class="p">,{</span>
+      <span class="s2">&quot;system&quot;</span><span class="o">:</span> <span class="s2">&quot;cpu&quot;</span><span class="p">,</span>
+      <span class="s2">&quot;category&quot;</span><span class="o">:</span> <span class="s2">&quot;epicFail&quot;</span>
+    <span class="p">}]</span>
+  <span class="p">}</span>
+  <span class="c1">// Note that this is a Notification as there is no &quot;id&quot;</span>
+<span class="p">}</span>
+
+<span class="c1">// call a method</span>
+<span class="p">{</span>
+  <span class="s2">&quot;method&quot;</span><span class="o">:</span> <span class="s2">&quot;call&quot;</span><span class="p">,</span>
+  <span class="s2">&quot;params&quot;</span><span class="o">:</span> <span class="p">{</span>
+    <span class="s2">&quot;path&quot;</span><span class="o">:</span> <span class="s2">&quot;addNumbers&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;args&quot;</span><span class="o">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">]</span>
+  <span class="p">}</span>
+  <span class="s2">&quot;id&quot;</span><span class="o">:</span> <span class="s2">&quot;91s&quot;</span>
+<span class="p">}</span>
+
+<span class="c1">// call a method with object args</span>
+<span class="p">{</span>
+  <span class="s2">&quot;method&quot;</span><span class="o">:</span> <span class="s2">&quot;call&quot;</span><span class="p">,</span>
+  <span class="s2">&quot;params&quot;</span><span class="o">:</span> <span class="p">{</span>
+    <span class="s2">&quot;path&quot;</span><span class="o">:</span> <span class="s2">&quot;createPerson&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;args&quot;</span><span class="o">:</span> <span class="p">{</span>
+      <span class="s2">&quot;name&quot;</span><span class="o">:</span> <span class="s2">&quot;Jefferson&quot;</span><span class="p">,</span>
+      <span class="s2">&quot;age&quot;</span><span class="o">:</span> <span class="mi">22</span><span class="p">,</span>
+      <span class="s2">&quot;hobbies&quot;</span><span class="o">:</span> <span class="p">[</span><span class="s2">&quot;soccer&quot;</span><span class="p">,</span><span class="s2">&quot;stamps&quot;</span><span class="p">]</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+  <span class="s2">&quot;id&quot;</span><span class="o">:</span> <span class="s2">&quot;911s&quot;</span>
+<span class="p">}</span>
+</code></pre></div>
+<h2>change</h2>
+
+<p>Use the <strong>change</strong> message to make a State value change public.</p>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="p">{</span>
+  <span class="s2">&quot;method&quot;</span><span class="o">:</span> <span class="s2">&quot;change&quot;</span><span class="p">,</span>
+  <span class="s2">&quot;params&quot;</span><span class="o">:</span> <span class="p">{</span>
+    <span class="s2">&quot;path&quot;</span><span class="o">:</span> <span class="s2">&quot;foo/bar&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;value&quot;</span><span class="o">:</span> <span class="kc">false</span> <span class="c1">// yes, state values may change type</span>
+  <span class="p">}</span>
+  <span class="s2">&quot;id&quot;</span><span class="o">:</span> <span class="mi">41</span>
+<span class="p">}</span>
+</code></pre></div><div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="p">{</span>
+  <span class="s2">&quot;method&quot;</span><span class="o">:</span> <span class="s2">&quot;change&quot;</span><span class="p">,</span>
+  <span class="s2">&quot;params&quot;</span><span class="o">:</span> <span class="p">{</span>
+    <span class="s2">&quot;path&quot;</span><span class="o">:</span> <span class="s2">&quot;person/Xop&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;value&quot;</span><span class="o">:</span> <span class="p">{</span>
+      <span class="s2">&quot;name&quot;</span><span class="o">:</span> <span class="s2">&quot;Bob&quot;</span><span class="p">,</span>
+      <span class="s2">&quot;age&quot;</span><span class="o">:</span> <span class="mi">27</span><span class="p">,</span>
+      <span class="s2">&quot;hobbies&quot;</span><span class="o">:</span> <span class="p">[</span><span class="s2">&quot;Computer Games&quot;</span><span class="p">,</span> <span class="s2">&quot;Climbing&quot;</span><span class="p">]</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+  <span class="c1">// Note that this is a Notification as there is no &quot;id&quot;</span>
+<span class="p">}</span>
+</code></pre></div>
+<h2>fetch</h2>
+
+<p>Use the <strong>fetch</strong> message to create a new fetch rule. The Daemon sends
+fetch Notifications with the specified fetch id as method, whenever appropriate.</p>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="c1">// some path based case insensitive fetch</span>
+<span class="p">{</span>
+  <span class="s2">&quot;method&quot;</span><span class="o">:</span> <span class="s2">&quot;fetch&quot;</span><span class="p">,</span>
+  <span class="s2">&quot;params&quot;</span><span class="o">:</span> <span class="p">{</span>
+    <span class="s2">&quot;id&quot;</span><span class="o">:</span> <span class="s2">&quot;f1000&quot;</span><span class="p">,</span>  <span class="c1">// a peer defined fetch id</span>
+    <span class="s2">&quot;path&quot;</span><span class="o">:</span> <span class="p">{</span>
+      <span class="s2">&quot;startsWith&quot;</span><span class="o">:</span> <span class="s2">&quot;abc&quot;</span><span class="p">,</span>
+      <span class="s2">&quot;contains&quot;</span><span class="o">:</span> <span class="s2">&quot;foo&quot;</span>
+    <span class="p">},</span>
+    <span class="s2">&quot;caseInsensitive&quot;</span><span class="o">:</span> <span class="kc">true</span>
+  <span class="p">},</span>
+  <span class="s2">&quot;id&quot;</span><span class="o">:</span> <span class="mi">3412</span>
+<span class="p">}</span>
+
+<span class="c1">// some path based fetch (setup as Notification)</span>
+<span class="p">{</span>
+  <span class="s2">&quot;method&quot;</span><span class="o">:</span> <span class="s2">&quot;fetch&quot;</span><span class="p">,</span>
+  <span class="s2">&quot;params&quot;</span><span class="o">:</span> <span class="p">{</span>
+    <span class="s2">&quot;id&quot;</span><span class="o">:</span> <span class="s2">&quot;__321_f&quot;</span><span class="p">,</span>  <span class="c1">// a peer defined fetch id</span>
+    <span class="s2">&quot;path&quot;</span><span class="o">:</span> <span class="p">{</span>
+      <span class="s2">&quot;endsWith&quot;</span><span class="o">:</span> <span class="s2">&quot;abc&quot;</span>
+    <span class="p">}</span>  
+  <span class="p">}</span>
+  <span class="c1">// no id -&gt; Notification, no Response if fetch setup is ok</span>
+<span class="p">}</span>
+
+<span class="c1">// some path / value based fetch</span>
+<span class="p">{</span>
+  <span class="s2">&quot;method&quot;</span><span class="o">:</span> <span class="s2">&quot;fetch&quot;</span><span class="p">,</span>
+  <span class="s2">&quot;params&quot;</span><span class="o">:</span> <span class="p">{</span>
+    <span class="s2">&quot;id&quot;</span><span class="o">:</span> <span class="s2">&quot;f123&quot;</span><span class="p">,</span>  <span class="c1">// a peer defined fetch id</span>
+    <span class="s2">&quot;path&quot;</span><span class="o">:</span> <span class="p">{</span>
+      <span class="s2">&quot;endsWith&quot;</span><span class="o">:</span> <span class="s2">&quot;/temperature&quot;</span>
+    <span class="p">},</span>
+    <span class="s2">&quot;value&quot;</span><span class="o">:</span> <span class="p">{</span>
+      <span class="s2">&quot;lessThan&quot;</span><span class="o">:</span> <span class="mi">7</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+  <span class="s2">&quot;id&quot;</span><span class="o">:</span> <span class="s2">&quot;pasdp3&quot;</span>
+<span class="p">}</span>
+
+<span class="c1">// some path / valuefield based fetch</span>
+<span class="p">{</span>
+  <span class="s2">&quot;method&quot;</span><span class="o">:</span> <span class="s2">&quot;fetch&quot;</span><span class="p">,</span>
+  <span class="s2">&quot;params&quot;</span><span class="o">:</span> <span class="p">{</span>
+    <span class="s2">&quot;id&quot;</span><span class="o">:</span> <span class="s2">&quot;f1pq23&quot;</span><span class="p">,</span>  <span class="c1">// a peer defined fetch id</span>
+    <span class="s2">&quot;path&quot;</span><span class="o">:</span> <span class="p">{</span>
+      <span class="s2">&quot;startsWith&quot;</span><span class="o">:</span> <span class="s2">&quot;persons/&quot;</span>
+    <span class="p">},</span>
+    <span class="s2">&quot;valueField&quot;</span><span class="o">:</span> <span class="p">{</span>
+      <span class="s2">&quot;age&quot;</span><span class="o">:</span> <span class="p">{</span>
+        <span class="s2">&quot;greaterThan&quot;</span><span class="o">:</span> <span class="mi">20</span>
+      <span class="p">},</span>
+      <span class="s2">&quot;name.first&quot;</span><span class="o">:</span> <span class="p">{</span>
+        <span class="s2">&quot;equals&quot;</span><span class="o">:</span> <span class="s2">&quot;Micheal&quot;</span>
+      <span class="p">}</span>
+    <span class="p">}</span>  
+  <span class="p">}</span>
+  <span class="s2">&quot;id&quot;</span><span class="o">:</span> <span class="s2">&quot;pa223&quot;</span>
+<span class="p">}</span>
+
+<span class="c1">// some path based sorted fetch</span>
+<span class="p">{</span>
+  <span class="s2">&quot;method&quot;</span><span class="o">:</span> <span class="s2">&quot;fetch&quot;</span><span class="p">,</span>
+  <span class="s2">&quot;params&quot;</span><span class="o">:</span> <span class="p">{</span>
+    <span class="s2">&quot;id&quot;</span><span class="o">:</span> <span class="s2">&quot;f1pq23&quot;</span><span class="p">,</span>  <span class="c1">// a peer defined fetch id</span>
+    <span class="s2">&quot;path&quot;</span><span class="o">:</span> <span class="p">{</span>
+      <span class="s2">&quot;startsWith&quot;</span><span class="o">:</span> <span class="s2">&quot;persons/&quot;</span>
+    <span class="p">},</span>
+    <span class="s2">&quot;sort&quot;</span><span class="o">:</span> <span class="p">{</span>
+      <span class="s2">&quot;from&quot;</span><span class="o">:</span> <span class="mi">20</span><span class="p">,</span> <span class="c1">// paginating</span>
+      <span class="s2">&quot;to&quot;</span><span class="o">:</span> <span class="mi">40</span><span class="p">,</span>
+      <span class="s2">&quot;byPath&quot;</span><span class="o">:</span> <span class="kc">true</span> <span class="c1">// this is default</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+  <span class="s2">&quot;id&quot;</span><span class="o">:</span> <span class="s2">&quot;pa223&quot;</span>
+<span class="p">}</span>
+
+<span class="c1">// some path based sorted (byValueField) fetch</span>
+<span class="p">{</span>
+  <span class="s2">&quot;method&quot;</span><span class="o">:</span> <span class="s2">&quot;fetch&quot;</span><span class="p">,</span>
+  <span class="s2">&quot;params&quot;</span><span class="o">:</span> <span class="p">{</span>
+    <span class="s2">&quot;id&quot;</span><span class="o">:</span> <span class="s2">&quot;f1pq23&quot;</span><span class="p">,</span>  <span class="c1">// a peer defined fetch id</span>
+    <span class="s2">&quot;path&quot;</span><span class="o">:</span> <span class="p">{</span>
+      <span class="s2">&quot;startsWith&quot;</span><span class="o">:</span> <span class="s2">&quot;persons/&quot;</span>
+    <span class="p">},</span>
+    <span class="s2">&quot;sort&quot;</span><span class="o">:</span> <span class="p">{</span>
+      <span class="s2">&quot;from&quot;</span><span class="o">:</span> <span class="mi">1</span><span class="p">,</span> <span class="c1">// paginating</span>
+      <span class="s2">&quot;to&quot;</span><span class="o">:</span> <span class="mi">10</span><span class="p">,</span>
+      <span class="s2">&quot;byValueField&quot;</span><span class="o">:</span> <span class="p">{</span>
+        <span class="s2">&quot;age&quot;</span><span class="o">:</span> <span class="s2">&quot;number&quot;</span> <span class="c1">// type is required for sorting: &quot;number&quot;, &quot;string&quot; or &quot;boolean&quot;</span>
+      <span class="p">},</span>
+      <span class="s2">&quot;descending&quot;</span><span class="o">:</span> <span class="kc">true</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+  <span class="s2">&quot;id&quot;</span><span class="o">:</span> <span class="s2">&quot;pa123&quot;</span>
+<span class="p">}</span>
+</code></pre></div>
+    </article>
+  </section>
+  
+  <footer>
+  <nav>
+  <p class="copyright">
+    &copy;2015 <a href="https://github.com/lipp">Gerhard Preuss</a> under the terms
+    of the <a href="https://github.com/lipp/jet/blob/master/LICENSE">MIT License</a>
+  </p>
+  <div>
+    <a href="https://github.com/lipp/jet"><img src="images/github2.svg"/></a>
+    <a href="https://twitter.com/gelipp2000"><img src="images/twitter2.svg"/></a>
+    <a href="https://plus.google.com/u/0/+GerhardPreuss/"><img src="images/google+.svg"/></a>
+  </div>
+</nav>
+</footer>
+
+</body>
+
+<script>
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-42875905-1', 'jetbus.io');
+ga('send', 'pageview');
+</script>
+
+</html>
