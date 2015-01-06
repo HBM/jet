@@ -17,49 +17,50 @@
 </head>
 
 <body>
-      <header>
-      <nav id="main-nav">
-        <ul>
-          
-          
-          
-          
-          
-          
-          <li><a href="/index.html">Jet</a></li>
-          
-          
-          
-          
-          
-          <li><a href="/concepts.html">Concepts</a></li>
-          
-          
-          
-          
-          
-          <li><a href="/quickstart.html">Get Started</a></li>
-          
-          
-          
-          
-          
-          <li><a href="/examples.html">Examples</a></li>
-          
-          
-          
-          
-          
-          <li class="active"><a href="/protocol.html" class="active">Protocol</a></li>
-          
-          
-          
-        </ul>
-        <iframe id="github-star"  src="http://ghbtns.com/github-btn.html?user=lipp&repo=jet&type=watch&count=true&size=large"
-          allowtransparency="true" frameborder="0" scrolling="0" width="120" height="30"></iframe>
-      </nav>
-    </header>
+  <header>
+  <nav id="main-nav">
+    <ul>
+      
+      
+      
+      
+      
+      
+      <li><a href="/index.html">Jet</a></li>
+      
+      
+      
+      
+      
+      <li><a href="/concepts.html">Concepts</a></li>
+      
+      
+      
+      
+      
+      <li><a href="/quickstart.html">Get Started</a></li>
+      
+      
+      
+      
+      
+      <li><a href="/examples.html">Examples</a></li>
+      
+      
+      
+      
+      
+      <li class="active"><a href="/protocol.html" class="active">Protocol</a></li>
+      
+      
+      
+    </ul>
+    <iframe id="github-star"  src="http://ghbtns.com/github-btn.html?user=lipp&repo=jet&type=watch&count=true&size=large"
+    allowtransparency="true" frameborder="0" scrolling="0" width="120" height="30"></iframe>
+  </nav>
+</header>
 
+  <button class="show-nav">Menu</button>
   
   <section class="sec-title">
     <h1>Protocol</h1>
@@ -426,6 +427,13 @@ fetch Notifications with the specified fetch id as method, whenever appropriate.
 
 </body>
 
+<script src="js/jquery-2.0.3.js"></script>
+
+<script>
+$('.show-nav').click(function() {
+  $('header').toggleClass('show');
+});
+</script>
 <script>
 (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
   (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
