@@ -8,6 +8,8 @@ GEM
       minitest (~> 5.1)
       thread_safe (~> 0.1)
       tzinfo (~> 1.1)
+    autoprefixer-rails (2.2.0.20140804)
+      execjs
     blankslate (2.1.2.4)
     celluloid (0.16.0)
       timers (~> 4.0.0)
@@ -93,6 +95,12 @@ GEM
     minitest (5.5.0)
     net-dns (0.8.0)
     nokogiri (1.5.6)
+    octopress-autoprefixer (1.0.0)
+      autoprefixer-rails (~> 2.2)
+      jekyll (~> 2.0)
+      octopress-hooks (~> 2.0)
+    octopress-hooks (2.2.3)
+      jekyll (~> 2.0)
     parslet (1.5.0)
       blankslate (~> 2.0)
     posix-spawn (0.3.9)
@@ -122,3 +130,4 @@ PLATFORMS
 
 DEPENDENCIES
   github-pages
+  octopress-autoprefixer
