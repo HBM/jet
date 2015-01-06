@@ -1,0 +1,18 @@
+    <header>
+      <nav id="main-nav">
+        <ul>
+          {% assign sorted_pages = (site.pages | sort: 'order') %}
+          {% for node in sorted_pages %}
+          {% if node.hidden == null %}
+          {% if page.url == node.url %}
+          <li class="active"><a href="{{node.url}}" class="active">{{node.title}}</a></li>
+          {% else %}
+          <li><a href="{{node.url}}">{{node.title}}</a></li>
+          {% endif %}
+          {% endif %}
+          {% endfor %}
+        </ul>
+        <iframe id="github-star"  src="http://ghbtns.com/github-btn.html?user=lipp&repo=jet&type=watch&count=true&size=large"
+          allowtransparency="true" frameborder="0" scrolling="0" width="120" height="30"></iframe>
+      </nav>
+    </header>
