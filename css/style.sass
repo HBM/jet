@@ -77,6 +77,28 @@ header
     width: 100%
     display: block
 
+@media (max-width: 730px)
+  header
+    transition: all 0.3s ease
+    position: absolute
+    left: -200px
+    width: 200px
+    right: 0
+    top: 0
+    height: 100vh
+    nav
+      width: 100% !important
+      height: 100%
+      align-items: flex-start
+      ul
+        width: 100%
+        flex-direction: column
+      iframe
+        display: none
+
+  header.show
+    transform: translateX(100%)
+
 footer
   font-weight: 100
   padding-top: 10px
@@ -130,6 +152,28 @@ section:first-of-type
     margin-top: 30px
     margin-bottom: 30px
 
+@media (max-width: 730px)
+  .hero
+    .logo
+      padding-top: 10px
+      padding-bottom: 10px
+
+    #brand
+      font-size: 4em
+      padding-left: 3px
+    #tagline
+      margin-top: 5px
+      margin-bottom: 5px
+      font-size: 1.3em
+
+  section:first-of-type
+    min-height: 50px
+    padding-top: 10px
+    > h1
+      padding-top: 0px
+      font-size: 2.5em
+
+
 .split
   padding-top: 30px
   padding-bottom: 30px
@@ -149,9 +193,11 @@ section:first-of-type
   .description p
     padding-top: 20px
     font-size: 18px
+    @media (max-width: 730px)
+      font-size: 16px
     //line-height: 1.5em
     font-weight: 100
-    color: gray
+    color: rgb(100,100,100)
     strong
       font-weight: 400
     em
@@ -159,28 +205,45 @@ section:first-of-type
       font-style: italic
   h3
     font-family: "Raleway"
+    @media (max-width: 730px)
+      font-size: 20px
     font-size: 30px
     font-weight: 400
     padding-bottom: 5px
-    color: #666
+    color: #565656
   h3::before
     content: "\201e"
   h3::after
     content: "\201D"
 
 
-.sec:nth-of-type(2n)
-  .visual
-    order: 1
-  .description
-    order: 2
+@media (max-width: 730px)
+  .split
+    flex-direction: column
+    .visual
+      order: 1
+      //max-height: 100px
+      padding-bottom: 20px
+    .description
+      order: 2
+      flex-grow: 1
+      width: 100%
+
+
+@media (min-width: 731px)
+  .sec:nth-of-type(2n)
+    .visual
+      order: 1
+    .description
+      order: 2
 
 .sec:nth-of-type(2n+1):not(.hero)
   background-color: rgb(237, 237, 237)
-  .visual
-    order: 2
-  .description
-    order: 1
+  @media (min-width: 731px)
+    .visual
+      order: 2
+    .description
+      order: 1
 
 article
   padding-top: 20px
@@ -206,7 +269,6 @@ article
 
 .free
   ul
-    padding-top: 45px
     display: flex
     flex-wrap: wrap
     justify-content: space-around
@@ -216,3 +278,18 @@ article
     margin-top: 10px
     img
       width: 100%
+
+
+.show-nav
+  @media (min-width: 731px)
+    display: none
+  @media (max-width: 730px)
+    position: absolute
+    top: 10px
+    height: 40px
+    right: 5%
+    color: rgba(82, 82, 82, 0.78)
+    background-color: rgba(238, 238, 238, 0.78)
+    border: 1px solid rgb(210, 210, 210)
+    border-radius: 3px
+    text-transform: uppercase
