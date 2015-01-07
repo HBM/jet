@@ -76,7 +76,7 @@ header {
   header {
     -webkit-transition: all 0.3s ease;
             transition: all 0.3s ease;
-    position: absolute;
+    position: fixed;
     left: -200px;
     width: 200px;
     right: 0;
@@ -131,6 +131,11 @@ footer {
     color: white;
     text-decoration: none; }
 
+@media (max-width: 655px) {
+  footer img {
+    width: 50px; }
+  footer div {
+    min-width: 110px; } }
 section:first-of-type {
   color: white;
   padding-top: 50px;
@@ -167,6 +172,7 @@ section:first-of-type {
     padding-left: 3px; }
   .hero #tagline {
     margin-top: 5px;
+    min-width: 100px;
     margin-bottom: 5px;
     font-size: 1.3em; }
 
