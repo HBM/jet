@@ -33,6 +33,7 @@ body {
 	font-smoothing: antialiased;
 }
 
+
 button,
 input[type="checkbox"] {
   outline: none;
@@ -551,4 +552,29 @@ hr {
 		width: 550px;
 		margin: 130px auto 40px auto;
 	}
+}
+
+@media (max-width: 600px) {
+	body {
+		width: 100%;
+	}
+
+	#todoapp h1 {
+		font-size: 40px;
+	}
+
+	.edit {
+		font-size: 20px;
+		line-height: 1em;
+	}
+
+	#new-todo {
+		font-size: 20px;
+		line-height: 1em;
+	}
+
+	.destroy {
+		display: initial;
+	}
+
 }
