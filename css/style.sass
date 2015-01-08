@@ -77,6 +77,7 @@ header
     width: 100%
     display: block
 
+
 @media (max-width: 730px)
   header
     transition: all 0.3s ease
@@ -86,15 +87,19 @@ header
     right: 0
     top: 0
     height: 100vh
+
     nav
       width: 100% !important
       height: 100%
       align-items: flex-start
+      flex-direction: column
+      justify-content: flex-start
       ul
         width: 100%
         flex-direction: column
       iframe
-        display: none
+        margin-left: 18px
+        margin-top: 18px
 
   header.show
     transform: translateX(100%)
@@ -301,3 +306,10 @@ article
     border: 1px solid rgb(210, 210, 210)
     border-radius: 3px
     text-transform: uppercase
+
+#twitter-widget-0
+  transform: scaleY(1.1) translateY(-1px)
+
+@media(max-width: 850px)
+  header li
+    padding: 0 16px
