@@ -238,10 +238,6 @@ section:first-of-type {
     @media (max-width: 730px) {
       .split h3 {
         font-size: 20px; } }
-  .split h3::before {
-    content: "\201e"; }
-  .split h3::after {
-    content: "\201D"; }
 
 @media (max-width: 730px) {
   .split {
