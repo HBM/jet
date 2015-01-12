@@ -119,6 +119,8 @@ footer {
   padding-bottom: 10px;
   background-color: #323232;
   color: #c8c8c8; }
+  footer .disclaimer {
+    display: block; }
   footer nav {
     display: -webkit-box;
     display: -webkit-flex;
