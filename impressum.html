@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title>Jet</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="description" content="Jet Realtime Message Bus for the Web">
+  <meta name="keywords" content="Jet,Realtime,Apps,JavaScript,Bus,JSON,Mobile,AngularJS,TODO,MVC,Lua,NodeJS,node">
+  <meta name="author" content="Gerhard Preuss">
+
+  <!-- syntax highlighting CSS -->
+  <link rel="stylesheet" href="/css/syntax.css">
+
+  <!-- reset CSS -->
+  <link rel="stylesheet" href="/css/reset.css">
+
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+  <header>
+  <nav id="main-nav">
+    <ul>
+      
+      
+      
+      
+      
+      
+      
+      
+      <li><a href="/index.html">Jet</a></li>
+      
+      
+      
+      
+      
+      <li><a href="/concepts.html">Concepts</a></li>
+      
+      
+      
+      
+      
+      <li><a href="/quickstart.html">Get Started</a></li>
+      
+      
+      
+      
+      
+      <li><a href="/examples.html">Examples</a></li>
+      
+      
+      
+      
+      
+      <li><a href="/protocol.html">Protocol</a></li>
+      
+      
+      
+    </ul>
+    <div>
+      <a class="twitter-share-button" href="https://twitter.com/share"
+      data-size="large"
+      data-count="none"
+      data-text="Check out #Jet for #RealtimeApps"
+      data-related="gelipp2000:Jet News">
+      Tweet
+    </a>
+    <iframe id="github-star"  src="http://ghbtns.com/github-btn.html?user=lipp&repo=jet&type=watch&count=true&size=large"
+    allowtransparency="true" frameborder="0" scrolling="0" width="120" height="30"></iframe>
+  </div>
+</nav>
+</header>
+
+  <button class="show-nav">Menu</button>
+  
+  <section class="sec-title">
+    <h1>Impressum / Disclaimer</h1>
+  </section>
+  
+  
+  <section>
+    <article>
+    <h2>Impressum</h2>
+
+<p>Gerhard Preuss<br />
+Alicenstrasse, 30<br />64293 Darmstadt</p>
+<p>Telefon: 06151 / 4921933<br />
+E-Mail: <a href="mailto:gelipp@gmail.com">gelipp@gmail.com</a><br />
+</p>
+
+<p><br /><br /><h2>Disclaimer – rechtliche Hinweise</h2>
+§ 1 Haftungsbeschränkung<br />
+Die Inhalte dieser Website werden mit größtmöglicher Sorgfalt erstellt. Der
+Anbieter übernimmt jedoch keine Gewähr für die Richtigkeit, Vollständigkeit
+und Aktualität der bereitgestellten Inhalte. Die Nutzung der Inhalte der
+Website erfolgt auf eigene Gefahr des Nutzers. Namentlich gekennzeichnete
+Beiträge geben die Meinung des jeweiligen Autors und nicht immer die Meinung
+des Anbieters wieder. Mit der reinen Nutzung der Website des Anbieters kommt
+keinerlei Vertragsverhältnis zwischen dem Nutzer und dem Anbieter zustande.
+<br /><br />
+§ 2 Externe Links<br />
+Diese Website enthält Verknüpfungen zu Websites Dritter (&quot;externe Links&quot;).
+Diese Websites unterliegen der Haftung der jeweiligen Betreiber. Der
+Anbieter hat bei der erstmaligen Verknüpfung der externen Links die fremden
+Inhalte daraufhin überprüft, ob etwaige Rechtsverstöße bestehen. Zu dem
+Zeitpunkt waren keine Rechtsverstöße ersichtlich. Der Anbieter hat keinerlei
+Einfluss auf die aktuelle und zukünftige Gestaltung und auf die Inhalte der
+verknüpften Seiten. Das Setzen von externen Links bedeutet nicht, dass sich
+der Anbieter die hinter dem Verweis oder Link liegenden Inhalte zu Eigen
+macht. Eine ständige Kontrolle der externen Links ist für den Anbieter ohne
+konkrete Hinweise auf Rechtsverstöße nicht zumutbar. Bei Kenntnis von
+Rechtsverstößen werden jedoch derartige externe Links unverzüglich gelöscht.
+<br /><br />
+§ 3 Urheber- und Leistungsschutzrechte<br />
+Die auf dieser Website veröffentlichten Inhalte unterliegen dem deutschen
+Urheber- und Leistungsschutzrecht. Jede vom deutschen Urheber- und
+Leistungsschutzrecht nicht zugelassene Verwertung bedarf der vorherigen
+schriftlichen Zustimmung des Anbieters oder jeweiligen Rechteinhabers. Dies
+gilt insbesondere für Vervielfältigung, Bearbeitung, Übersetzung,
+Einspeicherung, Verarbeitung bzw. Wiedergabe von Inhalten in Datenbanken
+oder anderen elektronischen Medien und Systemen. Inhalte und Rechte Dritter
+sind dabei als solche gekennzeichnet. Die unerlaubte Vervielfältigung oder
+Weitergabe einzelner Inhalte oder kompletter Seiten ist nicht gestattet und
+strafbar. Lediglich die Herstellung von Kopien und Downloads für den
+persönlichen, privaten und nicht kommerziellen Gebrauch ist erlaubt.
+<br /><br />
+Die Darstellung dieser Website in fremden Frames ist nur mit schriftlicher
+Erlaubnis zulässig.
+<br /><br />
+§ 4 Besondere Nutzungsbedingungen<br />
+Soweit besondere Bedingungen für einzelne Nutzungen dieser Website von den
+vorgenannten Paragraphen abweichen, wird an entsprechender Stelle
+ausdrücklich darauf hingewiesen. In diesem Falle gelten im jeweiligen
+Einzelfall die besonderen Nutzungsbedingungen.<br /><p>Quelle: <a href="http://www.juraforum.de/impressum-generator/">Impressum Muster</a> von der <a href="http://www.juraforum.de/rechtsanwalt/anwalt-darmstadt/">Juraforum-Anwaltssuche</a> in Ihrem Ort.</p><br /><br /><h2>Datenschutzerklärung:</h2><p><strong>Datenschutzerklärung für den Webanalysedienst Google Analytics</strong><br />
+Diese Website benutzt Google Analytics, einen Webanalysedienst der Google Inc. (&quot;Google&quot;). Google Analytics verwendet sog. &quot;Cookies&quot;, Textdateien, die auf Ihrem Computer gespeichert werden und die eine Analyse der Benutzung der Website durch Sie ermöglichen. Die durch den Cookie erzeugten Informationen über Ihre Benutzung dieser Website werden in der Regel an einen Server von Google in den USA übertragen und dort gespeichert. Wir haben die IP-Anonymisierung aktiviert. Auf dieser Webseite wird Ihre IP-Adresse von Google daher innerhalb von Mitgliedstaaten der Europäischen Union oder in anderen Vertragsstaaten des Abkommens über den Europäischen Wirtschaftsraum zuvor gekürzt. Nur in Ausnahmefällen wird die volle IP-Adresse an einen Server von Google in den USA übertragen und dort gekürzt. Im Auftrag des Betreibers dieser Website wird Google diese Informationen benutzen, um Ihre Nutzung der Website auszuwerten, um Reports über die Websiteaktivitäten zusammenzustellen und um weitere mit der Websitenutzung und der Internetnutzung verbundene Dienstleistungen gegenüber dem Websitebetreiber zu erbringen. Die im Rahmen von Google Analytics von Ihrem Browser übermittelte IP-Adresse wird nicht mit anderen Daten von Google zusammengeführt. Sie können die Speicherung der Cookies durch eine entsprechende Einstellung Ihrer Browser-Software verhindern; wir weisen Sie jedoch darauf hin, dass Sie in diesem Fall gegebenenfalls nicht sämtliche Funktionen dieser Website vollumfänglich werden nutzen können. Sie können darüber hinaus die Erfassung der durch das Cookie erzeugten und auf Ihre Nutzung der Website bezogenen Daten (inkl. Ihrer IP-Adresse) an Google sowie die Verarbeitung dieser Daten durch Google verhindern, indem sie das unter dem folgenden Link verfügbare Browser-Plugin herunterladen und installieren: <a href="http://tools.google.com/dlpage/gaoptout?hl=de" rel="nofollow">http://tools.google.com/dlpage/gaoptout?hl=de</a></p><p><strong>Datenschutzerklärung für die Nutzung von dem Webmessagedienst twitter.com</strong><br />
+Wir haben auf unserer Webseite auch den Webmessagedienst twitter.com integriert. Dieser wird durch die Twitter Inc., 1355 Market St, Suite 900, San Francisco, CA 94103, USA bereitgestellt. Twitter bietet die sog. „Tweet“ – Funktion an. Damit kann man 140 Zeichen lange Nachrichten auch mit Webseitenlinks in seinem eigenen Twitteraccount veröffentlichen. Wenn Sie die „Tweet“-Funktion von Twitter auf unseren Webseiten nutzen, wird die jeweilige Webseite mit Ihrem Account auf Twitter verknüpft und dort ggf. öffentlich bekannt gegeben. Hierbei werden auch Daten an Twitter übertragen.<br />
+Von dem Inhalt der übermittelten Daten und deren Nutzung durch Twitter erhalten wir keine Kenntnis. Konsultieren Sie daher für weitere Informationen die Datenschutzerklärung von Twitter: <a href="http://twitter.com/privacy" rel="nofollow">http://twitter.com/privacy</a><br />
+Twitter bietet Ihnen unter nachfolgendem Link die Möglichkeit, Ihre Datenschutzeinstellungen selbst festzulegen: <a href="http://twitter.com/account/settings" rel="nofollow">http://twitter.com/account/settings</a>.</p></p>
+
+    </article>
+  </section>
+  
+  <footer>
+  <nav>
+  <p class="copyright">
+    &copy;2015 <a href="https://github.com/lipp">Gerhard Preuss</a> under the terms
+    of the <a href="https://github.com/lipp/jet/blob/master/LICENSE">MIT License</a>
+    <a class="disclaimer" href="/impressum.html">Impressum / Disclaimer</a>
+  </p>
+  <div>
+    <a href="https://github.com/lipp/jet"><img src="images/github2.svg"/></a>
+    <a href="https://twitter.com/gelipp2000"><img src="images/twitter2.svg"/></a>
+    <a href="https://plus.google.com/u/0/+GerhardPreuss/"><img src="images/google+.svg"/></a>
+  </div>
+</nav>
+</footer>
+
+</body>
+
+<script src="js/jquery-2.0.3.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.3/fastclick.min.js"></script>
+
+<script>
+$('.show-nav').click(function() {
+  $('header').toggleClass('show');
+});
+$(function() {
+  FastClick.attach(document.body);
+});
+
+</script>
+
+
+<script type="text/javascript">
+window.twttr=(function(d,s,id){var t,js,fjs=d.getElementsByTagName(s)[0];if(d.getElementById(id)){return}js=d.createElement(s);js.id=id;js.src="https://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);return window.twttr||(t={_e:[],ready:function(f){t._e.push(f)}})}(document,"script","twitter-wjs"));
+</script>
+
+<script>
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-42875905-1', 'jetbus.io');
+ga('send', 'pageview');
+</script>
+
+</html>
