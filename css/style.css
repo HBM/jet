@@ -72,7 +72,7 @@ header {
     width: 100%;
     display: block; }
 
-@media (max-width: 730px) {
+@media (max-width: 880px) {
   section:first-of-type {
     position: fixed;
     z-index: 2;
@@ -190,7 +190,7 @@ section:first-of-type {
   margin-top: 30px;
   margin-bottom: 30px; }
 
-@media (max-width: 730px) {
+@media (max-width: 880px) {
   .hero .logo {
     -webkit-transform: translateY(-10px);
         -ms-transform: translateY(-10px);
@@ -355,10 +355,10 @@ article {
   .free li img {
     width: 100%; }
 
-@media (min-width: 731px) {
+@media (min-width: 881px) {
   .show-nav {
     display: none; } }
-@media (max-width: 730px) {
+@media (max-width: 880px) {
   .show-nav {
     position: fixed;
     background: url(../images/ic_menu_36px.svg);
@@ -383,3 +383,19 @@ article {
 @media(max-width: 850px) {
   header li {
     padding: 0 16px; } }
+
+body.appframe {
+  height: calc(100vh + 410px - 50px); }
+  body.appframe .app {
+    max-width: 1000px;
+    width: 90%;
+    margin: 0 auto;
+    height: calc(100vh - 50px);
+    overflow: scroll; }
+    body.appframe .app > * {
+      width: 100%;
+      height: 100%;
+      overflow: scroll; }
+  body.appframe footer {
+    position: absolute;
+    bottom: -360px; }
