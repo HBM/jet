@@ -14,7 +14,7 @@
       <!-- <span ng-if="parentPath.length > 1" class="parent-path">{{parentPath.slice(1)}}</span> -->
       <div class="sub-group" ng-repeat="sub in subs">
         <span ng-if="parentPath.length > 1" class="sub-path">{{parentPath.slice(1)}}.{{sub.name}}</span>
-        <span ng-if="parentPath.length <= 1" class="sub-path">{{sub.name}}</span>
+        <span ng-if="parentPath.length <= 1 && sub.name != '$value'" class="sub-path">{{sub.name}}</span>
         <input class="sub-input" type="{{sub.inputType}}" ng-model="sub.parent[sub.name]">
       </div>
     </div>
