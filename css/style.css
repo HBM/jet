@@ -13,7 +13,7 @@ body {
 
 p {
   font-size: 16px;
-  line-height: 1.5em; }
+  line-height: 1.7em; }
 
 section, header, footer {
   width: 100%; }
@@ -25,7 +25,7 @@ section, header, footer {
 #todo {
   margin: 0 auto;
   width: 100%;
-  height: 600px;
+  height: 800px;
   margin-bottom: -2px; }
 
 header {
@@ -214,8 +214,8 @@ section:first-of-type {
       padding-top: 0px;
       font-size: 2.5em; } }
 .split {
-  padding-top: 30px;
-  padding-bottom: 30px;
+  padding-top: 60px;
+  padding-bottom: 60px;
   display: -webkit-box;
   display: -webkit-flex;
   display: -ms-flexbox;
@@ -234,7 +234,7 @@ section:first-of-type {
     width: 59%;
     padding-bottom: 20px; }
   .split .visual {
-    width: 39%; }
+    width: 38%; }
     .split .visual img {
       width: 100%; }
   .split .description p {
@@ -269,6 +269,7 @@ section:first-of-type {
 
   .split {
     padding-top: 20px;
+    padding-bottom: 30px;
     -webkit-box-orient: vertical;
     -webkit-box-direction: normal;
     -webkit-flex-direction: column;
@@ -292,7 +293,7 @@ section:first-of-type {
       width: 100%; }
       .split .description h3 {
         text-align: center;
-        padding-bottom: 5px; }
+        padding: 10px 0; }
       .split .description p {
         padding-top: 16px; } }
 @media (min-width: 731px) {
@@ -307,6 +308,8 @@ section:first-of-type {
         -ms-flex-order: 2;
             order: 2; } }
 .sec:nth-of-type(2n+1):not(.hero) {
+  border-bottom: 1px solid #b2b2b2;
+  border-top: 1px solid #b2b2b2;
   background-color: #ededed; }
   @media (min-width: 731px) {
     .sec:nth-of-type(2n+1):not(.hero) .visual {
@@ -324,12 +327,14 @@ article {
   padding-top: 20px;
   padding-bottom: 20px; }
   article p {
-    color: #515151; }
+    font-size: 18px;
+    font-weight: 100;
+    color: #555555; }
   article h1, article h2 {
     font-size: 29px;
     margin-top: 50px;
     margin-bottom: 20px;
-    color: #333333; }
+    color: #565656; }
   article ul {
     padding-top: 10px;
     padding-bottom: 30px;
@@ -353,7 +358,13 @@ article {
   width: 40%;
   margin-top: 10px; }
   .free li img {
-    width: 100%; }
+    width: 100%;
+    -webkit-transition: all 0.3s ease;
+            transition: all 0.3s ease; }
+  .free li img:hover {
+    -webkit-transform: scale(1.05, 1.05);
+        -ms-transform: scale(1.05, 1.05);
+            transform: scale(1.05, 1.05); }
 
 @media (min-width: 881px) {
   .show-nav {

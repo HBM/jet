@@ -97,14 +97,14 @@
   </a>
   <div class="description">
     <h3>Daemon</h3>
-    <p>Aka Server. The Daemon is the <em>center of communications</em> as Peers connect to it. When
+    <p>Aka Server. The Daemon is the <em>center of communications</em> as all Peers connect to it. When
       Peers communicate with each other, the Daemon handles the message routing.
       All the heavy-lifting like <em>filtering and sorting</em> happens inside the daemon. Most likely the Daemon
-      runs on the same machine as your webserver.
+      runs on the same machine as your webserver, but just could run anywhere else!
     </p>
     <p>
       The Daemon itself does not provide any content at all, but provides means for <em>content
-      registration</em>. Technically it maybe described as a publish-subscribe engine with built-in
+      registration</em>. Technically the inner wirings maybe described as a publish-subscribe engine with built-in
       <em>content cache</em>.
     </p>
   </div>
@@ -203,7 +203,8 @@
       The best thing is, that the content gets <em>updated</em> as soon as something relevant
       concerning your fetch rule changes (new content gets added or removed, values changed).
       Imagine a score board, which should display the female top ten players ordered
-      by their score. With Jet this is piece of cake!
+      by their score, which gets updated automatically as players score. 
+      With Jet this is piece of cake!
     </p>
   </div>
 </div>
