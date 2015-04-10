@@ -143,8 +143,10 @@
   </a>
   <div class="description">
     <h3>State</h3>
-    <p>A logical piece of information (value), identified by a <em>unique name (path)</em>.
-      A State's value can be of <em>any Javascript type</em>.
+    <p>Aka Document. A logical piece of information (value), identified by a <em>unique name (path)</em>.
+      A State's value can be of <em>any Javascript type</em>. Peers define if and how the States they provide
+      react when someone tries to change its value. The request values maybe adapted, interpolated or refused
+      if necessary.
       Peers can add States to the Jet Bus by registrating them to the Daemon.
       States may change its value <em>spontaneously</em> or on behalf of another Peer by calling <strong>set</strong>.
       States are subject to fetching and thus are <em>observable</em> by other Peers.
@@ -167,7 +169,7 @@
   </a>
   <div class="description">
     <h3>Method</h3>
-    <p>An action identified by a <em>unique name (path)</em>.
+    <p>Aka Service. An action identified by a <em>unique name (path)</em>.
       Methods can have <em>any number and any type of parameters</em>.
       Peers can add Methods to the Jet Bus by registrating them to the Daemon.
       Unlike States, Methods have no associated value.
@@ -193,7 +195,7 @@
   </a>
   <div class="description">
     <h3>Fetching</h3>
-    <p>Fetching is the process of <em>continuously gathering information</em>.
+    <p>Aka Query. Fetching is the process of <em>continuously gathering information</em>.
       Peers can <strong>fetch</strong> to obtain content from a Daemon, which in turn is provided by Peers.
       This is much like a database query as you can exactly define what content you want
       based on <em>name (path)</em> and/or <em>values</em> of States and Methods.
@@ -202,6 +204,8 @@
     <p>
       The best thing is, that the content gets <em>updated</em> as soon as something relevant
       concerning your fetch rule changes (new content gets added or removed, values changed).
+    </p>
+    <p>
       Imagine a score board, which should display the female top ten players ordered
       by their score, which gets updated automatically as players score. 
       With Jet this is piece of cake!
