@@ -4,7 +4,7 @@
   </a>
   <div class="description">
     <h3>Method</h3>
-    <p>An action identified by a <em>unique name (path)</em>.
+    <p>Aka Service. An action identified by a <em>unique name (path)</em> which can be executed by other Peers.
       Methods can have <em>any number and any type of parameters</em>.
       Peers can add Methods to the Jet Bus by registrating them to the Daemon.
       Unlike States, Methods have no associated value.
@@ -12,7 +12,7 @@
     </p>
     <p>
       A method may do just anything. It could light an LED, create States
-      (e.g. <a href="https://github.com/lipp/node-jet/blob/master/examples/todo-server.js#L29">"todo/add"</a>) or
+      (e.g. <a href="https://github.com/lipp/node-jet/blob/master/examples/todo/todo-server.js#L57">"todo/add"</a>) or
       perform a system update.
       However, it <strong>should not</strong> behave like classical "getter/setter" as States
       are intended for this purpose.
