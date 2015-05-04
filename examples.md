@@ -10,6 +10,11 @@ Most of them use the Jet Daemon hosted at [nodejitsu](http://nodejitsu.com) with
 Daemon URL: `ws://jet.nodejitsu.com` (Port 80). The nodejitsu Jet Daemon is public
 and you may notice activity of other peers "playing" with it.
 
+## Todo-App Tutorial
+
+For a basic understanding of how to write complete "client/server" apps, 
+check out the [Todo-App tutorial](https://github.com/lipp/node-jet/blob/master/examples/todo/README.md).
+
 ## ATTENTION: Work in progress
 The codepen examples are using the old (<0.3.0) API. They will be updated soon!
 

@@ -12,7 +12,8 @@ The full Peer API documentation can be found [here](https://github.com/lipp/node
 
 ## Todo-App Tutorial
 
-Check out the [Todo-App tutorial](https://github.com/lipp/node-jet/blob/master/examples/todo/README.md).
+For a basic understanding of how to write complete "client/server" apps, 
+check out the [Todo-App tutorial](https://github.com/lipp/node-jet/blob/master/examples/todo/README.md).
 
 ## Load the jet module
 
