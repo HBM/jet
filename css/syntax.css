@@ -1,5 +1,5 @@
 .highlight {
-  background-color: #efefef;
+  background-color: #ededed;
   padding: 7px 7px 7px 10px;
   border: 1px dashed #999;
   margin: 20px 0 20px 0;
@@ -13,7 +13,6 @@ pre code *{
   font-weight: initial;
   /*font-family:'Bitstream Vera Sans Mono','Courier', monospace;*/
 }
-.highlight  { background: #fafafa; }
 .highlight .c { color: #999988; font-style: italic } /* Comment */
 .highlight .err { color: #a61717; background-color: #e3d2d2 } /* Error */
 .highlight .k { font-weight: bold } /* Keyword */

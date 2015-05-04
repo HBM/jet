@@ -28,7 +28,7 @@ body
 p
   font-size: 16px
   //text-align: justify
-  line-height: 1.5em
+  line-height: 1.7em
 
 section, header, footer
   width: 100%
@@ -41,7 +41,7 @@ section, header, footer
 #todo
   margin: 0 auto
   width: 100%
-  height: 600px
+  height: 1000px
   margin-bottom: -2px
 
 header
@@ -211,8 +211,8 @@ section:first-of-type
 
 
 .split
-  padding-top: 30px
-  padding-bottom: 30px
+  padding-top: 60px
+  padding-bottom: 60px
   display: flex
   justify-content: space-between
   width: 100%
@@ -224,7 +224,7 @@ section:first-of-type
   .visual
     img
       width: 100%
-    width: 39%
+    width: 38%
 
   .description p
     padding-top: 20px
@@ -261,6 +261,7 @@ section:first-of-type
       margin-bottom: 10px
   .split
     padding-top: 20px
+    padding-bottom: 30px
     flex-direction: column
     .visual
       order: 1
@@ -269,7 +270,7 @@ section:first-of-type
     .description
       h3
         text-align: center
-        padding-bottom: 5px
+        padding: 10px
       order: 2
       flex-grow: 1
       width: 100%
@@ -285,6 +286,8 @@ section:first-of-type
       order: 2
 
 .sec:nth-of-type(2n+1):not(.hero)
+  border-bottom: 1px solid #b2b2b2
+  border-top: 1px solid #b2b2b2
   background-color: rgb(237, 237, 237)
   @media (min-width: 731px)
     //text-align: right
@@ -298,13 +301,15 @@ article
   padding-bottom: 20px
 
   p
-    color: rgb(81,81,81)
+    color: #555555
+    font-size: 18px
+    font-weight: 100
 
   h1, h2
     font-size: 29px
     margin-top: 50px
     margin-bottom: 20px
-    color: #333
+    color: #565656
 
   ul
     padding-top: 10px
@@ -325,7 +330,11 @@ article
     //margin-right: 25px
     margin-top: 10px
     img
+      transition: all 0.3s ease
       width: 100%
+
+    img:hover
+      transform: scale(1.05,1.05)
 
 
 .show-nav
