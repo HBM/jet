@@ -10,17 +10,24 @@ Most of them use the Jet Daemon hosted at [nodejitsu](http://nodejitsu.com) with
 Daemon URL: `ws://jet.nodejitsu.com` (Port 80). The nodejitsu Jet Daemon is public
 and you may notice activity of other peers "playing" with it.
 
+## ATTENTION: Work in progress
+The codepen examples are using the old (<0.3.0) API. They will be updated soon!
+
 # Connect
 
 This example creates a peer and reports back the connection status.
+Daemons can run on the same machine as the Peer or on a remote site.
 
 The most relevant code snippet is:
 
 ```javascript
 var peer = new jet.Peer({
-      url: 'ws://jet.nodejitsu.com:80',
-      onOpen: function() {}
-    });
+      url: 'ws://jet.nodejitsu.com:80'
+});
+
+peer.connect().then(function() {
+  
+});
 ```
 
 <div data-height="345" data-theme-id="0" data-slug-hash="GEyuq" data-default-tab="js" class='codepen'><pre><code>var connect = function(url) {
@@ -54,7 +61,7 @@ $(&#x27;input&#x27;).change(function(e) {
 
 
 # Add States
-
+ 
 This example creates a Peer and adds two States with random. One, ignoring the
 Daemon response, the other one logging the Daemon response to console. The message
 traffic between the Daemon and the Peer is visible in the result window bottom.
@@ -65,25 +72,20 @@ The most relevant code snippet is:
 // create read-only state (no set callback provided)
 // ignore the Daemon response by leaving out the callback object.
 // the request is a notification.
-peer.state({
-  path: 'foo',
-  value: 123
-});
+var foo = new jet.State('foo', 123);
+peer.add(foo);
 
 // create writable state,
 // provide callback object with error and success handlers.
 // the Daemon will send a response, as the request is not a
 // notification.
-var bar = 'hello';
-peer.state({
-  path: 'bar',
-  value: bar,
-  set: function(newVal) {
-      bar = newVal;
-  }
-  }, {
-  success: function() {},
-  error: function(err) {}
+var bar = new jet.State('bar', {age: 123});
+bar.on('set', function(newVal) {
+	if (newVal.age > this.value().age) {
+	  console.log('bar', newVal);
+	} else {
+	  throw new Error('arg');
+	}
 });
 ```
 
@@ -173,7 +175,12 @@ This is the most relevant snippet:
 
 ```javascript
 // fetch and provide: 1) fetch rule, 2) callback for fetching
-peer.fetch({path: {startsWith: 'random'}}, function(path, event, value){});
+var randomStuff = new jet.Fetcher()
+  .path('startsWith', 'random')
+  .on('data', function(path, event, value) {
+  });
+
+peer.fetch(randomStuff);
 ```
 
 <div data-height="923" data-theme-id="0" data-slug-hash="Cglby" data-default-tab="js" class='codepen'><pre><code>var connect = function(url) {
@@ -248,7 +255,7 @@ var addLogEntry = function(direction, message) {
 </code></pre>
 <p>See the Pen <a href='http://codepen.io/lipp/pen/Cglby/'>Jet Fetch State</a> by Gerhard Preuss (<a href='http://codepen.io/lipp'>@lipp</a>) on <a href='http://codepen.io'>CodePen</a>.</p>
 </div><script async src="//codepen.io/assets/embed/ei.js"></script>
-
+ 
 # Change State
 
 This examples creates a Peer, adds a "ticker" States with random name (so that at least
@@ -260,10 +267,9 @@ in the result window bottom.
 This is the most relevant snippet:
 
 ```javascript
-var ticker = peer.state({
-  path: 'ticker',
-  value: 1
-});
+var ticker = new jet.State('ticker', 1);
+
+peer.add(ticker);
 
 setInterval(function() {
   var old = ticker.value();

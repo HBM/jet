@@ -5,12 +5,16 @@ order: 2
 ---
 
 This is a quick start guide for writing Peers using the Javascript Peer API for
-[Browsers](http://github.com/lipp/jet-js) and [Node.js](http://github.com/lipp/node-jet).
+[Browsers and Node.js](http://github.com/lipp/node-jet).
 It may help you getting a basic understanding of Jet even if your are not
 planing to use one of this Peer implementations.
-The full Peer API documentation can be found [here](https://github.com/lipp/jet-js#api).
+The full Peer API documentation can be found [here](https://github.com/lipp/node-jet/blob/master/doc/peer.md#jetpeer-api).
 
-Note, that Node.js users have to require the Jet module.
+## Todo-App Tutorial
+
+Check out the [Todo-App tutorial](https://github.com/lipp/node-jet/blob/master/examples/todo/README.md).
+
+## Load the jet module
 
 ```javascript
 var jet = require('node-jet');
@@ -27,10 +31,14 @@ messages from Peer to Peer.
 var peer = new jet.Peer({
   url: 'ws://jet.nodejitsu.com:80'
 });
+
+peer.connect().then(function() {
+  console.log('peer is connected to daemon');
+});
 ```
 
 ## Add States
-
+ 
 Peers can add States to the Daemon. A State must have a **unique path**
 and a **value**, which can be of any non-function type. States are visible to other
 Peers (by fetching) and any Peer may try to **set** the State to a new value.
@@ -40,13 +48,15 @@ a State change is posted automatically, thus keeping all other Peers and the
 Daemon in sync.
 
 ```javascript
-var machineName = 'Animal';
-var machineNameState = peer.state({
-  path: 'machine/name',
-  value: machineName,
-  set: function(newName) {
-    machineName = newName;
-  }
+var machineName = new jet.State('machine/name', 'animal');
+machineName.on('set', function(newName) {
+  setMachineName(newName); // does something appropriate
+});
+
+peer.add(machineName).then(function() {
+  console.log('machine/name has been added to daemon');
+}).catch(function(err) {
+  console.log('could not add machine/name to daemon', err);
 });
 ```
 
@@ -58,20 +68,20 @@ frequently.
 
 ```javascript
 // add a state
-var cpuLoadState = peer.state({
-  path: 'cpu/load',
-  value: readCpuLoad()
-});
+var cpuLoad = new jet.State('cpu/load', readCpuLoad());
 
-// async post new value
-setTimeout(function () {
-  cpuLoadState.value(readCpuLoad());
-},3000);
+peer.add(cpuLoad).then(function() {
+  // async post new value
+  setTimeout(function () {
+    cpuLoad.value(readCpuLoad());
+  },3000);
+});
 ```
 
 In opposite to [Firebase](http://firebase.com) there is no persistency layer.
 Jet States are "runtime" States as they die with the Peer. Adding persistency
-would be a task for the respective Peer to implement.
+would be a task for the respective Peer to implement and could involve
+writing to disk, to a Database or setting hardware registers.
 
 ## Add Methods
 
@@ -84,19 +94,19 @@ thrown during execution.
 
 ```javascript
 // add a method
-var greet = peer.method({
-  path: 'greet',
-  call: function (name) {
+var greet = new jet.Method('greet');
+greet.on('call', function(name) {
     if (name.first === 'John') {
       throw 'John is a bad guy!';
     }
     var greeting = 'Hello ' + name.first + ' ' + name.last;
     console.log(greeting);
     return greeting;
-  }
 });
-```
 
+peer.add(greet);
+```
+ 
 ## Fetch States and Methods
 
 Other Peers can fetch States and Methods. Fetching is like having a realtime
@@ -113,34 +123,42 @@ values. Note that the Daemon caches all States and Methods and thus is able to
 to have hotplug-like behaviour, dependency based start-up sequences etc.
 
 ```javascript
-peer.fetch({
-  path: {
-    equalsOneOf: ['foo','addNumbers']
-  }, function (path, event, value) {
-      // the value is undefined for methods
-  }
-});
+var engineers = new jet.Fetcher()
+  .path('startsWith', 'engineers/')
+  .on('data', function(path, event, engineer) {
+    if (path === 'add') {
+	  console.log('hello engineer', engineer.name);
+	} else if (path === 'change') {
+	  console.log('has your salary been raised?', engineer.salary)
+	} else if (path === 'remove') {
+	  console.log('good bye', engineer.name);
+	}
+  });
+
+peer.fetch(engineers);
 ```
 
 If desired, the fetched elements can also be delivered sorted, e.g. querying the
-top ten players could look like:
+top ten female players could look like:
 
 ```javascript
-peer.fetch({
-    path: {
-      startsWith: 'players/'
-    },
-    sort: {
-      from: 1,
-      to: 10,
-      descending: true,
-      byValueField: {
-        score: 'number'
-      }
-    }, function (changes, n) {
-  }
-});
+var topTenFemalePlayers = new jet.Fetcher()
+  .path('startsWith', 'players/')
+  .key('gender', 'equals', 'female')
+  .sortByKey('score', 'number')
+  .descending()
+  .range(1, 10)
+  .on('data', function(players) {
+    console.log('scoreboard just changed:');
+	console.log(players);
+  });
+
+peer.fetch(topTenFemalePlayers);
 ```
+
+This saves the clients bandwidth as only a subset of information goes over the wire and
+is easy to handle, since always a complete and correct set of information (Array) is
+passed to the fetch "data" handler.
 
 ## Set States
 
@@ -151,23 +169,29 @@ to the Peer which added the State (or reply with an error if the State is not
 available).
 
 ```javascript
-peer.set('foo', 6271, {
-  success: function() {
+peer.set('foo', 6271)
+  .then(function() {
     console.log('great success');
-  },
-  error: function(err) {
+  }).catch(function(err) {
     console.log('omg', err);
-  }
-});
-
-//if you dont care about the result, leave the callbacks out
-peer.set('foo', 416);
+  });
 ```
 
-You must not make any assumptions about side-effects of a set call without error.
+You must not make any assumptions about side-effects of a set call without error,
+as the Peer implementing the State's `set` callback is free to do anything appropriate
+with the requested new value (merging, adjusting, translating).
 In particular, the actual value of a State can only be determined by fetching
-it.
+it or by explicitly requesting it during the `set` call:
 
+```javascript
+peer.set('foo', 6271, {valueAsResult: true})
+  .then(function(realNewValue) {
+    console.log('the new "read" value is', realNewValue);
+  }).catch(function(err) {
+    console.log('omg', err);
+  });
+```
+ 
 ## Call Methods
 
 Any Peer may (try) to call Methods. The return value is determined by the
@@ -176,17 +200,12 @@ respective Method. The Daemon will route the request to the Peer which added the
 Method (or reply with an error if the Method is not available).
 
 ```javascript
-peer.call('greet', {first: 'Jim', last: 'White'}, {
-  success: function() {
+peer.call('greet', {first: 'Jim', last: 'White'})
+  .then(function() {
     console.log('great success');
-  },
-  error: function(err) {
+  }).catch(function(err) {
     console.log('omg', err);
-  }
-});
-
-//if you dont care about the result, leave the callbacks out
-peer.call('greet', {first: 'John', last: 'Carter'});
+  });
 ```
 
 ## Remove States
@@ -196,23 +215,24 @@ the Daemon if the network connection to a Peer breaks. In any case, all fetching
 Peers will be informed.
 
 ```javascript
-var foo = peer.state({
-  path: 'foo',
-  value: 123
+var foo = new jet.State('foo', 123); 
+
+peer.add(foo).then(function() {
+  foo.remove();
 });
-foo.remove();
 ```
 
 ## Remove Methods
-
+ 
 Methods can be removed by the owning Peer. Methods are also implicitly removed by
 the Daemon if the network connection to a Peer breaks. In any case, all fetching
 Peers will be informed.
 
 ```javascript
-var greet = peer.method({
-  path: 'greet',
-  call: function() {}
+var greet = new jet.Method('greet'); 
+greet.on('call', function() {});
+
+peer.add(greet).then(function() {
+  greet.remove();
 });
-greet.remove();
 ```
