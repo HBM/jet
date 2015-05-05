@@ -97,7 +97,7 @@
   </a>
   <div class="description">
     <h3>Daemon</h3>
-    <p>Aka Server. The Daemon is the <em>center of communications</em> as all Peers connect to it. When
+    <p>Aka Master. The Daemon is the <em>center of communications</em> as all Peers connect to it. When
       Peers communicate with each other, the Daemon handles the message routing.
       All the heavy-lifting like <em>filtering and sorting</em> happens inside the daemon. Most likely the Daemon
       runs on the same machine as your webserver, but just could run anywhere else!
@@ -143,10 +143,10 @@
   </a>
   <div class="description">
     <h3>State</h3>
-    <p>Aka Document. A logical piece of information (value), identified by a <em>unique name (path)</em>.
-      A State's value can be of <em>any Javascript type</em>: primitive types, nested Objects or Arrays.
+	<p>Aka Document. A logical piece of information (value), identified by a <em>unique name (path)</em>.
+	  A State's value can be of <em>any Javascript type</em>: primitive types, nested Objects or Arrays.
       Peers can add States to the Jet Bus by registrating them to the Daemon.
-      States may change its value <em>spontaneously</em> or on behalf of another Peer by calling <strong>set</strong>.
+      States may change its value <em>spontaneously</em> or on behalf of another Peer.
       They are subject to fetching and thus are <em>observable</em> by other Peers.
     </p>
     <p>
@@ -155,7 +155,7 @@
       behaviour when a <strong>set</strong> request comes in and is free to do anything
       that is appropriate.
       If necessary the requested value maybe adapted, interpolated or refused.
-    </p>
+     </p>
   </div>
 </div>
 
@@ -168,7 +168,7 @@
   </a>
   <div class="description">
     <h3>Method</h3>
-    <p>Aka Service. An action identified by a <em>unique name (path)</em>.
+    <p>Aka Service. An action identified by a <em>unique name (path)</em> which can be executed by other Peers.
       Methods can have <em>any number and any type of parameters</em>.
       Peers can add Methods to the Jet Bus by registrating them to the Daemon.
       Unlike States, Methods have no associated value.
@@ -176,7 +176,7 @@
     </p>
     <p>
       A method may do just anything. It could light an LED, create States
-      (e.g. <a href="https://github.com/lipp/node-jet/blob/master/examples/todo-server.js#L29">"todo/add"</a>) or
+      (e.g. <a href="https://github.com/lipp/node-jet/blob/master/examples/todo/todo-server.js#L57">"todo/add"</a>) or
       perform a system update.
       However, it <strong>should not</strong> behave like classical "getter/setter" as States
       are intended for this purpose.
@@ -202,12 +202,12 @@
     </p>
     <p>
       The best thing is, that the content gets <em>updated</em> as soon as something relevant
-      concerning your fetch rule changes (new content gets added or removed, values changed).
-    </p>
-    <p>
+      concerning your fetch rule changes: new content gets added or removed, values changed.
+	</p>
+	<p>
       Imagine a score board, which should display the female top ten players ordered
       by their score, which gets updated automatically as players score. 
-      With Jet this is piece of cake!
+	  With Jet this is piece of cake!
     </p>
   </div>
 </div>

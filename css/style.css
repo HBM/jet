@@ -293,7 +293,7 @@ section:first-of-type {
       width: 100%; }
       .split .description h3 {
         text-align: center;
-        padding: 10px 0; }
+        padding: 10px; }
       .split .description p {
         padding-top: 16px; } }
 @media (min-width: 731px) {
@@ -327,9 +327,9 @@ article {
   padding-top: 20px;
   padding-bottom: 20px; }
   article p {
+    color: #555555;
     font-size: 18px;
-    font-weight: 100;
-    color: #555555; }
+    font-weight: 100; }
   article h1, article h2 {
     font-size: 29px;
     margin-top: 50px;
@@ -358,9 +358,9 @@ article {
   width: 40%;
   margin-top: 10px; }
   .free li img {
-    width: 100%;
     -webkit-transition: all 0.3s ease;
-            transition: all 0.3s ease; }
+            transition: all 0.3s ease;
+    width: 100%; }
   .free li img:hover {
     -webkit-transform: scale(1.05, 1.05);
         -ms-transform: scale(1.05, 1.05);
@@ -410,3 +410,6 @@ body.appframe {
   body.appframe footer {
     position: absolute;
     bottom: -360px; }
+
+iframe.cp_embed_iframe {
+  box-shadow: 5px 5px 10px 0px #a5a5a5; }

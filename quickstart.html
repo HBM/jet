@@ -92,12 +92,17 @@
   <section>
     <article>
     <p>This is a quick start guide for writing Peers using the Javascript Peer API for
-<a href="http://github.com/lipp/jet-js">Browsers</a> and <a href="http://github.com/lipp/node-jet">Node.js</a>.
+<a href="http://github.com/lipp/node-jet">Browsers and Node.js</a>.
 It may help you getting a basic understanding of Jet even if your are not
 planing to use one of this Peer implementations.
-The full Peer API documentation can be found <a href="https://github.com/lipp/jet-js#api">here</a>.</p>
+The full Peer API documentation can be found <a href="https://github.com/lipp/node-jet/blob/master/doc/peer.md#jetpeer-api">here</a>.</p>
 
-<p>Note, that Node.js users have to require the Jet module.</p>
+<h2>Todo-App Tutorial</h2>
+
+<p>For a basic understanding of how to write complete &quot;client/server&quot; apps, 
+check out the <a href="https://github.com/lipp/node-jet/blob/master/examples/todo/README.md">Todo-App tutorial</a>.</p>
+
+<h2>Load the jet module</h2>
 <div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">jet</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;node-jet&#39;</span><span class="p">);</span>
 </code></pre></div>
 <h2>Create a Peer</h2>
@@ -109,6 +114,10 @@ messages from Peer to Peer.</p>
 <div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">peer</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">jet</span><span class="p">.</span><span class="nx">Peer</span><span class="p">({</span>
   <span class="nx">url</span><span class="o">:</span> <span class="s1">&#39;ws://jet.nodejitsu.com:80&#39;</span>
 <span class="p">});</span>
+
+<span class="nx">peer</span><span class="p">.</span><span class="nx">connect</span><span class="p">().</span><span class="nx">then</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;peer is connected to daemon&#39;</span><span class="p">);</span>
+<span class="p">});</span>
 </code></pre></div>
 <h2>Add States</h2>
 
@@ -119,13 +128,15 @@ Whenever someone tries to set a State to a new value, the corresponding <code>se
 callback function will be invoked. Per default, when the <code>set</code> callback does not throw an error,
 a State change is posted automatically, thus keeping all other Peers and the
 Daemon in sync.</p>
-<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">machineName</span> <span class="o">=</span> <span class="s1">&#39;Animal&#39;</span><span class="p">;</span>
-<span class="kd">var</span> <span class="nx">machineNameState</span> <span class="o">=</span> <span class="nx">peer</span><span class="p">.</span><span class="nx">state</span><span class="p">({</span>
-  <span class="nx">path</span><span class="o">:</span> <span class="s1">&#39;machine/name&#39;</span><span class="p">,</span>
-  <span class="nx">value</span><span class="o">:</span> <span class="nx">machineName</span><span class="p">,</span>
-  <span class="nx">set</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">newName</span><span class="p">)</span> <span class="p">{</span>
-    <span class="nx">machineName</span> <span class="o">=</span> <span class="nx">newName</span><span class="p">;</span>
-  <span class="p">}</span>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">machineName</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">jet</span><span class="p">.</span><span class="nx">State</span><span class="p">(</span><span class="s1">&#39;machine/name&#39;</span><span class="p">,</span> <span class="s1">&#39;animal&#39;</span><span class="p">);</span>
+<span class="nx">machineName</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;set&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">newName</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">setMachineName</span><span class="p">(</span><span class="nx">newName</span><span class="p">);</span> <span class="c1">// does something appropriate</span>
+<span class="p">});</span>
+
+<span class="nx">peer</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="nx">machineName</span><span class="p">).</span><span class="nx">then</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;machine/name has been added to daemon&#39;</span><span class="p">);</span>
+<span class="p">}).</span><span class="k">catch</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;could not add machine/name to daemon&#39;</span><span class="p">,</span> <span class="nx">err</span><span class="p">);</span>
 <span class="p">});</span>
 </code></pre></div>
 <p>If a State does not provide a set callback function, it is considered read-only
@@ -134,19 +145,19 @@ States may also change spontaneously at will, without someone trying to
 <strong>set</strong> the State. E.g. one could add a &quot;cpu-load&quot; State, which changes very
 frequently.</p>
 <div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="c1">// add a state</span>
-<span class="kd">var</span> <span class="nx">cpuLoadState</span> <span class="o">=</span> <span class="nx">peer</span><span class="p">.</span><span class="nx">state</span><span class="p">({</span>
-  <span class="nx">path</span><span class="o">:</span> <span class="s1">&#39;cpu/load&#39;</span><span class="p">,</span>
-  <span class="nx">value</span><span class="o">:</span> <span class="nx">readCpuLoad</span><span class="p">()</span>
-<span class="p">});</span>
+<span class="kd">var</span> <span class="nx">cpuLoad</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">jet</span><span class="p">.</span><span class="nx">State</span><span class="p">(</span><span class="s1">&#39;cpu/load&#39;</span><span class="p">,</span> <span class="nx">readCpuLoad</span><span class="p">());</span>
 
-<span class="c1">// async post new value</span>
-<span class="nx">setTimeout</span><span class="p">(</span><span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
-  <span class="nx">cpuLoadState</span><span class="p">.</span><span class="nx">value</span><span class="p">(</span><span class="nx">readCpuLoad</span><span class="p">());</span>
-<span class="p">},</span><span class="mi">3000</span><span class="p">);</span>
+<span class="nx">peer</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="nx">cpuLoad</span><span class="p">).</span><span class="nx">then</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+  <span class="c1">// async post new value</span>
+  <span class="nx">setTimeout</span><span class="p">(</span><span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+    <span class="nx">cpuLoad</span><span class="p">.</span><span class="nx">value</span><span class="p">(</span><span class="nx">readCpuLoad</span><span class="p">());</span>
+  <span class="p">},</span><span class="mi">3000</span><span class="p">);</span>
+<span class="p">});</span>
 </code></pre></div>
 <p>In opposite to <a href="http://firebase.com">Firebase</a> there is no persistency layer.
 Jet States are &quot;runtime&quot; States as they die with the Peer. Adding persistency
-would be a task for the respective Peer to implement.</p>
+would be a task for the respective Peer to implement and could involve
+writing to disk, to a Database or setting hardware registers.</p>
 
 <h2>Add Methods</h2>
 
@@ -157,17 +168,17 @@ Method arguments can be of any non-function type and the number of arguments
 is flexible. The Method may return a value of any type or an exception might be
 thrown during execution.</p>
 <div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="c1">// add a method</span>
-<span class="kd">var</span> <span class="nx">greet</span> <span class="o">=</span> <span class="nx">peer</span><span class="p">.</span><span class="nx">method</span><span class="p">({</span>
-  <span class="nx">path</span><span class="o">:</span> <span class="s1">&#39;greet&#39;</span><span class="p">,</span>
-  <span class="nx">call</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">name</span><span class="p">)</span> <span class="p">{</span>
+<span class="kd">var</span> <span class="nx">greet</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">jet</span><span class="p">.</span><span class="nx">Method</span><span class="p">(</span><span class="s1">&#39;greet&#39;</span><span class="p">);</span>
+<span class="nx">greet</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;call&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">name</span><span class="p">)</span> <span class="p">{</span>
     <span class="k">if</span> <span class="p">(</span><span class="nx">name</span><span class="p">.</span><span class="nx">first</span> <span class="o">===</span> <span class="s1">&#39;John&#39;</span><span class="p">)</span> <span class="p">{</span>
       <span class="k">throw</span> <span class="s1">&#39;John is a bad guy!&#39;</span><span class="p">;</span>
     <span class="p">}</span>
     <span class="kd">var</span> <span class="nx">greeting</span> <span class="o">=</span> <span class="s1">&#39;Hello &#39;</span> <span class="o">+</span> <span class="nx">name</span><span class="p">.</span><span class="nx">first</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span> <span class="o">+</span> <span class="nx">name</span><span class="p">.</span><span class="nx">last</span><span class="p">;</span>
     <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">greeting</span><span class="p">);</span>
     <span class="k">return</span> <span class="nx">greeting</span><span class="p">;</span>
-  <span class="p">}</span>
 <span class="p">});</span>
+
+<span class="nx">peer</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="nx">greet</span><span class="p">);</span>
 </code></pre></div>
 <h2>Fetch States and Methods</h2>
 
@@ -185,31 +196,39 @@ invoked if:</p>
 values. Note that the Daemon caches all States and Methods and thus is able to
 &quot;fake&quot; add events for Peers joining the party lately. This feature allows Peers
 to have hotplug-like behaviour, dependency based start-up sequences etc.</p>
-<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="nx">peer</span><span class="p">.</span><span class="nx">fetch</span><span class="p">({</span>
-  <span class="nx">path</span><span class="o">:</span> <span class="p">{</span>
-    <span class="nx">equalsOneOf</span><span class="o">:</span> <span class="p">[</span><span class="s1">&#39;foo&#39;</span><span class="p">,</span><span class="s1">&#39;addNumbers&#39;</span><span class="p">]</span>
-  <span class="p">},</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">path</span><span class="p">,</span> <span class="nx">event</span><span class="p">,</span> <span class="nx">value</span><span class="p">)</span> <span class="p">{</span>
-      <span class="c1">// the value is undefined for methods</span>
-  <span class="p">}</span>
-<span class="p">});</span>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">engineers</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">jet</span><span class="p">.</span><span class="nx">Fetcher</span><span class="p">()</span>
+  <span class="p">.</span><span class="nx">path</span><span class="p">(</span><span class="s1">&#39;startsWith&#39;</span><span class="p">,</span> <span class="s1">&#39;engineers/&#39;</span><span class="p">)</span>
+  <span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;data&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">path</span><span class="p">,</span> <span class="nx">event</span><span class="p">,</span> <span class="nx">engineer</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">path</span> <span class="o">===</span> <span class="s1">&#39;add&#39;</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;hello engineer&#39;</span><span class="p">,</span> <span class="nx">engineer</span><span class="p">.</span><span class="nx">name</span><span class="p">);</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">path</span> <span class="o">===</span> <span class="s1">&#39;change&#39;</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;has your salary been raised?&#39;</span><span class="p">,</span> <span class="nx">engineer</span><span class="p">.</span><span class="nx">salary</span><span class="p">)</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">path</span> <span class="o">===</span> <span class="s1">&#39;remove&#39;</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;good bye&#39;</span><span class="p">,</span> <span class="nx">engineer</span><span class="p">.</span><span class="nx">name</span><span class="p">);</span>
+    <span class="p">}</span>
+  <span class="p">});</span>
+
+<span class="nx">peer</span><span class="p">.</span><span class="nx">fetch</span><span class="p">(</span><span class="nx">engineers</span><span class="p">);</span>
 </code></pre></div>
 <p>If desired, the fetched elements can also be delivered sorted, e.g. querying the
-top ten players could look like:</p>
-<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="nx">peer</span><span class="p">.</span><span class="nx">fetch</span><span class="p">({</span>
-    <span class="nx">path</span><span class="o">:</span> <span class="p">{</span>
-      <span class="nx">startsWith</span><span class="o">:</span> <span class="s1">&#39;players/&#39;</span>
-    <span class="p">},</span>
-    <span class="nx">sort</span><span class="o">:</span> <span class="p">{</span>
-      <span class="nx">from</span><span class="o">:</span> <span class="mi">1</span><span class="p">,</span>
-      <span class="nx">to</span><span class="o">:</span> <span class="mi">10</span><span class="p">,</span>
-      <span class="nx">descending</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
-      <span class="nx">byValueField</span><span class="o">:</span> <span class="p">{</span>
-        <span class="nx">score</span><span class="o">:</span> <span class="s1">&#39;number&#39;</span>
-      <span class="p">}</span>
-    <span class="p">},</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">changes</span><span class="p">,</span> <span class="nx">n</span><span class="p">)</span> <span class="p">{</span>
-  <span class="p">}</span>
-<span class="p">});</span>
+top ten female players could look like:</p>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">topTenFemalePlayers</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">jet</span><span class="p">.</span><span class="nx">Fetcher</span><span class="p">()</span>
+  <span class="p">.</span><span class="nx">path</span><span class="p">(</span><span class="s1">&#39;startsWith&#39;</span><span class="p">,</span> <span class="s1">&#39;players/&#39;</span><span class="p">)</span>
+  <span class="p">.</span><span class="nx">key</span><span class="p">(</span><span class="s1">&#39;gender&#39;</span><span class="p">,</span> <span class="s1">&#39;equals&#39;</span><span class="p">,</span> <span class="s1">&#39;female&#39;</span><span class="p">)</span>
+  <span class="p">.</span><span class="nx">sortByKey</span><span class="p">(</span><span class="s1">&#39;score&#39;</span><span class="p">,</span> <span class="s1">&#39;number&#39;</span><span class="p">)</span>
+  <span class="p">.</span><span class="nx">descending</span><span class="p">()</span>
+  <span class="p">.</span><span class="nx">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+  <span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;data&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">players</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;scoreboard just changed:&#39;</span><span class="p">);</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">players</span><span class="p">);</span>
+  <span class="p">});</span>
+
+<span class="nx">peer</span><span class="p">.</span><span class="nx">fetch</span><span class="p">(</span><span class="nx">topTenFemalePlayers</span><span class="p">);</span>
 </code></pre></div>
+<p>This saves the clients bandwidth as only a subset of information goes over the wire and
+is easy to handle, since always a complete and correct set of information (Array) is
+passed to the fetch &quot;data&quot; handler.</p>
+
 <h2>Set States</h2>
 
 <p>Any Peer may (try) to set States to other values. This operation may succeed
@@ -217,61 +236,60 @@ or fail as determined by the implementation of the <code>set</code> callback fun
 by the owning Peer of the respective State. The Daemon will route the request
 to the Peer which added the State (or reply with an error if the State is not
 available).</p>
-<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="nx">peer</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s1">&#39;foo&#39;</span><span class="p">,</span> <span class="mi">6271</span><span class="p">,</span> <span class="p">{</span>
-  <span class="nx">success</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="nx">peer</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s1">&#39;foo&#39;</span><span class="p">,</span> <span class="mi">6271</span><span class="p">)</span>
+  <span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
     <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;great success&#39;</span><span class="p">);</span>
-  <span class="p">},</span>
-  <span class="nx">error</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="p">{</span>
+  <span class="p">}).</span><span class="k">catch</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="p">{</span>
     <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;omg&#39;</span><span class="p">,</span> <span class="nx">err</span><span class="p">);</span>
-  <span class="p">}</span>
-<span class="p">});</span>
-
-<span class="c1">//if you dont care about the result, leave the callbacks out</span>
-<span class="nx">peer</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s1">&#39;foo&#39;</span><span class="p">,</span> <span class="mi">416</span><span class="p">);</span>
+  <span class="p">});</span>
 </code></pre></div>
-<p>You must not make any assumptions about side-effects of a set call without error.
+<p>You must not make any assumptions about side-effects of a set call without error,
+as the Peer implementing the State&#39;s <code>set</code> callback is free to do anything appropriate
+with the requested new value (merging, adjusting, translating).
 In particular, the actual value of a State can only be determined by fetching
-it.</p>
-
+it or by explicitly requesting it during the <code>set</code> call:</p>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="nx">peer</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s1">&#39;foo&#39;</span><span class="p">,</span> <span class="mi">6271</span><span class="p">,</span> <span class="p">{</span><span class="nx">valueAsResult</span><span class="o">:</span> <span class="kc">true</span><span class="p">})</span>
+  <span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">realNewValue</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;the new &quot;read&quot; value is&#39;</span><span class="p">,</span> <span class="nx">realNewValue</span><span class="p">);</span>
+  <span class="p">}).</span><span class="k">catch</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;omg&#39;</span><span class="p">,</span> <span class="nx">err</span><span class="p">);</span>
+  <span class="p">});</span>
+</code></pre></div>
 <h2>Call Methods</h2>
 
 <p>Any Peer may (try) to call Methods. The return value is determined by the
 implementation of the <code>call</code> callback function defined by the owning Peer of the
 respective Method. The Daemon will route the request to the Peer which added the
 Method (or reply with an error if the Method is not available).</p>
-<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="nx">peer</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="s1">&#39;greet&#39;</span><span class="p">,</span> <span class="p">{</span><span class="nx">first</span><span class="o">:</span> <span class="s1">&#39;Jim&#39;</span><span class="p">,</span> <span class="nx">last</span><span class="o">:</span> <span class="s1">&#39;White&#39;</span><span class="p">},</span> <span class="p">{</span>
-  <span class="nx">success</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="nx">peer</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="s1">&#39;greet&#39;</span><span class="p">,</span> <span class="p">{</span><span class="nx">first</span><span class="o">:</span> <span class="s1">&#39;Jim&#39;</span><span class="p">,</span> <span class="nx">last</span><span class="o">:</span> <span class="s1">&#39;White&#39;</span><span class="p">})</span>
+  <span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
     <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;great success&#39;</span><span class="p">);</span>
-  <span class="p">},</span>
-  <span class="nx">error</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="p">{</span>
+  <span class="p">}).</span><span class="k">catch</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="p">{</span>
     <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;omg&#39;</span><span class="p">,</span> <span class="nx">err</span><span class="p">);</span>
-  <span class="p">}</span>
-<span class="p">});</span>
-
-<span class="c1">//if you dont care about the result, leave the callbacks out</span>
-<span class="nx">peer</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="s1">&#39;greet&#39;</span><span class="p">,</span> <span class="p">{</span><span class="nx">first</span><span class="o">:</span> <span class="s1">&#39;John&#39;</span><span class="p">,</span> <span class="nx">last</span><span class="o">:</span> <span class="s1">&#39;Carter&#39;</span><span class="p">});</span>
+  <span class="p">});</span>
 </code></pre></div>
 <h2>Remove States</h2>
 
 <p>States can be removed by the owning Peer. States are also implicitly removed by
 the Daemon if the network connection to a Peer breaks. In any case, all fetching
 Peers will be informed.</p>
-<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">foo</span> <span class="o">=</span> <span class="nx">peer</span><span class="p">.</span><span class="nx">state</span><span class="p">({</span>
-  <span class="nx">path</span><span class="o">:</span> <span class="s1">&#39;foo&#39;</span><span class="p">,</span>
-  <span class="nx">value</span><span class="o">:</span> <span class="mi">123</span>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">foo</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">jet</span><span class="p">.</span><span class="nx">State</span><span class="p">(</span><span class="s1">&#39;foo&#39;</span><span class="p">,</span> <span class="mi">123</span><span class="p">);</span> 
+
+<span class="nx">peer</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="nx">foo</span><span class="p">).</span><span class="nx">then</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+  <span class="nx">foo</span><span class="p">.</span><span class="nx">remove</span><span class="p">();</span>
 <span class="p">});</span>
-<span class="nx">foo</span><span class="p">.</span><span class="nx">remove</span><span class="p">();</span>
 </code></pre></div>
 <h2>Remove Methods</h2>
 
 <p>Methods can be removed by the owning Peer. Methods are also implicitly removed by
 the Daemon if the network connection to a Peer breaks. In any case, all fetching
 Peers will be informed.</p>
-<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">greet</span> <span class="o">=</span> <span class="nx">peer</span><span class="p">.</span><span class="nx">method</span><span class="p">({</span>
-  <span class="nx">path</span><span class="o">:</span> <span class="s1">&#39;greet&#39;</span><span class="p">,</span>
-  <span class="nx">call</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{}</span>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">greet</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">jet</span><span class="p">.</span><span class="nx">Method</span><span class="p">(</span><span class="s1">&#39;greet&#39;</span><span class="p">);</span> 
+<span class="nx">greet</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;call&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{});</span>
+
+<span class="nx">peer</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="nx">greet</span><span class="p">).</span><span class="nx">then</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+  <span class="nx">greet</span><span class="p">.</span><span class="nx">remove</span><span class="p">();</span>
 <span class="p">});</span>
-<span class="nx">greet</span><span class="p">.</span><span class="nx">remove</span><span class="p">();</span>
 </code></pre></div>
     </article>
   </section>
