@@ -15,9 +15,6 @@ and you may notice activity of other peers "playing" with it.
 For a basic understanding of how to write complete "client/server" apps, 
 check out the [Todo-App tutorial](https://github.com/lipp/node-jet/blob/master/examples/todo/README.md).
 
-## ATTENTION: Work in progress
-The codepen examples are using the old (<0.3.0) API. They will be updated soon!
-
 # Connect
 
 This example creates a peer and reports back the connection status.
@@ -34,35 +31,8 @@ peer.connect().then(function() {
   
 });
 ```
-
-<div data-height="345" data-theme-id="0" data-slug-hash="GEyuq" data-default-tab="js" class='codepen'><pre><code>var connect = function(url) {
-   try {
-    $(&#x27;#status&#x27;).text(&#x27;disconnected&#x27;);
-    // create a Jet Peer, providing the Jet (Daemon) Websocket URL
-    var peer = new jet.Peer({
-      url: url,
-      onOpen: function() {
-        $(&#x27;#status&#x27;).text(&#x27;connected&#x27;);
-      },
-    });
-  } catch(err) {
-    $(&#x27;#status&#x27;).text(&#x27;error &#x27; + err);
-  }
-};
-
-// try to (re-)connect when button is clicked
-$(&#x27;button&#x27;).click(function(e) {
-  connect($(&#x27;input&#x27;).val());
-  e.preventDefault();
-});
-
-// try to (re-)connect when input field changed
-$(&#x27;input&#x27;).change(function(e) {
-  connect($(&#x27;input&#x27;).val());
-});
-</code></pre>
-<p>See the Pen <a href='http://codepen.io/lipp/pen/GEyuq/'>Jet Connect</a> by Gerhard Preuss (<a href='http://codepen.io/lipp'>@lipp</a>) on <a href='http://codepen.io'>CodePen</a>.</p>
-</div><script async src="//codepen.io/assets/embed/ei.js"></script>
+<p data-height="268" data-theme-id="0" data-slug-hash="GEyuq" data-default-tab="result" data-user="lipp" class='codepen'>See the Pen <a href='http://codepen.io/lipp/pen/GEyuq/'>Jet Connect</a> by Gerhard Preuss (<a href='http://codepen.io/lipp'>@lipp</a>) on <a href='http://codepen.io'>CodePen</a>.</p>
+<script async src="//assets.codepen.io/assets/embed/ei.js"></script>
 
 
 # Add States
@@ -94,77 +64,9 @@ bar.on('set', function(newVal) {
 });
 ```
 
-<div data-height="870" data-theme-id="0" data-slug-hash="kLlfB" data-default-tab="js" class='codepen'><pre><code>var connect = function(url) {
-   try {
-    $(&#x27;#status&#x27;).text(&#x27;disconnected&#x27;);
-    // create a Jet Peer, providing the Jet (Daemon) Websocket URL
-    var peer = new jet.Peer({
-      url: url,
-      onOpen: function() {
-        $(&#x27;#status&#x27;).text(&#x27;connected&#x27;);
-      },
-      onSend: function(message) {
-        addLogEntry(&#x27;Out&#x27;,message);
-      },
-      onReceive: function(message) {
-        addLogEntry(&#x27;In&#x27;,message);
-      }
-    });
-     var random = &#x27;random&#x27; + new Date().getTime();
-     // add as notification
-     peer.state({
-       path: random,
-       value: 123
-     });
+<p data-height="609" data-theme-id="0" data-slug-hash="kLlfB" data-default-tab="result" data-user="lipp" class='codepen'>See the Pen <a href='http://codepen.io/lipp/pen/kLlfB/'>Jet Add State</a> by Gerhard Preuss (<a href='http://codepen.io/lipp'>@lipp</a>) on <a href='http://codepen.io'>CodePen</a>.</p>
+<script async src="//assets.codepen.io/assets/embed/ei.js"></script>
 
-     random = &#x27;random_2_&#x27; + new Date().getTime();
-     // add as request
-     peer.state({
-       path: random,
-       value: 123
-     },{
-       success: function() {
-         console.log(&#x27;ok&#x27;);
-       },
-       error: function(err) {
-         console.log(err);
-       }
-     });
-  } catch(err) {
-    $(&#x27;#status&#x27;).text(&#x27;error &#x27; + err);
-  }
-};
-
-
-
-// try to (re-)connect when button is clicked
-$(&#x27;button&#x27;).click(function(e) {
-  connect($(&#x27;input&#x27;).val());
-  e.preventDefault();
-});
-
-// try to (re-)connect when input field changed
-$(&#x27;input&#x27;).change(function(e) {
-  connect($(&#x27;input&#x27;).val());
-});
-
-
-var off;
-var addLogEntry = function(direction, message) {
-  var now = new Date().getTime();
-  if (!off) {
-    off = now;
-  }
-  var tr = $(&#x27;&lt;tr&gt;&lt;/tr&gt;&#x27;);
-  tr.append(&#x27;&lt;td&gt;&#x27; + (now-off) + &#x27;&lt;/td&gt;&#x27;);
-  tr.append(&#x27;&lt;td&gt;&#x27; + direction + &#x27;&lt;/td&gt;&#x27;);
-  tr.append(&#x27;&lt;td&gt;&#x27; + message + &#x27;&lt;/td&gt;&#x27;);
-  $(&#x27;#log tbody&#x27;).append(tr);
-};
-
-</code></pre>
-<p>See the Pen <a href='http://codepen.io/lipp/pen/kLlfB/'>Jet Add State</a> by Gerhard Preuss (<a href='http://codepen.io/lipp'>@lipp</a>) on <a href='http://codepen.io'>CodePen</a>.</p>
-</div><script async src="//codepen.io/assets/embed/ei.js"></script>
 
 # Fetch Simple
 
@@ -188,79 +90,9 @@ var randomStuff = new jet.Fetcher()
 peer.fetch(randomStuff);
 ```
 
-<div data-height="923" data-theme-id="0" data-slug-hash="Cglby" data-default-tab="js" class='codepen'><pre><code>var connect = function(url) {
-   try {
-    $(&#x27;#status&#x27;).text(&#x27;disconnected&#x27;);
-    // create a Jet Peer, providing the Jet (Daemon) Websocket URL
-    var peer = new jet.Peer({
-      url: url,
-      onOpen: function() {
-        $(&#x27;#status&#x27;).text(&#x27;connected&#x27;);
-      },
-      onSend: function(message) {
-        addLogEntry(&#x27;Out&#x27;,message);
-      },
-      onReceive: function(message) {
-        addLogEntry(&#x27;In&#x27;,message);
-      }
-    });
-     var random = &#x27;random&#x27; + new Date().getTime();
-     // add as notification
-     peer.state({
-       path: random,
-       value: 123
-     });
+<p data-height="701" data-theme-id="0" data-slug-hash="Cglby" data-default-tab="result" data-user="lipp" class='codepen'>See the Pen <a href='http://codepen.io/lipp/pen/Cglby/'>Jet Fetch State</a> by Gerhard Preuss (<a href='http://codepen.io/lipp'>@lipp</a>) on <a href='http://codepen.io'>CodePen</a>.</p>
+<script async src="//assets.codepen.io/assets/embed/ei.js"></script>
 
-     random = &#x27;random_2_&#x27; + new Date().getTime();
-     // add as request
-     peer.state({
-       path: random,
-       value: 123
-     });
-
-     peer.fetch({
-       path: {
-         startsWith: &#x27;random&#x27;
-       }
-     },function(path, event, value) {
-       console.log(&#x27;fetch&#x27;, path, event, value);
-     });
-  } catch(err) {
-    $(&#x27;#status&#x27;).text(&#x27;error &#x27; + err);
-  }
-};
-
-
-
-// try to (re-)connect when button is clicked
-$(&#x27;button&#x27;).click(function(e) {
-  connect($(&#x27;input&#x27;).val());
-  e.preventDefault();
-});
-
-// try to (re-)connect when input field changed
-$(&#x27;input&#x27;).change(function(e) {
-  connect($(&#x27;input&#x27;).val());
-});
-
-
-var off;
-var addLogEntry = function(direction, message) {
-  var now = new Date().getTime();
-  if (!off) {
-    off = now;
-  }
-  var tr = $(&#x27;&lt;tr&gt;&lt;/tr&gt;&#x27;);
-  tr.append(&#x27;&lt;td&gt;&#x27; + (now-off) + &#x27;&lt;/td&gt;&#x27;);
-  tr.append(&#x27;&lt;td&gt;&#x27; + direction + &#x27;&lt;/td&gt;&#x27;);
-  tr.append(&#x27;&lt;td&gt;&#x27; + message + &#x27;&lt;/td&gt;&#x27;);
-  $(&#x27;#log tbody&#x27;).append(tr);
-};
-
-</code></pre>
-<p>See the Pen <a href='http://codepen.io/lipp/pen/Cglby/'>Jet Fetch State</a> by Gerhard Preuss (<a href='http://codepen.io/lipp'>@lipp</a>) on <a href='http://codepen.io'>CodePen</a>.</p>
-</div><script async src="//codepen.io/assets/embed/ei.js"></script>
- 
 # Change State
 
 This examples creates a Peer, adds a "ticker" States with random name (so that at least
@@ -274,85 +106,14 @@ This is the most relevant snippet:
 ```javascript
 var ticker = new jet.State('ticker', 1);
 
-peer.add(ticker);
-
-setInterval(function() {
-  var old = ticker.value();
-  ticker.value(++old); // post state change
-}, 1000);
+peer.add(ticker).then(function() {
+  setInterval(function() {
+    var old = ticker.value();
+    ticker.value(++old); // post state change
+  }, 1000);
+});
 ```
 
-<div data-height="945" data-theme-id="0" data-slug-hash="eKBpG" data-default-tab="js" class='codepen'><pre><code>var tickTimer;
-var connect = function(url) {
-  try {
-    $(&#x27;#status&#x27;).text(&#x27;disconnected&#x27;);
-    // create a Jet Peer, providing the Jet (Daemon) Websocket URL
-    var peer = new jet.Peer({
-      url: url,
-      onOpen: function() {
-        $(&#x27;#status&#x27;).text(&#x27;connected&#x27;);
-      },
-      onSend: function(message) {
-        addLogEntry(&#x27;Out&#x27;,message);
-      },
-      onReceive: function(message) {
-        addLogEntry(&#x27;In&#x27;,message);
-      }
-    });
-    var path = &#x27;ticker_#&#x27; + new Date().getTime();
-    // add as notification
-    var ticker = peer.state({
-      path: path,
-      value: 1
-    });
+<p data-height="891" data-theme-id="0" data-slug-hash="eKBpG" data-default-tab="result" data-user="lipp" class='codepen'>See the Pen <a href='http://codepen.io/lipp/pen/eKBpG/'>Jet Change State</a> by Gerhard Preuss (<a href='http://codepen.io/lipp'>@lipp</a>) on <a href='http://codepen.io'>CodePen</a>.</p>
+<script async src="//assets.codepen.io/assets/embed/ei.js"></script>
 
-    if (tickTimer) {
-      clearInterval(tickTimer);
-    }
-    tickTimer = setInterval(function() {
-      var old = ticker.value();
-      ticker.value(++old);
-    }, 1000);
-
-    peer.fetch({
-      path: {
-        startsWith: &#x27;ticker_&#x27;
-      }
-    },function(path, event, value) {
-      // console.log(&#x27;fetch&#x27;, path, event, value);
-    });
-  } catch(err) {
-    $(&#x27;#status&#x27;).text(&#x27;error &#x27; + err);
-  }
-};
-
-
-
-// try to (re-)connect when button is clicked
-$(&#x27;button&#x27;).click(function(e) {
-  connect($(&#x27;input&#x27;).val());
-  e.preventDefault();
-});
-
-// try to (re-)connect when input field changed
-$(&#x27;input&#x27;).change(function(e) {
-  connect($(&#x27;input&#x27;).val());
-});
-
-
-var off;
-var addLogEntry = function(direction, message) {
-  var now = new Date().getTime();
-  if (!off) {
-    off = now;
-  }
-  var tr = $(&#x27;&lt;tr&gt;&lt;/tr&gt;&#x27;);
-  tr.append(&#x27;&lt;td&gt;&#x27; + (now-off) + &#x27;&lt;/td&gt;&#x27;);
-  tr.append(&#x27;&lt;td&gt;&#x27; + direction + &#x27;&lt;/td&gt;&#x27;);
-  tr.append(&#x27;&lt;td&gt;&#x27; + message + &#x27;&lt;/td&gt;&#x27;);
-  $(&#x27;#log tbody&#x27;).append(tr);
-};
-
-</code></pre>
-<p>See the Pen <a href='http://codepen.io/lipp/pen/eKBpG/'>Jet Change State</a> by Gerhard Preuss (<a href='http://codepen.io/lipp'>@lipp</a>) on <a href='http://codepen.io'>CodePen</a>.</p>
-</div><script async src="//codepen.io/assets/embed/ei.js"></script>
