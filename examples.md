@@ -6,9 +6,9 @@ order: 3
 
 The following examples demonstrate Javascript peer API usage and (protocol) messages.
 They actually run in your browser. You can edit them on [codepen](http://codepen.io) if desired.
-Most of them use the Jet Daemon hosted at [nodejitsu](http://nodejitsu.com) with the
-Daemon URL: `ws://jet.nodejitsu.com` (Port 80). The nodejitsu Jet Daemon is public
-and you may notice activity of other peers "playing" with it.
+The examples use a public Jet Daemon, which also hosts a Todo-App. Thus
+you may notice activity of other peers "playing" with it. 
+To view everything in a nice debug-perspective, open <a href="radar.html" target="_blank">Radar</a>.
 
 ## Todo-App Tutorial
 
