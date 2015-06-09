@@ -1,2 +1,0 @@
-<form class="connection connection-status-{{status}}" ng-submit="connect(newUrl);">
-</form>
