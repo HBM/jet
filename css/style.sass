@@ -6,8 +6,8 @@ $first-bg: #319D9D
 
 $menu-break: 880px
 
-@import url(http://fonts.googleapis.com/css?family=Open+Sans:400,300)
-@import url(http://fonts.googleapis.com/css?family=Raleway:400,100)
+@import url(https://fonts.googleapis.com/css?family=Open+Sans:400,300)
+@import url(https://fonts.googleapis.com/css?family=Raleway:400,100)
 
 @mixin vertical-align
   position: relative
@@ -160,6 +160,7 @@ section:first-of-type
   > h1
     padding-top: 200px
     font-size: 10em
+
 
 
 .hero
@@ -341,6 +342,7 @@ article
   @media (min-width: $menu-break + 1px)
     display: none
   @media (max-width: $menu-break)
+    outline: none
     position: fixed
     background: url(../images/ic_menu_36px.svg)
     background-size: cover
@@ -380,3 +382,19 @@ body.appframe
 
 iframe.cp_embed_iframe
   box-shadow: 5px 5px 10px 0px rgb(165,165,165)
+
+section
+  min-height: 300px
+
+section ul
+  color: #565656
+  li
+    font-weight: 100
+    color: #555
+  li a:first-child
+    text-decoration: none
+    margin-top: 1.5em
+    margin-bottom: 0.3em
+    font-size: 1.1em
+    color: #b135ce
+    display: block

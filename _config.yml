@@ -1,5 +1,5 @@
 name: Jet
 markdown: redcarpet
-pygments: true
+highlighter: true
 gems:
   - octopress-autoprefixer

@@ -7,6 +7,5 @@ sections:
  - all-in.html
  - free.html
  - bus.html
- - todo.html
 order: 0
 ---
