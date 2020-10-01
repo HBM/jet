@@ -2,7 +2,7 @@
 
 The JSON Bus.
 
-This is the website project for [Jet](http://jetbus.io). 
+This is the [Jet](http://jetbus.io) website project . 
 
 If you are looking for language implementations, you may be interested in:
 
@@ -12,7 +12,7 @@ If you are looking for language implementations, you may be interested in:
 
 # Contribute
 
-Everybody is very welcomed to contribute. If you have:
+Everyone are most welcomed to contribute. If you have:
 
 - Bugs to report
 - Ideas for improvements
