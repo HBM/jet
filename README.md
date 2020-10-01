@@ -1,6 +1,6 @@
 # Jet
 
-The JSON Bus.
+The JSON Buses.
 
 This is the website project for [Jet](http://jetbus.io). 
 
@@ -17,7 +17,7 @@ Everybody is very welcomed to contribute. If you have:
 - Bugs to report
 - Ideas for improvements
 - Questions to the Protocol
-- Usage Feedback
+
 
 Please create an issue or - even better - fork and make a Pull Request.
 
